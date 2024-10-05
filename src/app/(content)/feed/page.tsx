@@ -2,14 +2,36 @@
 import { getFeed } from "~/lib/api/getFeed";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useRef, useState } from "react";
-import PostCard  from "~/components/PostCard";
 import { Photo } from "~/types";
+
+function CardGrid({groups} : {groups: String[]}) {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {groups.map((group) => (
+        <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
+          <div className="px-6 py-4">
+            <div className="font-bold text-xl mb-2">{group}</div>
+            <ul>
+              <li>course</li>
+              <li>time</li>
+              <li>location</li>
+            </ul>
+          </div>
+          <div className="px-6 pt-4 pb-2">
+            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#open</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function FeedPage() {
   const { user } = useUser();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [isScrollNearBottom, setIsScrollNearBottom] = useState(false);
   const lastPhoto = useRef<string | null>(null);
+  const groups = ["title1", "title2","title3"];
 
   // This lazily loads the photos, avoiding lag.
   function onScroll(e: React.UIEvent<HTMLDivElement>) {
@@ -37,16 +59,18 @@ export default function FeedPage() {
     loadPhotos();
   }, [user, isScrollNearBottom]);
 
-  const photoCards = photos.map((photo) => (
-    photo && <></> // What should go here?  How do we render a post card?
-  ))
+  
 
   return (
-    <main className="container relative overflow-scroll h-screen" onScroll={onScroll}>
-      <p className="text-4xl text-white font-bold pt-4 text-center">Feed</p>
-      <div className="container flex flex-col items-center justify-center gap-12 py-[1rem]">
-        <div className="grid grid-cols-1">
-          {photoCards}
+    <main className="container relative overflow-scroll h-screen" onScroll={onScroll}>                                                                                                                                                                                                                            
+      <div className="p-4 font-sans">
+        <p className="text-white">Filters</p>
+        <div className="flex items-center mb-4">
+          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#open</span>
+          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#regular</span>     
+        </div>
+        <div className="mt-8">
+          <CardGrid groups={groups}/>
         </div>
       </div>
       <p className="text-white text-sm font-bold">Stop scrolling, it's bad for you!!</p>

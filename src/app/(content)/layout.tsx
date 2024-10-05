@@ -17,15 +17,18 @@ export default async function ContentLayout({
 
   return (
     <div className="flex h-screen w-screen">
-      <div className="bg-black left-0 top-0 flex-none w-[15vw] h-full">
+      <div className="bg-slate-400 left-0 top-0 flex-none w-[10vw] h-full">
         <NavBar />
       </div>
-      <div className="flex-initial w-[85vw]">
+      <div className="flex-initial w-[80vw]">
         <div className="flex justify-center">
-          <main className="bg-black h-screen fixed w-[600px] container">
+          <main className="bg-black h-screen fixed w-[80%] container">
               {children}
           </main>
         </div>
+      </div>
+      <div className="bg-slate-800 left-0 top-0 flex-none w-[10vw] h-full">
+        <p className="text-white">DETAILS</p>
       </div> 
     </div>
   );
