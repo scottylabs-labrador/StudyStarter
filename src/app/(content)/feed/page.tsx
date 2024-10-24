@@ -1,9 +1,26 @@
-
+"use client";
+import {useState } from "react";
+import Details from "~/components/Details";
+import groupDetails from "~/types";
 
 
 export default function FeedPage() {
   const opens = [{title:"18100 HW 5",course:"18100", time:"12/1 10:00", location:"Hunt"}, {title:"21127 test 2 prep",course:"21127", time:"12/24 10:00", location:"Stever"}];
   const scheduled = [{title:"18100 study group",course:"18100", time:"TBD", location:"Hunt"}, {title:"21127 HELP ME PLEASE",course:"21127", time:"Wednesday 10:00", location:"Wean"}];
+
+  const [showDetails, setShowDetails] = useState(true);
+  // Create sampel groupDetails
+  const sampleGroup: groupDetails = {
+    groupName: "Concepts Preparation",
+    numParticipants: 3,
+    totalSeats: 4,
+    location: "Giant Eagle",
+    time: "Sun, Oct 6: 4:00 - 5:00pm",
+    course: "21-127",
+    participantDetails: ["Jane", "Doe"],
+    details: "This is for Greggo's Class, not Newstead's!"
+  }
+
 
   const displayOpens = opens.map((studyGroupCard) => 
     <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
@@ -36,9 +53,8 @@ export default function FeedPage() {
   return (
     
     <main className="container relative overflow-scroll h-screen">
-      <div className="w-full">
-        <div className="max-w-4xl mx-auto">
-    
+      <div className="w-full flex">
+        <div className="w-[60vw] m-[2.5vw]">
           <div className="border-b border-gray-200 dark:border-gray-700 mb-4">
               <ul className="flex flex-wrap -mb-px" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
                   <li className="mr-2" role="presentation">
@@ -66,7 +82,10 @@ export default function FeedPage() {
               </div>
           </div>
         </div>
-      </div>                                                                                                                                                                                                                            
+        <div className="w-[25vw] h-full">
+          {showDetails && <Details details={sampleGroup} onClick={() => setShowDetails(false)}></Details>}
+        </div> 
+      </div>                                                                                                                                                                                                                    
       <script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>
     </main>
   );
