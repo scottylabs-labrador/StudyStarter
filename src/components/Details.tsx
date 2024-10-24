@@ -2,7 +2,7 @@
 import React, { ReactNode, useState } from "react";
 import groupDetails from "~/types";
 interface Props {
-    onClick: () => void,
+  onClick: () => void;
   details: groupDetails;
 }
 
@@ -11,14 +11,18 @@ const Details = ({ onClick, details }: Props) => {
   const [joinedState, joinedSetState] = useState(false);
   return (
     <div
-      className="card text-dark mb-3 ms-auto bg-white me-5 mt-3"
-      style={{ maxWidth: "30rem", height: "30rem", borderRadius: "10px"}}
+      className="card text-dark mb-3 me-5 ms-auto mt-3 bg-white"
+      style={{ maxWidth: "30rem", height: "35rem", borderRadius: "10px"}}
     >
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-    <button className="btn-close me-5 mt-3" onClick={onClick} style={{ color: 'black', fontSize: '20px', marginBottom: "-12px" }}>
-        X
-    </button>
-</div>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <button
+          className="btn-close me-5 mt-3"
+          onClick={onClick}
+          style={{ color: "black", fontSize: "20px", marginBottom: "-12px" }}
+        >
+          X
+        </button>
+      </div>
       <div
         className="card-header"
         style={{
@@ -61,17 +65,25 @@ const Details = ({ onClick, details }: Props) => {
         </p>
         {participantsState &&
           details.participantDetails.map((participantDetail) => (
-            <p
-              className="card-text"
-              style={{
-                fontSize: "20px",
-                fontFamily: "Verdana",
-                textIndent: "2rem",
-              }}
-            >
-              {" "}
-              <strong>Name</strong>: {participantDetail}
-            </p>
+            <div style={{display: "flex", alignItems: "center", padding: "10px"}}>
+              <img
+                className="img-fluid"
+                style={{width: "3rem", height: "3rem", borderRadius: "50%"}}
+                src={participantDetail.url}
+                alt="Example"
+              />
+              <p
+                className="card-text"
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Verdana",
+                  textIndent: "2rem",
+                }}
+              >
+                {" "}
+                <strong>Name</strong>: {participantDetail.name}
+              </p>
+              </div>
           ))}
         <p
           className="card-heading"
@@ -88,7 +100,7 @@ const Details = ({ onClick, details }: Props) => {
             backgroundColor: "#e0ded7",
             borderRadius: "10px",
             margin: "0 auto",
-            marginTop: "10px"
+            marginTop: "10px",
           }}
         >
           <div className="card-body" style={{ color: "black", padding: "5px" }}>
@@ -96,16 +108,15 @@ const Details = ({ onClick, details }: Props) => {
           </div>
         </div>
         <button
-          className={"btn float-end pe-3 mt-3 me-3"}
+          className={"btn float-end me-3 mt-3 pe-3"}
           onClick={() => joinedSetState(!joinedState)}
           style={{
-            borderColor: (joinedState ? "blue" : "black"),
+            borderColor: joinedState ? "blue" : "black",
             borderWidth: "4px",
             borderRadius: "26px",
             padding: "10px",
-            backgroundColor: (joinedState ? "#226cf5" : "#f5f4f0"),
-            width: "100px"
-            
+            backgroundColor: joinedState ? "#226cf5" : "#f5f4f0",
+            width: "100px",
           }}
         >
           {joinedState ? "Joined" : "Join"}

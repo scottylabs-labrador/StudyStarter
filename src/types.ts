@@ -5,7 +5,11 @@ export default interface groupDetails {
     location: string,
     time: string,
     course: string,
-    participantDetails: string[],
+    participantDetails: {
+        name: string,
+        url: string
+        
+    }[],
     details: string
 }
   
