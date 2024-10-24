@@ -11,6 +11,7 @@ export default function FeedPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [isScrollNearBottom, setIsScrollNearBottom] = useState(false);
   const lastPhoto = useRef<string | null>(null);
+  const [showDetails, setShowDetails] = useState(true);
 
   // This lazily loads the photos, avoiding lag.
   function onScroll(e: React.UIEvent<HTMLDivElement>) {
@@ -61,7 +62,7 @@ export default function FeedPage() {
   return (
     <main className="container relative overflow-scroll h-screen" onScroll={onScroll}>
       <p className="text-4xl text-white font-bold pt-4 text-center">Study Groups</p>
-      <Details details={sampleGroup}></Details>
+      {showDetails && <Details details={sampleGroup} onClick={() => setShowDetails(false)}></Details>}
       <div className="container flex flex-col items-center justify-center gap-12 py-[1rem]">
         <div className="grid grid-cols-1">
           {photoCards}

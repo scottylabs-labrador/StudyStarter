@@ -1,22 +1,28 @@
 import React, { ReactNode, useState } from "react";
 import groupDetails from "~/types/groupDetails";
 interface Props {
+    onClick: () => void,
   details: groupDetails;
 }
 
-const Details = ({ details }: Props) => {
+const Details = ({ onClick, details }: Props) => {
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
   return (
     <div
       className="card text-dark mb-3 ms-auto bg-white me-5 mt-3"
-      style={{ maxWidth: "30rem", height: "30rem", borderRadius: "10px" }}
+      style={{ maxWidth: "30rem", height: "30rem", borderRadius: "10px"}}
     >
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <button className="btn-close me-5 mt-3" onClick={onClick} style={{ color: 'black', fontSize: '20px', marginBottom: "-12px" }}>
+        X
+    </button>
+</div>
       <div
         className="card-header"
         style={{
           textAlign: "center",
-          marginBottom: "20px",
+          marginBottom: "10px",
           fontSize: "35px",
           fontFamily: "Verdana",
         }}
@@ -89,7 +95,7 @@ const Details = ({ details }: Props) => {
           </div>
         </div>
         <button
-          className={"btn btn-secondary float-end pe-3 mt-3 me-3"}
+          className={"btn float-end pe-3 mt-3 me-3"}
           onClick={() => joinedSetState(!joinedState)}
           style={{
             borderColor: (joinedState ? "blue" : "black"),
