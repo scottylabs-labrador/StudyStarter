@@ -4,7 +4,8 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useRef, useState } from "react";
 import PostCard  from "~/components/PostCard";
 import { Photo } from "~/types";
-
+import Details from "~/components/Details";
+import groupDetails from "~/types/groupDetails";
 export default function FeedPage() {
   const { user } = useUser();
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -41,15 +42,31 @@ export default function FeedPage() {
     photo && <></> // What should go here?  How do we render a post card?
   ))
 
+  // Create sampel groupDetails
+  const sampleGroup: groupDetails = {
+    groupName: "Concepts Preparation",
+    numParticipants: 3,
+    totalSeats: 4,
+    location: "Giant Eagle",
+    time: "Sun, Oct 6: 4:00 - 5:00pm",
+    course: "21-127",
+    participantDetails: ["Jane", "Doe"],
+    details: "This is for Greggo's Class, not Newstead's!"
+  }
+
+
+
+
+
   return (
     <main className="container relative overflow-scroll h-screen" onScroll={onScroll}>
-      <p className="text-4xl text-white font-bold pt-4 text-center">Feed</p>
+      <p className="text-4xl text-white font-bold pt-4 text-center">Study Groups</p>
+      <Details details={sampleGroup}></Details>
       <div className="container flex flex-col items-center justify-center gap-12 py-[1rem]">
         <div className="grid grid-cols-1">
           {photoCards}
         </div>
       </div>
-      <p className="text-white text-sm font-bold">Stop scrolling, it's bad for you!!</p>
     </main>
   );
 }
