@@ -15,13 +15,10 @@ export default function NavBar() {
     return (
         <Fragment>
                 <div className="grid grid-rows-3 gap-y-6 px-4 pt-[50px] overflow-hidden text-white">
-                    <div className="font-bold text-lg">InstaPlate.</div>
+                    <div className="font-bold text-lg">Study Group Finder</div>
                     <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
                         Feed
                     </a>
-                    <p onClick={() => dispatch(setIsModalOpen(true))} className={isModalOpen ? "font-bold" : ""}>
-                        Upload
-                    </p>
                     <a href="/profile" className={page == "profile" ? "font-bold" : ""}>
                         Profile
                     </a>

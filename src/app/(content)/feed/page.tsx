@@ -1,55 +1,155 @@
 "use client";
-import { getFeed } from "~/lib/api/getFeed";
-import { useUser } from "@clerk/nextjs";
-import { useEffect, useRef, useState } from "react";
-import PostCard  from "~/components/PostCard";
-import { Photo } from "~/types";
+import { useState } from "react";
+import Details from "~/components/Details";
+import groupDetails from "~/types";
 
 export default function FeedPage() {
-  const { user } = useUser();
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [isScrollNearBottom, setIsScrollNearBottom] = useState(false);
-  const lastPhoto = useRef<string | null>(null);
+  const scheduled: groupDetails[]=[
+  {
+    groupName: "Concepts Preparation",
+    numParticipants: 3,
+    totalSeats: 4,
+    location: "Giant Eagle",
+    time: "Sun, Oct 6: 4:00 - 5:00pm",
+    course: "21-127",
+    participantDetails: [
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+      { name: "John Deer", url: "assets/John Deer.jpg" },
+    ],
+    details: "This is for Greggo's Class, not Newstead's!",
+  },
 
-  // This lazily loads the photos, avoiding lag.
-  function onScroll(e: React.UIEvent<HTMLDivElement>) {
-    const target = e.target as HTMLDivElement;
-    if (target.scrollHeight - target.scrollTop <= 2 * target.clientHeight) {
-      setIsScrollNearBottom(true);
-    } else {
-      setIsScrollNearBottom(false);
-    }
+  {
+    groupName: "ECE Preparation",
+    numParticipants: 2,
+    totalSeats: 10,
+    location: "Hunt",
+    time: "Sun, Oct 12: 4:00 - 5:00pm",
+    course: "18-100",
+    participantDetails: [
+      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
+      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
+    ],
+    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
   }
+];
 
-  useEffect(() => {
-    if (photos.length && !isScrollNearBottom) {
-      return;
-    }
-    const loadPhotos = async () => {
-      if (user) {
-        // We know this is safe because we check if the user is signed in
-        const [paginatedPhotos, lastSnapshot] = await getFeed(user?.emailAddresses[0]?.emailAddress as string, lastPhoto.current, 5);
-        lastPhoto.current = lastSnapshot || null;
-        setPhotos([...photos, ...paginatedPhotos]);
-      }
-    };
+const open: groupDetails[]=[
+  {
+    groupName: "GRINDING SESSION",
+    numParticipants: 1,
+    totalSeats: 4,
+    location: "Sorrels",
+    time: "Sun, Oct 4: 4:00 - 10:00pm",
+    course: "15-112",
+    participantDetails: [
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" }
+    ],
+    details: "I am grinding my homework just join me",
+  }
+];
+  
+ 
+  const [showDetails, setShowDetails] = useState(true);
 
-    loadPhotos();
-  }, [user, isScrollNearBottom]);
+  const displayOpens = open.map((group) => (
+    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
+      <div className="px-6 py-4">
+        <div className="mb-2 text-xl font-bold">{group.groupName}</div>
+        <ul>
+          <li>{group.course}</li>
+          <li>{group.time}</li>
+          <li>{group.location}</li>
+        </ul>
+      </div>
+    </div>
+  ));
 
-  const photoCards = photos.map((photo) => (
-    photo && <></> // What should go here?  How do we render a post card?
-  ))
+  const displayScheduled = scheduled.map((group) => (
+    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
+      <div className="px-6 py-4">
+        <div className="mb-2 text-xl font-bold">{group.groupName}</div>
+        <ul>
+          <li>{group.course}</li>
+          <li>{group.time}</li>
+          <li>{group.location}</li>
+        </ul>
+      </div>
+    </div>
+  ));
 
   return (
-    <main className="container relative overflow-scroll h-screen" onScroll={onScroll}>
-      <p className="text-4xl text-white font-bold pt-4 text-center">Feed</p>
-      <div className="container flex flex-col items-center justify-center gap-12 py-[1rem]">
-        <div className="grid grid-cols-1">
-          {photoCards}
+    <main className="container relative h-screen overflow-scroll">
+      <div className="flex w-full">
+        <div className="m-[2.5vw] w-[60vw]">
+          <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+            <ul
+              className="-mb-px flex flex-wrap"
+              id="myTab"
+              data-tabs-toggle="#myTabContent"
+              role="tablist"
+            >
+              <li className="mr-2" role="presentation">
+                <button
+                  className="inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
+                  id="open-tab"
+                  data-tabs-target="#open"
+                  type="button"
+                  role="tab"
+                  aria-controls="open"
+                  aria-selected="false"
+                >
+                  Open
+                </button>
+              </li>
+              <li className="mr-2" role="presentation">
+                <button
+                  className="active inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
+                  id="scheduled-tab"
+                  data-tabs-target="#scheduled"
+                  type="button"
+                  role="tab"
+                  aria-controls="scheduled"
+                  aria-selected="true"
+                >
+                  Scheduled
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div id="myTabContent">
+            <div
+              className="hidden rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
+              id="open"
+              role="tabpanel"
+              aria-labelledby="open-tab"
+            >
+              <div className="mt-8">
+                <div className="grid grid-cols-2 gap-4">{displayOpens}</div>
+              </div>
+            </div>
+            <div
+              className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
+              id="scheduled"
+              role="tabpanel"
+              aria-labelledby="scheduled-tab"
+            >
+              <div className="mt-8">
+                <div className="grid grid-cols-2 gap-4">{displayScheduled}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="h-full w-[25vw]">
+          {showDetails && (
+            <Details
+              details={scheduled[1]}
+              onClick={() => setShowDetails(false)}
+            ></Details>
+          )}
         </div>
       </div>
-      <p className="text-white text-sm font-bold">Stop scrolling, it's bad for you!!</p>
+      <script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>
     </main>
   );
 }

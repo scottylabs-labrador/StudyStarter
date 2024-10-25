@@ -1,7 +1,5 @@
 "use client";
 import "~/styles/globals.css";
-
-import { useEffect, useState } from "react";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { getUserPhotos } from "~/lib/api/getUserPhotos";
 import { Photo } from "~/types";
