@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { getUserPhotos } from "~/lib/api/getUserPhotos";
 import { Photo } from "~/types";
+import { ClassList } from "~/components/ClassList";
 
 function ProfileGrid({ photos }: { photos: Photo[] }) {
   return (
@@ -29,7 +30,6 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadPhotos = async () => {
       if (user) {
-        // We know this is safe because we check if the user is signed in
         const userPhotos = await getUserPhotos(user.emailAddresses[0]?.emailAddress as string);
         setPhotos(userPhotos);
       }
@@ -38,17 +38,19 @@ export default function ProfilePage() {
     loadPhotos();
   }, [user]);
 
+  const displayName = user?.fullName || user?.firstName || user?.username || "User";
+
   return (
     <div className="p-4 font-sans">
       <div className="flex items-center mb-4">
         <img
-          src="https://via.placeholder.com/80"
+          src={user?.imageUrl || "https://via.placeholder.com/80"}
           alt="Profile"
           className="w-20 h-20 rounded-full"
         />
         <div className="ml-4">
-          <h1 className="text-2xl font-bold">{user?.emailAddresses[0]?.emailAddress}</h1>
-          <p className="text-gray-500">{photos.length} posts</p>
+          <h1 className="text-2xl font-bold">{displayName}</h1>
+          <p className="text-gray-500">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
         <div className="ml-auto">
           <SignOutButton>
@@ -63,6 +65,7 @@ export default function ProfilePage() {
       <div className="mt-8">
         <ProfileGrid photos={photos} />
       </div>
+      <ClassList />
     </div>
   );
 }
