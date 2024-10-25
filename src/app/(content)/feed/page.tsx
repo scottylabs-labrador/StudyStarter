@@ -4,38 +4,8 @@ import Details from "~/components/Details";
 import groupDetails from "~/types";
 
 export default function FeedPage() {
-  const opens = [
-    {
-      title: "18100 HW 5",
-      course: "18100",
-      time: "12/1 10:00",
-      location: "Hunt",
-    },
-    {
-      title: "21127 test 2 prep",
-      course: "21127",
-      time: "12/24 10:00",
-      location: "Stever",
-    },
-  ];
-  const scheduled = [
-    {
-      title: "18100 study group",
-      course: "18100",
-      time: "TBD",
-      location: "Hunt",
-    },
-    {
-      title: "21127 HELP ME PLEASE",
-      course: "21127",
-      time: "Wednesday 10:00",
-      location: "Wean",
-    },
-  ];
-
-  const [showDetails, setShowDetails] = useState(true);
-  // Create sampel groupDetails
-  const sampleGroup: groupDetails = {
+  const scheduled: groupDetails[]=[
+  {
     groupName: "Concepts Preparation",
     numParticipants: 3,
     totalSeats: 4,
@@ -47,29 +17,62 @@ export default function FeedPage() {
       { name: "John Deer", url: "assets/John Deer.jpg" },
     ],
     details: "This is for Greggo's Class, not Newstead's!",
-  };
+  },
 
-  const displayOpens = opens.map((studyGroupCard) => (
+  {
+    groupName: "ECE Preparation",
+    numParticipants: 2,
+    totalSeats: 10,
+    location: "Hunt",
+    time: "Sun, Oct 12: 4:00 - 5:00pm",
+    course: "18-100",
+    participantDetails: [
+      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
+      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
+    ],
+    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
+  }
+];
+
+const open: groupDetails[]=[
+  {
+    groupName: "GRINDING SESSION",
+    numParticipants: 1,
+    totalSeats: 4,
+    location: "Sorrels",
+    time: "Sun, Oct 4: 4:00 - 10:00pm",
+    course: "15-112",
+    participantDetails: [
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" }
+    ],
+    details: "I am grinding my homework just join me",
+  }
+];
+  
+ 
+  const [showDetails, setShowDetails] = useState(true);
+
+  const displayOpens = open.map((group) => (
     <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
       <div className="px-6 py-4">
-        <div className="mb-2 text-xl font-bold">{studyGroupCard.title}</div>
+        <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
-          <li>{studyGroupCard.course}</li>
-          <li>{studyGroupCard.time}</li>
-          <li>{studyGroupCard.location}</li>
+          <li>{group.course}</li>
+          <li>{group.time}</li>
+          <li>{group.location}</li>
         </ul>
       </div>
     </div>
   ));
 
-  const displayScheduled = scheduled.map((studyGroupCard) => (
+  const displayScheduled = scheduled.map((group) => (
     <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
       <div className="px-6 py-4">
-        <div className="mb-2 text-xl font-bold">{studyGroupCard.title}</div>
+        <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
-          <li>{studyGroupCard.course}</li>
-          <li>{studyGroupCard.time}</li>
-          <li>{studyGroupCard.location}</li>
+          <li>{group.course}</li>
+          <li>{group.time}</li>
+          <li>{group.location}</li>
         </ul>
       </div>
     </div>
@@ -140,7 +143,7 @@ export default function FeedPage() {
         <div className="h-full w-[25vw]">
           {showDetails && (
             <Details
-              details={sampleGroup}
+              details={scheduled[1]}
               onClick={() => setShowDetails(false)}
             ></Details>
           )}
