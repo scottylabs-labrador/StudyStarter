@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { getUserPhotos } from "~/lib/api/getUserPhotos";
 import { Photo } from "~/types";
+import { useEffect, useState } from "react";
 import { ClassList } from "~/components/ClassList";
 
 function ProfileGrid({ photos }: { photos: Photo[] }) {
@@ -47,7 +48,7 @@ export default function ProfilePage() {
           className="w-20 h-20 rounded-full"
         />
         <div className="ml-4">
-          <h1 className="text-2xl font-bold">{displayName}</h1>
+          <h1 className="text-2xl font-bold text-white">{displayName}</h1>
           <p className="text-gray-500">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
         <div className="ml-auto">

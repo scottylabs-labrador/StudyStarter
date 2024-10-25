@@ -20,7 +20,7 @@ export function ClassList() {
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-bold mb-4">My Classes</h2>
+      <h2 className="text-xl font-bold mb-4 text-white">My Classes</h2>
       <div className="mb-4">
         <input
           type="text"

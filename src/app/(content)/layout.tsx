@@ -15,7 +15,7 @@ export default async function ContentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen w-screen">
+    <div className="flex h-screen w-screen bg-black">
       <div className="bg-slate-400 left-0 top-0 flex-none w-[10vw] h-full">
         <NavBar />
       </div>
