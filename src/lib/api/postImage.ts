@@ -15,7 +15,7 @@ export async function postImage(data: FormData, userId: string | undefined) {
 
     uploadBytes(ref(storageRef, ('images/' + String(photo_uuid))), buffer)
     setDoc(doc(photosRef, photo_uuid), {
-        "reference": `/boilerplate-7545b.appspot.com/images/${photo_uuid}`,
+        "reference": `/studygroupfinder-14500.com/images/${photo_uuid}`,
         "uploadTime": new Date(),
         "userId": userId
     })
