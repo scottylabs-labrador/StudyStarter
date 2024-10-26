@@ -4,6 +4,7 @@ const isProtectedRoute = createRouteMatcher([
     '/feed(.*)',
     '/profile(.*)',
     '/login(.*)',
+    '/create_account(.*)',
   ]);
 
 export default clerkMiddleware((auth, req) => {
@@ -11,5 +12,5 @@ export default clerkMiddleware((auth, req) => {
 });
   
 export const config = {
-  matcher: ['/', '/login', '/profile', '/feed'],
+  matcher: ['/', '/create_account(.*)', '/login', '/profile', '/feed'],
 };
