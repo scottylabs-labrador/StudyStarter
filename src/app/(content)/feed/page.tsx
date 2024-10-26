@@ -50,10 +50,10 @@ const open: groupDetails[]=[
 ];
   
  
-  const [showDetails, setShowDetails] = useState(true);
+  const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
 
   const displayOpens = open.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
+    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails(group)}>
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
@@ -66,7 +66,7 @@ const open: groupDetails[]=[
   ));
 
   const displayScheduled = scheduled.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
+    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails(group)}>
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
@@ -143,8 +143,8 @@ const open: groupDetails[]=[
         <div className="h-full w-[25vw]">
           {showDetails && (
             <Details
-              details={scheduled[1]}
-              onClick={() => setShowDetails(false)}
+              details={showDetails}
+              onClick={() => setShowDetails(null)}
             ></Details>
           )}
         </div>
