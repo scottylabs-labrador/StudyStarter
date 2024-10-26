@@ -28,7 +28,7 @@ export default function NavBar() {
       <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] text-white">
         <div className="text-lg font-bold">Study Group Finder</div>
         <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
-          My Groups
+          Feed
         </a>
         <a href="/profile" className={page == "profile" ? "font-bold" : ""}>
           Profile
