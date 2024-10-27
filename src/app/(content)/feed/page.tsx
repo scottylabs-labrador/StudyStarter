@@ -48,13 +48,13 @@ const open: groupDetails[]=[
     details: "I am grinding my homework just join me",
   }
 ];
-function displayDetails() {
+const displayDetails = () => {
   // Ensure the study group selection for details card is the same as the currently open tab
   if (showDetails && showDetails[1] == tabOpen) {
     return showDetails;
   }
   return null;
-}
+};
  
   const [showDetails, setShowDetails] = useState<[groupDetails, "Open" | "Scheduled"] | null>(null); // index 1 for open or scheduled
   const [tabOpen, setTabOpen] = useState<"Open" | "Scheduled">("Scheduled");
