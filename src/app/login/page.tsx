@@ -10,12 +10,12 @@ export default async function LoginPage() {
             Welcome!
           </h1>
           <SignedOut>
-            <SignInButton mode="modal" forceRedirectUrl="/profile">
+            <SignInButton mode="modal" forceRedirectUrl="/create_account">
               <button className="bg-blue-500 rounded-lg p-4 text-2xl"> 🪵 📥</button>
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            { redirect("/profile") }
+            { redirect("/create_account") }
           </SignedIn>
         </div>
       </main>
