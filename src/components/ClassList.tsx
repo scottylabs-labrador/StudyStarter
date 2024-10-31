@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, collection, query, onSnapshot } from 'firebase/firestore';
+import { setDoc, doc, collection, query, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
 
 
@@ -12,7 +12,7 @@ interface Class {
 
 export function ClassList() {
   const { user } = useUser();
-  const [classes, setClasses] = useState<any[]>([]);
+  var [classes, setClasses] = useState<any[]>([]);
   const [newClass, setNewClass] = useState({ title: '', professor: '', section: '' });
 
   const addClass = () => {
@@ -31,6 +31,15 @@ export function ClassList() {
     }
   };
 
+  const deleteClass = (cls) => {
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    const usersDocRef = doc(db, "Users", userId? userId : "");
+    const classesRef = collection(usersDocRef, "Classes");
+    console.log(cls)
+    console.log(typeof cls)
+    deleteDoc(doc(classesRef, cls));
+  };
+
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
@@ -42,7 +51,7 @@ export function ClassList() {
       const classes = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
       }));
-      setClasses(classes);
+      setClasses(classes)
     }, (error) => {
       console.error('Error getting documents: ', error);
     });
@@ -83,12 +92,29 @@ export function ClassList() {
         </button>
       </div>
       <ul className="space-y-2">
+      
         {classes.map((cls) => (
-          <li key={cls.id} className="bg-gray-100 p-2 rounded">
-            <strong>{cls.title}</strong> - Prof. {cls.professor}, Section: {cls.section}
+          <li key={cls.id} 
+            className="bg-gray-100 p-2 rounded"
+            style={{ display: "flex", justifyContent: "space-between", width: "100%"}}
+            >
+            <div>
+              <strong>{cls.title}</strong> - Prof. {cls.professor}, Section: {cls.section}
+            </div>
+            <span>
+            <div style={{ display: "inline-block", justifyContent: "space-between"}}>
+              <button
+                onClick={async () => await deleteClass(cls.title)}
+                className="text-lightgray-500 text-xl"
+                style={{ marginLeft: "flex-end"}}
+              >x</button>
+            </div>
+            </span>
           </li>
         ))}
       </ul>
     </div>
+    
   );
+
 }

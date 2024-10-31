@@ -65,6 +65,11 @@ export default function ProfilePage() {
         <ProfileGrid photos={photos} />
       </div>
       <ClassList />
+      <button
+              className="px-4 py-2 bg-gray-200 text-black font-bold rounded-lg hover:bg-gray-300"
+            >
+              Continue
+      </button>
     </div>
   );
 }
