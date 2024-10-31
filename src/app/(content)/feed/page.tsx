@@ -2,8 +2,65 @@
 import { useState } from "react";
 import Details from "~/components/Details";
 import groupDetails from "~/types";
+import React, { useEffect } from 'react';
+import { db } from '~/lib/api/firebaseConfig';
+import { setDoc, doc, collection, query, onSnapshot } from 'firebase/firestore';
+import { useUser } from '@clerk/nextjs';
+// import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
+
+function InClass() {
+  const { user } = useUser();
+  const [classes, setClasses] = useState<any[]>([]);
+  const [newClass, setNewClass] = useState({ title: '', professor: '', section: '' });
+
+  const addClass = () => {
+    if (newClass.title && newClass.professor && newClass.section) {
+
+      setNewClass({ title: '', professor: '', section: '' });
+      
+      const userId = user?.emailAddresses[0]?.emailAddress;
+      const usersDocRef = doc(db, "Users", userId? userId : "");
+      const classesRef = collection(usersDocRef, "Classes");
+      setDoc(doc(classesRef, newClass.title), {
+        title: newClass.title,
+        professor: newClass.professor,
+        section: newClass.section,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    const usersDocRef = doc(db, "Users", userId? userId : "");
+    const classesRef = collection(usersDocRef, "Classes");
+    const q = query(classesRef);
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const classes = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+      }));
+      setClasses(classes);
+    }, (error) => {
+      console.error('Error getting documents: ', error);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+  classes.map((cls) => (
+    console.log(cls.id)
+  ))
+  console.log(classes);
+  return classes.length > 0;
+}
 
 export default function FeedPage() {
+  // var createaccount = !InClass();
+  // setTimeout(()=>{if (createaccount) {console.log("redirect");}}, 1000);
+  // // if (!InClass()) console.log("redirect")//redirect("/create_account");
+  // if (createaccount) {console.log("redirect");}
+  // console.log("bad");
   const scheduled: groupDetails[]=[
   {
     groupName: "Concepts Preparation",
