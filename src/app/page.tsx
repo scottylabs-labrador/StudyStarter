@@ -73,6 +73,12 @@ export default function HomePage() {
 
   useEffect(() => {
     const doStuff = () => {
+      const id = setInterval(() => {
+        if (classes.length != 0) { 
+          console.log("feed");
+          router.push("/feed");
+        }
+      }, 10);
       setTimeout(() => {
         if (classes.length === 0) { 
           console.log("create");
@@ -81,7 +87,8 @@ export default function HomePage() {
           console.log("feed");
           router.push("/feed");
         }
-      }, 20);
+        clearInterval(id);
+      }, 1000);
     };
     doStuff();
   }, [classes, router]);
