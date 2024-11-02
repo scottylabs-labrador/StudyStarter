@@ -37,8 +37,11 @@ export default function NavBar() {
         >
           + Create
         </button>
-        <a href="/profile" className={page == "profile" ? "font-bold" : ""}>
-          Profile
+        <a
+          href="/profile"
+          className="fixed bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-500 font-bold text-white shadow-lg hover:bg-blue-600"
+        >
+          P
         </a>
       </div>
 

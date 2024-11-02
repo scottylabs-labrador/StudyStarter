@@ -2,25 +2,28 @@
 import { use, useState } from "react";
 import Details from "~/components/Details";
 import groupDetails from "~/types";
-import React, { useEffect } from 'react';
-import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, collection, query, onSnapshot } from 'firebase/firestore';
-import { useUser } from '@clerk/nextjs';
+import React, { useEffect } from "react";
+import { db } from "~/lib/api/firebaseConfig";
+import { setDoc, doc, collection, query, onSnapshot } from "firebase/firestore";
+import { useUser } from "@clerk/nextjs";
 // import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
 
 function InClass() {
   const { user } = useUser();
   const [classes, setClasses] = useState<any[]>([]);
-  const [newClass, setNewClass] = useState({ title: '', professor: '', section: '' });
+  const [newClass, setNewClass] = useState({
+    title: "",
+    professor: "",
+    section: "",
+  });
 
   const addClass = () => {
     if (newClass.title && newClass.professor && newClass.section) {
+      setNewClass({ title: "", professor: "", section: "" });
 
-      setNewClass({ title: '', professor: '', section: '' });
-      
       const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId? userId : "");
+      const usersDocRef = doc(db, "Users", userId ? userId : "");
       const classesRef = collection(usersDocRef, "Classes");
       setDoc(doc(classesRef, newClass.title), {
         title: newClass.title,
@@ -33,24 +36,26 @@ function InClass() {
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId? userId : "");
+    const usersDocRef = doc(db, "Users", userId ? userId : "");
     const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const classes = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-      }));
-      setClasses(classes);
-    }, (error) => {
-      console.error('Error getting documents: ', error);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const classes = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        setClasses(classes);
+      },
+      (error) => {
+        console.error("Error getting documents: ", error);
+      },
+    );
 
     return () => unsubscribe();
   }, [user]);
-  classes.map((cls) => (
-    console.log(cls.id)
-  ))
+  classes.map((cls) => console.log(cls.id));
   console.log(classes);
   return classes.length > 0;
 }
@@ -61,73 +66,77 @@ export default function FeedPage() {
   // // if (!InClass()) console.log("redirect")//redirect("/create_account");
   // if (createaccount) {console.log("redirect");}
   // console.log("bad");
-  const scheduled: groupDetails[]=[
-  {
-    groupName: "Concepts Preparation",
-    numParticipants: 3,
-    totalSeats: 4,
-    location: "Giant Eagle",
-    time: "Sun, Oct 6: 4:00 - 5:00pm",
-    course: "21-127",
-    participantDetails: [
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-    ],
-    details: "This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!",
-  },
+  const scheduled: groupDetails[] = [
+    {
+      groupName: "Concepts Preparation",
+      numParticipants: 3,
+      totalSeats: 4,
+      location: "Giant Eagle",
+      time: "Sun, Oct 6: 4:00 - 5:00pm",
+      course: "21-127",
+      participantDetails: [
+        { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+        { name: "John Deer", url: "assets/John Deer.jpg" },
+        { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+        { name: "John Deer", url: "assets/John Deer.jpg" },
+        { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+        { name: "John Deer", url: "assets/John Deer.jpg" },
+        { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+        { name: "John Deer", url: "assets/John Deer.jpg" },
+        { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+        { name: "John Deer", url: "assets/John Deer.jpg" },
+        { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+        { name: "John Deer", url: "assets/John Deer.jpg" },
+      ],
+      details:
+        "This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!",
+    },
 
-  {
-    groupName: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
+    {
+      groupName: "ECE Preparation",
+      numParticipants: 2,
+      totalSeats: 10,
+      location: "Hunt",
+      time: "Sun, Oct 12: 4:00 - 5:00pm",
+      course: "18-100",
+      participantDetails: [
+        { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
+      ],
+      details:
+        "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
+    },
+  ];
 
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  }
-];
+  const open: groupDetails[] = [
+    {
+      groupName: "GRINDING SESSION",
+      numParticipants: 1,
+      totalSeats: 4,
+      location: "Sorrels",
+      time: "Sun, Oct 4: 4:00 - 10:00pm",
+      course: "15-112",
+      participantDetails: [{ name: "Jane Doe", url: "assets/Jane Doe.webp" }],
+      details: "I am grinding my homework just join me",
+    },
+  ];
+  const displayDetails = () => {
+    // Ensure the study group selection for details card is the same as the currently open tab
+    if (showDetails && showDetails[1] == tabOpen) {
+      return showDetails;
+    }
+    return null;
+  };
 
-const open: groupDetails[]=[
-  {
-    groupName: "GRINDING SESSION",
-    numParticipants: 1,
-    totalSeats: 4,
-    location: "Sorrels",
-    time: "Sun, Oct 4: 4:00 - 10:00pm",
-    course: "15-112",
-    participantDetails: [
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" }
-    ],
-    details: "I am grinding my homework just join me",
-  }
-];
-const displayDetails = () => {
-  // Ensure the study group selection for details card is the same as the currently open tab
-  if (showDetails && showDetails[1] == tabOpen) {
-    return showDetails;
-  }
-  return null;
-};
- 
-  const [showDetails, setShowDetails] = useState<[groupDetails, "Open" | "Scheduled"] | null>(null); // index 1 for open or scheduled
+  const [showDetails, setShowDetails] = useState<
+    [groupDetails, "Open" | "Scheduled"] | null
+  >(null); // index 1 for open or scheduled
   const [tabOpen, setTabOpen] = useState<"Open" | "Scheduled">("Scheduled");
 
   const displayOpens = open.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Open"])}>
+    <div
+      className="max-w-sm cursor-pointer overflow-hidden rounded bg-white shadow-lg"
+      onClick={() => setShowDetails([group, "Open"])}
+    >
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
@@ -140,7 +149,10 @@ const displayDetails = () => {
   ));
 
   const displayScheduled = scheduled.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
+    <div
+      className="max-w-sm cursor-pointer overflow-hidden rounded bg-white shadow-lg"
+      onClick={() => setShowDetails([group, "Scheduled"])}
+    >
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
@@ -224,11 +236,6 @@ const displayDetails = () => {
             ></Details>
           )}
         </div>
-        <a href = '/profile'
-          className="fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center rounded-full bg-gray-500 text-white font-bold shadow-lg hover:bg-blue-600"
-          >
-            P
-        </a>
       </div>
       <script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>
     </main>
