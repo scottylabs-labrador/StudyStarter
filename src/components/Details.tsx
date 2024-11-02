@@ -16,7 +16,7 @@ const Details = ({ onClick, details }: Props) => {
   const joinGroup = async () => {
     const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
     await updateDoc(groupDocRef, {
-      participants: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress})
+      participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress})
     });
     joinedSetState(!joinedState);
   };
