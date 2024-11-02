@@ -15,8 +15,18 @@ export default function FeedPage() {
     participantDetails: [
       { name: "Jane Doe", url: "assets/Jane Doe.webp" },
       { name: "John Deer", url: "assets/John Deer.jpg" },
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+      { name: "John Deer", url: "assets/John Deer.jpg" },
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+      { name: "John Deer", url: "assets/John Deer.jpg" },
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+      { name: "John Deer", url: "assets/John Deer.jpg" },
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+      { name: "John Deer", url: "assets/John Deer.jpg" },
+      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
+      { name: "John Deer", url: "assets/John Deer.jpg" },
     ],
-    details: "This is for Greggo's Class, not Newstead's!",
+    details: "This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!",
   },
 
   {
@@ -28,7 +38,7 @@ export default function FeedPage() {
     course: "18-100",
     participantDetails: [
       { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
+
     ],
     details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
   }
