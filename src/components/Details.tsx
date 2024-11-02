@@ -11,8 +11,8 @@ const Details = ({ onClick, details }: Props) => {
   const [joinedState, joinedSetState] = useState(false);
   return (
     <div
-      className="card text-dark mb-3 me-5 ms-auto mt-3 bg-white"
-      style={{ maxWidth: "30rem", height: "35rem", borderRadius: "10px"}}
+      className="card text-dark bg-white"
+      style={{ width: "27rem", height: "48rem", borderRadius: "10px", position: "fixed", right: "1rem", bottom: "2rem", paddingLeft: "1rem"}}
     >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
@@ -63,6 +63,7 @@ const Details = ({ onClick, details }: Props) => {
             {participantsState ? "▼" : "▲"}
           </button>
         </p>
+        <div style={{maxHeight: "20rem", overflowY: 'scroll', padding: '10px'}}>
         {participantsState &&
           details.participantDetails.map((participantDetail) => (
             <div style={{display: "flex", alignItems: "center", padding: "10px"}}>
@@ -85,6 +86,7 @@ const Details = ({ onClick, details }: Props) => {
               </p>
               </div>
           ))}
+          </div>
         <p
           className="card-heading"
           style={{ fontSize: "20px", fontFamily: "Verdana" }}
@@ -96,6 +98,7 @@ const Details = ({ onClick, details }: Props) => {
           className="card mb-3 text-white"
           style={{
             height: "8rem",
+            overflowY: "scroll",
             maxWidth: "20rem",
             backgroundColor: "#e0ded7",
             borderRadius: "10px",
@@ -103,7 +106,7 @@ const Details = ({ onClick, details }: Props) => {
             marginTop: "10px",
           }}
         >
-          <div className="card-body" style={{ color: "black", padding: "5px" }}>
+          <div className="card-body" style={{ color: "black", padding: "5px"}}>
             {details.details}
           </div>
         </div>
