@@ -2,25 +2,28 @@
 import { use, useState } from "react";
 import Details from "~/components/Details";
 import groupDetails from "~/types";
-import React, { useEffect } from 'react';
-import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, collection, query, onSnapshot } from 'firebase/firestore';
-import { useUser } from '@clerk/nextjs';
+import React, { useEffect } from "react";
+import { db } from "~/lib/api/firebaseConfig";
+import { setDoc, doc, collection, query, onSnapshot } from "firebase/firestore";
+import { useUser } from "@clerk/nextjs";
 // import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
 
 function InClass() {
   const { user } = useUser();
   const [classes, setClasses] = useState<any[]>([]);
-  const [newClass, setNewClass] = useState({ title: '', professor: '', section: '' });
+  const [newClass, setNewClass] = useState({
+    title: "",
+    professor: "",
+    section: "",
+  });
 
   const addClass = () => {
     if (newClass.title && newClass.professor && newClass.section) {
+      setNewClass({ title: "", professor: "", section: "" });
 
-      setNewClass({ title: '', professor: '', section: '' });
-      
       const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId? userId : "");
+      const usersDocRef = doc(db, "Users", userId ? userId : "");
       const classesRef = collection(usersDocRef, "Classes");
       setDoc(doc(classesRef, newClass.title), {
         title: newClass.title,
@@ -33,24 +36,26 @@ function InClass() {
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId? userId : "");
+    const usersDocRef = doc(db, "Users", userId ? userId : "");
     const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const classes = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-      }));
-      setClasses(classes);
-    }, (error) => {
-      console.error('Error getting documents: ', error);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const classes = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        setClasses(classes);
+      },
+      (error) => {
+        console.error("Error getting documents: ", error);
+      },
+    );
 
     return () => unsubscribe();
   }, [user]);
-  classes.map((cls) => (
-    console.log(cls.id)
-  ))
+  classes.map((cls) => console.log(cls.id));
   console.log(classes);
   return classes.length > 0;
 }
@@ -129,7 +134,10 @@ const displayDetails = () => {
   const [tabOpen, setTabOpen] = useState<"Open" | "Scheduled">("Scheduled");
 
   const displayOpens = open.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Open"])}>
+    <div
+      className="max-w-sm cursor-pointer overflow-hidden rounded bg-white shadow-lg"
+      onClick={() => setShowDetails([group, "Open"])}
+    >
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
@@ -226,11 +234,6 @@ const displayDetails = () => {
             ></Details>
           )}
         </div>
-        <a href = '/profile'
-          className="fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center rounded-full bg-gray-500 text-white font-bold shadow-lg hover:bg-blue-600"
-          >
-            P
-        </a>
       </div>
       <script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>
     </main>
