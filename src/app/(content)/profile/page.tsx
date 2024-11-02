@@ -1,6 +1,6 @@
 "use client";
 import "~/styles/globals.css";
-import { useUser, SignOutButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { getUserPhotos } from "~/lib/api/getUserPhotos";
 import { Photo } from "~/types";
 import { useEffect, useState } from "react";
@@ -10,11 +10,11 @@ function ProfileGrid({ photos }: { photos: Photo[] }) {
   return (
     <div className="grid grid-cols-3 gap-4">
       {photos.map((photo) => (
-        <div key={photo.id} className="w-full aspect-w-1 aspect-h-1 bg-[#DDD]">
+        <div key={photo.id} className="aspect-h-1 aspect-w-1 w-full bg-[#DDD]">
           <img
             src={photo.url}
             alt="Uploaded"
-            className="w-full h-full object-cover object-center"
+            className="h-full w-full object-cover object-center"
           />
         </div>
       ))}
@@ -22,14 +22,16 @@ function ProfileGrid({ photos }: { photos: Photo[] }) {
   );
 }
 
-export default function ProfilePage() {
+function ProfilePage() {
   const { user } = useUser();
   const [photos, setPhotos] = useState<Photo[]>([]);
 
   useEffect(() => {
     const loadPhotos = async () => {
       if (user) {
-        const userPhotos = await getUserPhotos(user.emailAddresses[0]?.emailAddress as string);
+        const userPhotos = await getUserPhotos(
+          user.emailAddresses[0]?.emailAddress as string,
+        );
         setPhotos(userPhotos);
       }
     };
@@ -37,34 +39,46 @@ export default function ProfilePage() {
     loadPhotos();
   }, [user]);
 
-  const displayName = user?.fullName || user?.firstName || user?.username || "User";
+  const displayName =
+    user?.fullName || user?.firstName || user?.username || "User";
+
+  const gradYear = "202x";
+  const aboutSection = "About section goes here";
+  const majorsAndMinorsText = "Majors and minors go here";
 
   return (
-    <div className="p-4 font-sans">
-      <div className="flex items-center mb-4">
+    <div className="flex flex-col items-center p-4 font-sans">
+      <div className="mb-4 flex flex-col items-center">
         <img
           src={user?.imageUrl || "https://via.placeholder.com/80"}
           alt="Profile"
-          className="w-20 h-20 rounded-full"
+          className="h-20 w-20 rounded-full"
         />
-        <div className="ml-4">
-          <h1 className="text-2xl font-bold text-white">{displayName}</h1>
-          <p className="text-gray-500">{user?.emailAddresses[0]?.emailAddress}</p>
+        <h1 className="mt-2 text-2xl font-bold text-white">{displayName}</h1>
+        <p className="text-gray-500">{user?.emailAddresses[0]?.emailAddress}</p>
+        <div className="mt-4 text-white">
+          <strong>Class of</strong> {gradYear}
         </div>
-        <div className="ml-auto">
-          <SignOutButton>
-            <button
-              className="px-4 py-2 bg-gray-200 text-black font-bold rounded-lg hover:bg-gray-300"
-            >
-              Logout
-            </button>
-          </SignOutButton>
+        <div className="mt-4 text-center text-white">
+          <strong>About Me:</strong> {aboutSection}
+        </div>
+        <button className="mt-4 rounded-lg bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600">
+          Edit Profile
+        </button>
+      </div>
+      <div className="mt-4 flex w-full flex-col items-center">
+        <h2 className="mb-2 text-2xl font-bold text-white">
+          Majors and Minors
+        </h2>
+        <div className="w-60 rounded-md border bg-gray-100 p-2 text-center">
+          {majorsAndMinorsText}
         </div>
       </div>
-      <div className="mt-8">
-        <ProfileGrid photos={photos} />
+      <div className="mt-8 flex w-full justify-center">
+        <ClassList />
       </div>
-      <ClassList />
     </div>
   );
 }
+
+export default ProfilePage;
