@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { use, useState } from "react";
 import Details from "~/components/Details";
 import groupDetails from "~/types";
 import React, { useEffect } from 'react';
@@ -105,12 +105,19 @@ const open: groupDetails[]=[
     details: "I am grinding my homework just join me",
   }
 ];
-  
+const displayDetails = () => {
+  // Ensure the study group selection for details card is the same as the currently open tab
+  if (showDetails && showDetails[1] == tabOpen) {
+    return showDetails;
+  }
+  return null;
+};
  
-  const [showDetails, setShowDetails] = useState(true);
+  const [showDetails, setShowDetails] = useState<[groupDetails, "Open" | "Scheduled"] | null>(null); // index 1 for open or scheduled
+  const [tabOpen, setTabOpen] = useState<"Open" | "Scheduled">("Scheduled");
 
   const displayOpens = open.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
+    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Open"])}>
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
@@ -123,7 +130,7 @@ const open: groupDetails[]=[
   ));
 
   const displayScheduled = scheduled.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg">
+    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.groupName}</div>
         <ul>
@@ -152,6 +159,7 @@ const open: groupDetails[]=[
                   id="open-tab"
                   data-tabs-target="#open"
                   type="button"
+                  onClick={() => setTabOpen("Open")}
                   role="tab"
                   aria-controls="open"
                   aria-selected="false"
@@ -165,6 +173,7 @@ const open: groupDetails[]=[
                   id="scheduled-tab"
                   data-tabs-target="#scheduled"
                   type="button"
+                  onClick={() => setTabOpen("Scheduled")}
                   role="tab"
                   aria-controls="scheduled"
                   aria-selected="true"
@@ -198,10 +207,10 @@ const open: groupDetails[]=[
           </div>
         </div>
         <div className="h-full w-[25vw]">
-          {showDetails && (
+          {displayDetails() && (
             <Details
-              details={scheduled[1]}
-              onClick={() => setShowDetails(false)}
+              details={showDetails![0]}
+              onClick={() => setShowDetails(null)}
             ></Details>
           )}
         </div>
