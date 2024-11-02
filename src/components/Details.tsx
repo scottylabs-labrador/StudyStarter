@@ -4,11 +4,23 @@ import groupDetails from "~/types";
 interface Props {
   onClick: () => void;
   details: groupDetails;
-}
+}import { useUser } from "@clerk/nextjs";
+import { updateDoc, arrayUnion, collection, doc } from "firebase/firestore";
+import { db } from "~/lib/api/firebaseConfig";
 
 const Details = ({ onClick, details }: Props) => {
+  const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
+
+  const joinGroup = async () => {
+    const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
+    await updateDoc(groupDocRef, {
+      participants: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress})
+    });
+    joinedSetState(!joinedState);
+  };
+
   return (
     <div
       className="card text-dark bg-white"
@@ -32,7 +44,7 @@ const Details = ({ onClick, details }: Props) => {
           fontFamily: "Verdana",
         }}
       >
-        {details.groupName}
+        {details.title}
       </div>
       <div className="card-body">
         <p
@@ -112,7 +124,7 @@ const Details = ({ onClick, details }: Props) => {
         </div>
         <button
           className={"btn float-end me-3 mt-3 pe-3"}
-          onClick={() => joinedSetState(!joinedState)}
+          onClick={joinGroup}
           style={{
             borderColor: joinedState ? "blue" : "black",
             borderWidth: "4px",
