@@ -1,5 +1,5 @@
 export default interface groupDetails {
-    groupName: string
+    title: string
     numParticipants: number,
     totalSeats: number,
     location: string,

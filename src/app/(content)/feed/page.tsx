@@ -2,11 +2,38 @@
 import { use, useState } from "react";
 import Details from "~/components/Details";
 import groupDetails from "~/types";
+import { db } from "~/lib/api/firebaseConfig";
+import { useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { collection, onSnapshot, query } from "firebase/firestore";
+
+
 
 export default function FeedPage() {
+  const [groups, setGroups] = useState<any[]>([]);
+  const { user } = useUser();
+  useEffect(() => {
+    if (!user) return;
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    const classesRef = collection(db, "Study Groups");
+    const q = query(classesRef);
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const groups = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+      }));
+      setGroups(groups);
+    }, (error) => {
+      console.error('Error getting documents: ', error);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+
   const scheduled: groupDetails[]=[
   {
-    groupName: "Concepts Preparation",
+    title: "Concepts Preparation",
     numParticipants: 3,
     totalSeats: 4,
     location: "Giant Eagle",
@@ -18,25 +45,11 @@ export default function FeedPage() {
     ],
     details: "This is for Greggo's Class, not Newstead's!",
   },
-
-  {
-    groupName: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  }
 ];
 
 const open: groupDetails[]=[
   {
-    groupName: "GRINDING SESSION",
+    title: "GRINDING SESSION",
     numParticipants: 1,
     totalSeats: 4,
     location: "Sorrels",
@@ -62,7 +75,7 @@ const displayDetails = () => {
   const displayOpens = open.map((group) => (
     <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Open"])}>
       <div className="px-6 py-4">
-        <div className="mb-2 text-xl font-bold">{group.groupName}</div>
+        <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
           <li>{group.time}</li>
@@ -72,10 +85,10 @@ const displayDetails = () => {
     </div>
   ));
 
-  const displayScheduled = scheduled.map((group) => (
+  const displayScheduled = groups.map((group) => (
     <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
       <div className="px-6 py-4">
-        <div className="mb-2 text-xl font-bold">{group.groupName}</div>
+        <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
           <li>{group.time}</li>
