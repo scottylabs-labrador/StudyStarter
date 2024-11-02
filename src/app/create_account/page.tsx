@@ -77,6 +77,7 @@ export default function ProfilePage() {
         <ProfileGrid photos={photos} />
       </div>
       <ClassList />
+      <br></br>
       <ContinueButton />
     </div>
   );
