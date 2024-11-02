@@ -6,13 +6,6 @@ import { Photo } from "~/types";
 import { useEffect, useState } from "react";
 import { ClassList } from "~/components/ClassList";
 
-import { db } from '~/lib/api/firebaseConfig';
-
-import { setDoc, doc, collection, query, onSnapshot } from 'firebase/firestore';
-// import { redirect } from "next/dist/server/api-utils";
-import { redirect } from "next/navigation";
-// import HomePage from "../page";
-
 function ProfileGrid({ photos }: { photos: Photo[] }) {
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -27,35 +20,6 @@ function ProfileGrid({ photos }: { photos: Photo[] }) {
       ))}
     </div>
   );
-}
-
-function InClass() {
-    const { user } = useUser();
-    const [classes, setClasses] = useState<any[]>([]);
-  
-    useEffect(() => {
-      if (!user) return;
-      const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId? userId : "");
-      const classesRef = collection(usersDocRef, "Classes");
-      const q = query(classesRef);
-  
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const classes = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-        }));
-        setClasses(classes);
-      }, (error) => {
-        console.error('Error getting documents: ', error);
-      });
-  
-      return () => unsubscribe();
-    }, [user]);
-    classes.map((cls) => (
-      console.log(cls.id)
-    ))
-    console.log(classes);
-    return classes.length > 0;
 }
 
 function ContinueButton() {
