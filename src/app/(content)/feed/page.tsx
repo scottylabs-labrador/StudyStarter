@@ -148,6 +148,11 @@ const open: groupDetails[]=[
             ></Details>
           )}
         </div>
+        <a href = '/profile'
+          className="fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center rounded-full bg-gray-500 text-white font-bold shadow-lg hover:bg-blue-600"
+          >
+            P
+        </a>
       </div>
       <script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>
     </main>

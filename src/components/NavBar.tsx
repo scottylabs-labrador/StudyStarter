@@ -30,9 +30,6 @@ export default function NavBar() {
         <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
           My Groups
         </a>
-        <a href="/profile" className={page == "profile" ? "font-bold" : ""}>
-          Profile
-        </a>
       </div>
       <button
         onClick={handleCreateGroupClick}
@@ -40,8 +37,16 @@ export default function NavBar() {
       >
         + Create
       </button>
+      < 
+        a href = '/profile'
+        className="fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center rounded-full bg-gray-500 text-white font-bold shadow-lg hover:bg-blue-600"
+      >
+        P
+      </a>
+      
       <UploadModal />
       <CreateGroupModal />
     </Fragment>
   );
 }
+
