@@ -23,9 +23,9 @@ const Details = ({ onClick, details }: Props) => {
 
   return (
     <div
-      className="card text-dark bg-white"
-      style={{ width: "27rem", height: "48rem", borderRadius: "10px", position: "fixed", right: "1rem", bottom: "2rem", paddingLeft: "1rem"}}
-    >
+      className="card text-dark bg-white h-[80%] w-[30%]"
+      style={{borderRadius: "10px", position: "fixed", right: "1rem", bottom: "2rem", padding: "1rem", marginRight:"4rem"}}
+>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
           className="btn-close me-5 mt-3"
@@ -75,20 +75,20 @@ const Details = ({ onClick, details }: Props) => {
             {participantsState ? "▼" : "▲"}
           </button>
         </p>
-        <div style={{maxHeight: "20rem", overflowY: 'scroll', padding: '10px'}}>
+        <div className="h-20"style={{overflowY: 'scroll', padding: '10px'}}>
         {participantsState &&
           details.participantDetails.map((participantDetail) => (
-            <div style={{display: "flex", alignItems: "center", padding: "10px"}}>
+            <div style={{display: "flex", alignItems: "center", padding: "5px"}}>
               <img
                 className="img-fluid"
-                style={{width: "3rem", height: "3rem", borderRadius: "50%"}}
+                style={{width: "2rem", height: "2rem", borderRadius: "50%"}}
                 src={participantDetail.url}
                 alt="Example"
               />
               <p
                 className="card-text"
                 style={{
-                  fontSize: "20px",
+                  fontSize: "16px",
                   fontFamily: "Verdana",
                   textIndent: "2rem",
                 }}

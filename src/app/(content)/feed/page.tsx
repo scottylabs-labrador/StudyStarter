@@ -104,8 +104,48 @@ export default function FeedPage() {
       { name: "Jane Doe", url: "assets/Jane Doe.webp" },
       { name: "John Deer", url: "assets/John Deer.jpg" },
     ],
-    details: "This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!This is for Greggo's Class, not Newstead's!",
+    details: "This is for Greggo's Class, not Newstead's!",
   },
+
+  {
+    title: "ECE Preparation",
+    numParticipants: 2,
+    totalSeats: 10,
+    location: "Hunt",
+    time: "Sun, Oct 12: 4:00 - 5:00pm",
+    course: "18-100",
+    participantDetails: [
+      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
+      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
+    ],
+    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
+  },
+  {
+    title: "ECE Preparation",
+    numParticipants: 2,
+    totalSeats: 10,
+    location: "Hunt",
+    time: "Sun, Oct 12: 4:00 - 5:00pm",
+    course: "18-100",
+    participantDetails: [
+      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
+      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
+    ],
+    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
+  },
+  {
+    title: "ECE Preparation",
+    numParticipants: 2,
+    totalSeats: 10,
+    location: "Hunt",
+    time: "Sun, Oct 12: 4:00 - 5:00pm",
+    course: "18-100",
+    participantDetails: [
+      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
+      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
+    ],
+    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
+  }
 ];
 
 const open: groupDetails[]=[
@@ -163,9 +203,9 @@ const displayDetails = () => {
   ));
 
   return (
-    <main className="container relative h-screen overflow-scroll">
-      <div className="flex w-full">
-        <div className="m-[2.5vw] w-[60vw]">
+    <main className="container relative h-screen">
+      <div className={`${showDetails ? 'flex' : 'w-full'}`}>
+        <div className={`${showDetails ? 'w-[60%]' : 'w-[100%]'}`}>
           <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
             <ul
               className="-mb-px flex flex-wrap"
@@ -173,7 +213,7 @@ const displayDetails = () => {
               data-tabs-toggle="#myTabContent"
               role="tablist"
             >
-              <li className="mr-2" role="presentation">
+              <li className="mr-1 ml-1" role="presentation">
                 <button
                   className="inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
                   id="open-tab"
@@ -187,7 +227,7 @@ const displayDetails = () => {
                   Open
                 </button>
               </li>
-              <li className="mr-2" role="presentation">
+              <li className="mr-1 ml-1" role="presentation">
                 <button
                   className="active inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
                   id="scheduled-tab"
@@ -210,8 +250,8 @@ const displayDetails = () => {
               role="tabpanel"
               aria-labelledby="open-tab"
             >
-              <div className="mt-8">
-                <div className="grid grid-cols-2 gap-4">{displayOpens}</div>
+              <div className="mt-4">
+                <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayOpens}</div>
               </div>
             </div>
             <div
@@ -220,13 +260,13 @@ const displayDetails = () => {
               role="tabpanel"
               aria-labelledby="scheduled-tab"
             >
-              <div className="mt-8">
-                <div className="grid grid-cols-2 gap-4">{displayScheduled}</div>
+              <div className="mt-4">
+              <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayScheduled}</div>
               </div>
             </div>
           </div>
         </div>
-        <div className="h-full w-[25vw]">
+        <div >
           {displayDetails() && (
             <Details
               details={showDetails![0]}

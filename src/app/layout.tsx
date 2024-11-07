@@ -5,8 +5,8 @@ import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "BoilerGram",
-  description: "Your new favorite social media platform.",
+  title: "Study Group Finder",
+  description:"Totally novel way to support your grade",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
