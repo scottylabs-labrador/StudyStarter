@@ -40,6 +40,7 @@ export default function NavBar() {
         <a
           href="/profile"
           className="fixed bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-500 font-bold text-white shadow-lg hover:bg-blue-600"
+          style={{ zIndex: 1000 }}
         >
           P
         </a>
