@@ -82,86 +82,9 @@ export default function FeedPage() {
   }, [user]);
 
 
-  const scheduled: groupDetails[]=[
-  {
-    title: "Concepts Preparation",
-    numParticipants: 3,
-    totalSeats: 4,
-    location: "Giant Eagle",
-    time: "Sun, Oct 6: 4:00 - 5:00pm",
-    course: "21-127",
-    participantDetails: [
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-    ],
-    details: "This is for Greggo's Class, not Newstead's!",
-  },
+const myGroup: groupDetails[]=[];
 
-  {
-    title: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  },
-  {
-    title: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  },
-  {
-    title: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  }
-];
 
-const open: groupDetails[]=[
-  {
-    title: "GRINDING SESSION",
-    numParticipants: 1,
-    totalSeats: 4,
-    location: "Sorrels",
-    time: "Sun, Oct 4: 4:00 - 10:00pm",
-    course: "15-112",
-    participantDetails: [
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" }
-    ],
-    details: "I am grinding my homework just join me",
-  }
-];
 const displayDetails = () => {
   // Ensure the study group selection for details card is the same as the currently open tab
   if (showDetails && showDetails[1] == tabOpen) {
@@ -170,13 +93,13 @@ const displayDetails = () => {
   return null;
 };
  
-  const [showDetails, setShowDetails] = useState<[groupDetails, "Open" | "Scheduled"] | null>(null); // index 1 for open or scheduled
-  const [tabOpen, setTabOpen] = useState<"Open" | "Scheduled">("Scheduled");
+  const [showDetails, setShowDetails] = useState<[groupDetails, "myGroup" | "Scheduled"] | null>(null); // index 1 for open or scheduled
+  const [tabOpen, setTabOpen] = useState<"myGroup" | "Scheduled">("Scheduled");
 
-  const displayOpens = open.map((group) => (
+  const displaymyGroup = myGroup.map((group) => (
     <div
       className="max-w-sm cursor-pointer overflow-hidden rounded bg-white shadow-lg"
-      onClick={() => setShowDetails([group, "Open"])}
+      onClick={() => setShowDetails([group, "myGroup"])}
     >
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -216,15 +139,15 @@ const displayDetails = () => {
               <li className="mr-1 ml-1" role="presentation">
                 <button
                   className="inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
-                  id="open-tab"
-                  data-tabs-target="#open"
+                  id="myGroup-tab"
+                  data-tabs-target="#myGroup"
                   type="button"
-                  onClick={() => setTabOpen("Open")}
+                  onClick={() => setTabOpen("myGroup")}
                   role="tab"
-                  aria-controls="open"
+                  aria-controls="myGroup"
                   aria-selected="false"
                 >
-                  Open
+                  My group
                 </button>
               </li>
               <li className="mr-1 ml-1" role="presentation">
@@ -246,12 +169,12 @@ const displayDetails = () => {
           <div id="myTabContent">
             <div
               className="hidden rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
-              id="open"
+              id="myGroup"
               role="tabpanel"
-              aria-labelledby="open-tab"
+              aria-labelledby="myGroup-tab"
             >
               <div className="mt-4">
-                <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayOpens}</div>
+                <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{myGroup.length ==0 ? <p className="text-red"> Please join a group!</p> : displaymyGroup}</div>
               </div>
             </div>
             <div
