@@ -4,7 +4,7 @@ import Details from "~/components/Details";
 import groupDetails from "~/types";
 import React, { useEffect } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import { setDoc, doc, collection, query, onSnapshot } from "firebase/firestore";
+import { setDoc, doc, collection, query, onSnapshot, where } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 // import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
@@ -67,8 +67,7 @@ export default function FeedPage() {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
     const classesRef = collection(db, "Study Groups");
-    const q = query(classesRef);
-
+    const q = query(classesRef, where("isAvailable", "==", true));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const groups = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
@@ -82,86 +81,7 @@ export default function FeedPage() {
   }, [user]);
 
 
-  const scheduled: groupDetails[]=[
-  {
-    title: "Concepts Preparation",
-    numParticipants: 3,
-    totalSeats: 4,
-    location: "Giant Eagle",
-    time: "Sun, Oct 6: 4:00 - 5:00pm",
-    course: "21-127",
-    participantDetails: [
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" },
-      { name: "John Deer", url: "assets/John Deer.jpg" },
-    ],
-    details: "This is for Greggo's Class, not Newstead's!",
-  },
-
-  {
-    title: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  },
-  {
-    title: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  },
-  {
-    title: "ECE Preparation",
-    numParticipants: 2,
-    totalSeats: 10,
-    location: "Hunt",
-    time: "Sun, Oct 12: 4:00 - 5:00pm",
-    course: "18-100",
-    participantDetails: [
-      { name: "Sylvia Smith", url: "assets/Jane Doe.webp" },
-      { name: "Anika Suktanker", url: "assets/John Deer.jpg" },
-    ],
-    details: "We are preparing for the upcomming test 2! WE NEED SOMEONE SMART PLEASE",
-  }
-];
-
-const open: groupDetails[]=[
-  {
-    title: "GRINDING SESSION",
-    numParticipants: 1,
-    totalSeats: 4,
-    location: "Sorrels",
-    time: "Sun, Oct 4: 4:00 - 10:00pm",
-    course: "15-112",
-    participantDetails: [
-      { name: "Jane Doe", url: "assets/Jane Doe.webp" }
-    ],
-    details: "I am grinding my homework just join me",
-  }
-];
+  
 const displayDetails = () => {
   // Ensure the study group selection for details card is the same as the currently open tab
   if (showDetails && showDetails[1] == tabOpen) {
@@ -173,21 +93,6 @@ const displayDetails = () => {
   const [showDetails, setShowDetails] = useState<[groupDetails, "Open" | "Scheduled"] | null>(null); // index 1 for open or scheduled
   const [tabOpen, setTabOpen] = useState<"Open" | "Scheduled">("Scheduled");
 
-  const displayOpens = open.map((group) => (
-    <div
-      className="max-w-sm cursor-pointer overflow-hidden rounded bg-white shadow-lg"
-      onClick={() => setShowDetails([group, "Open"])}
-    >
-      <div className="px-6 py-4">
-        <div className="mb-2 text-xl font-bold">{group.title}</div>
-        <ul>
-          <li>{group.course}</li>
-          <li>{group.time}</li>
-          <li>{group.location}</li>
-        </ul>
-      </div>
-    </div>
-  ));
 
   const displayScheduled = groups.map((group) => (
     <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
@@ -250,9 +155,6 @@ const displayDetails = () => {
               role="tabpanel"
               aria-labelledby="open-tab"
             >
-              <div className="mt-4">
-                <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayOpens}</div>
-              </div>
             </div>
             <div
               className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800"

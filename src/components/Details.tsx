@@ -5,18 +5,22 @@ interface Props {
   onClick: () => void;
   details: groupDetails;
 }import { useUser } from "@clerk/nextjs";
-import { updateDoc, arrayUnion, collection, doc } from "firebase/firestore";
+import { updateDoc, arrayUnion, collection, doc, increment } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 
 const Details = ({ onClick, details }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
+  const currentParticipants = details.numberOfParticipants || 0;
+  const maxSeats = details.totalSeats || 0;
 
   const joinGroup = async () => {
     const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
     await updateDoc(groupDocRef, {
-      participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress})
+      participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress}),
+      numberOfParticipants: increment(1),
+      isAvailable: currentParticipants + 1 < maxSeats
     });
     joinedSetState(!joinedState);
   };
@@ -65,7 +69,7 @@ const Details = ({ onClick, details }: Props) => {
           className="card-text"
           style={{ fontSize: "20px", fontFamily: "Verdana" }}
         >
-          <strong>Participants</strong>: {details.numParticipants}/
+          <strong>Participants</strong>: {details.numberOfParticipants}/
           {details.totalSeats}{" "}
           <button
             onClick={() => participantsSetState(!participantsState)}

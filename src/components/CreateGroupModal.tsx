@@ -14,7 +14,7 @@ export default function CreateGroupModal() {
   const [prerequisites, setPrerequisites] = useState('');
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
-  const [participants, setParticipants] = useState('');
+  const [seats, setSeats] = useState('');
   const [details, setDetails] = useState('');
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
@@ -33,7 +33,9 @@ export default function CreateGroupModal() {
         prerequisites: prerequisites,
         time: time,
         location: location,
-        numberOfParticipants: Number(participants),
+        totalSeats: Number(seats),
+        numberOfParticipants: 1,
+        isAvailable: true,
         participantDetails: [
           { name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress},
         ],
@@ -44,7 +46,7 @@ export default function CreateGroupModal() {
       setPrerequisites('');
       setTime('');
       setLocation('');
-      setParticipants('');
+      setSeats('');
       setDetails('');
       handleClose();
       toast('Study group created successfully!', 
@@ -112,9 +114,9 @@ export default function CreateGroupModal() {
           <input
             className="mb-2 w-full rounded border p-2"
             type="number"
-            placeholder="Number of Participants"
-            value={participants}
-            onChange={(e) => setParticipants(e.target.value)}
+            placeholder="Number of Seats"
+            value={seats}
+            onChange={(e) => setSeats(e.target.value)}
           />
           <input
             className="mb-2 w-full rounded border p-2"
