@@ -182,6 +182,7 @@ const displayDetails = () => {
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
+          {/* <li>{group.purpose}</li> */}
           <li>{group.time}</li>
           <li>{group.location}</li>
         </ul>

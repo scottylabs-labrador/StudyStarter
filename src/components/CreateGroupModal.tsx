@@ -1,21 +1,25 @@
+"use client";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, getDoc, getDocs, collection } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
+  
   const [title, setTitle] = useState('');
   const [course, setCourse] = useState('');
-  const [prerequisites, setPrerequisites] = useState('');
+  const [purpose, setPurpose] = useState('');
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
   const [participants, setParticipants] = useState('');
   const [details, setDetails] = useState('');
+  const [classes, setClasses] = useState([]); // Define classes state
+
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
 
@@ -23,44 +27,73 @@ export default function CreateGroupModal() {
     dispatch(setIsCreateGroupModalOpen(false));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const groupDocRef = doc(db, "Study Groups", title? title : "");
-      setDoc(groupDocRef, {
-        title: title,
-        course: course,
-        prerequisites: prerequisites,
-        time: time,
-        location: location,
-        numberOfParticipants: Number(participants),
-        participantDetails: [
-          { name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress},
-        ],
-        details: details,
-      });
-      setTitle('');
-      setCourse('');
-      setPrerequisites('');
-      setTime('');
-      setLocation('');
-      setParticipants('');
-      setDetails('');
-      handleClose();
-      toast('Study group created successfully!', 
-        {
-          icon: '👏',
-          style: {
-            borderRadius: '10px',
-            background: '#333',
-            color: '#fff',
-          },
-        }
-      );
-    } catch (error) {
-      alert('Error creating study group');
-    }
+  async function checkId(docRef) {
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists();
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for (let i = 0; i < 20; i++) {
+      id += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    let groupDocRef = doc(db, "Study Groups", id);
+    while (await checkId(groupDocRef)) {
+      id = '';
+      for (let i = 0; i < 20; i++) {
+        id += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      groupDocRef = doc(db, "Study Groups", id);
+    }
+
+    await setDoc(groupDocRef, {
+      id,
+      title,
+      course,
+      purpose,
+      time,
+      location,
+      numberOfParticipants: Number(participants),
+      participantDetails: [{ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress }],
+      details,
+    });
+
+    setTitle('');
+    setCourse('');
+    setPurpose('');
+    setTime('');
+    setLocation('');
+    setParticipants('');
+    setDetails('');
+    handleClose();
+
+    toast('Study group created successfully!', {
+      icon: '👏',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      },
+    });
+  };
+
+  useEffect(() => {
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    const usersDocRef = doc(db, "Users", userId ? userId : "");
+    const classesRef = collection(usersDocRef, "Classes");
+
+    getDocs(classesRef).then(querySnapshot => {
+      const classlist = [];
+      querySnapshot.forEach(doc => {
+        classlist.push(doc.id);
+      });
+      setClasses(classlist);
+    });
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -80,20 +113,29 @@ export default function CreateGroupModal() {
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            required
+            maxLength={20} // Reasonable character limit
           />
-          <input
+          <select
             className="mb-2 w-full rounded border p-2"
-            type="text"
-            placeholder="Course"
+            id="classSelect"
             value={course}
             onChange={(e) => setCourse(e.target.value)}
-          />
+            required
+          >
+            <option value="" disabled>Select a class</option>
+            {classes.map((cls) => (
+              <option key={cls} value={cls}>{cls}</option>
+            ))}
+          </select>
           <input
             className="mb-2 w-full rounded border p-2"
             type="text"
-            placeholder="Prerequisites"
-            value={prerequisites}
-            onChange={(e) => setPrerequisites(e.target.value)}
+            placeholder="Purpose"
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
+            required
+            maxLength={30} // Reasonable character limit
           />
           <input
             className="mb-2 w-full rounded border p-2"
@@ -101,6 +143,7 @@ export default function CreateGroupModal() {
             placeholder="Time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
+            required
           />
           <input
             className="mb-2 w-full rounded border p-2"
@@ -108,6 +151,7 @@ export default function CreateGroupModal() {
             placeholder="Location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            required
           />
           <input
             className="mb-2 w-full rounded border p-2"
@@ -115,6 +159,8 @@ export default function CreateGroupModal() {
             placeholder="Number of Participants"
             value={participants}
             onChange={(e) => setParticipants(e.target.value)}
+            required
+            min="2" // Minimum participants of 2
           />
           <input
             className="mb-2 w-full rounded border p-2"
@@ -122,7 +168,7 @@ export default function CreateGroupModal() {
             placeholder="Details"
             value={details}
             onChange={(e) => setDetails(e.target.value)}
-          ></input>
+          />
           <button
             type="submit"
             className="w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"

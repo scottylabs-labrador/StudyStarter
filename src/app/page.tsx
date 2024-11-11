@@ -54,7 +54,7 @@ export default function HomePage() {
           router.push("/feed");
         }
         clearInterval(id);
-      }, 1000);
+      }, 1500);
     };
     doStuff();
   }, [classes, router]);
