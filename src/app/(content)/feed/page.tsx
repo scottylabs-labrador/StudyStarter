@@ -9,12 +9,84 @@ import { useUser } from "@clerk/nextjs";
 // import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
 
+function formatTime(timeString) {
+  // Combine with a dummy date to parse correctly
+  const date = new Date(`1970-01-01T${timeString}:00Z`); // Adding `:00` for seconds and `Z` for UTC
+
+  let hours = date.getUTCHours();
+  let minutes = date.getUTCMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // '0' hour should be '12'
+  minutes = minutes < 10 ? '0' + minutes : minutes; // pad minutes with zero if needed
+
+  return `${hours}:${minutes} ${ampm}`;
+}
+function formatDate(dateString) {
+  const date = new Date(dateString); // assuming dateString is the stored date in year-month-day format
+  const month = date.getMonth() + 1; // months are 0-indexed
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+}
+
+function InClass() {
+  const { user } = useUser();
+  const [classes, setClasses] = useState<any[]>([]);
+  const [newClass, setNewClass] = useState({
+    title: "",
+    professor: "",
+    section: "",
+  });
+
+  const addClass = () => {
+    if (newClass.title && newClass.professor && newClass.section) {
+      setNewClass({ title: "", professor: "", section: "" });
+
+      const userId = user?.emailAddresses[0]?.emailAddress;
+      const usersDocRef = doc(db, "Users", userId ? userId : "");
+      const classesRef = collection(usersDocRef, "Classes");
+      setDoc(doc(classesRef, newClass.title), {
+        title: newClass.title,
+        professor: newClass.professor,
+        section: newClass.section,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    const usersDocRef = doc(db, "Users", userId ? userId : "");
+    const classesRef = collection(usersDocRef, "Classes");
+    const q = query(classesRef);
+
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const classes = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        setClasses(classes);
+      },
+      (error) => {
+        console.error("Error getting documents: ", error);
+      },
+    );
+
+    return () => unsubscribe();
+  }, [user]);
+  classes.map((cls) => console.log(cls.id));
+  console.log(classes);
+  return classes.length > 0;
+}
+
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
   useEffect(() => {
     if (!user) return;
-    // const userId = user?.emailAddresses[0]?.emailAddress;
+    const userId = user?.emailAddresses[0]?.emailAddress;
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
@@ -36,6 +108,8 @@ export default function FeedPage() {
     title: "Concepts Preparation",
     numParticipants: 3,
     totalSeats: 4,
+    purpose: "",
+    date:"",
     location: "Giant Eagle",
     time: "Sun, Oct 6: 4:00 - 5:00pm",
     course: "21-127",
@@ -60,7 +134,9 @@ export default function FeedPage() {
     title: "ECE Preparation",
     numParticipants: 2,
     totalSeats: 10,
+    purpose: "",
     location: "Hunt",
+    date:"",
     time: "Sun, Oct 12: 4:00 - 5:00pm",
     course: "18-100",
     participantDetails: [
@@ -73,7 +149,9 @@ export default function FeedPage() {
     title: "ECE Preparation",
     numParticipants: 2,
     totalSeats: 10,
+    purpose: "",
     location: "Hunt",
+    date:"",
     time: "Sun, Oct 12: 4:00 - 5:00pm",
     course: "18-100",
     participantDetails: [
@@ -86,7 +164,9 @@ export default function FeedPage() {
     title: "ECE Preparation",
     numParticipants: 2,
     totalSeats: 10,
+    purpose: "",
     location: "Hunt",
+    date:"",
     time: "Sun, Oct 12: 4:00 - 5:00pm",
     course: "18-100",
     participantDetails: [
@@ -102,7 +182,9 @@ const open: groupDetails[]=[
     title: "GRINDING SESSION",
     numParticipants: 1,
     totalSeats: 4,
+    purpose: "",
     location: "Sorrels",
+    date:"",
     time: "Sun, Oct 4: 4:00 - 10:00pm",
     course: "15-112",
     participantDetails: [
@@ -131,8 +213,11 @@ const displayDetails = () => {
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
+          <li>{group.purpose}</li>
           <li>{group.time}</li>
+          <li>{group.date}</li>
           <li>{group.location}</li>
+          <li>{group.totalSeats}</li>
         </ul>
       </div>
     </div>
@@ -142,10 +227,20 @@ const displayDetails = () => {
     <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.title}</div>
-        <ul>
-          <li>{group.course}</li>
-          <li>{group.time}</li>
-          <li>{group.location}</li>
+        <ul style={{ display: 'flex', flexDirection: 'row' }}>
+          <li className="font-bold" > Course: &nbsp; </li> <li>{group.course}</li>
+        </ul>
+        <ul style={{ display: 'flex', flexDirection: 'row' }}>
+          <li className="font-bold" > Purpose: &nbsp; </li> <li>{group.purpose}</li>
+        </ul>
+        <ul style={{ display: 'flex', flexDirection: 'row' }}>
+          <li className="font-bold" > Time: &nbsp; </li> <li>{formatTime(group.time)}</li> 
+        </ul>
+        <ul style={{ display: 'flex', flexDirection: 'row' }}>
+          <li className="font-bold" > Date: &nbsp; </li> <li>{formatDate(group.date)}</li>
+        </ul>
+        <ul style={{ display: 'flex', flexDirection: 'row' }}>
+          <li className="font-bold" > Location: &nbsp; </li> <li>{group.location}</li>
         </ul>
       </div>
     </div>
