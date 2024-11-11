@@ -14,6 +14,7 @@ export default function CreateGroupModal() {
   const [title, setTitle] = useState('');
   const [course, setCourse] = useState('');
   const [purpose, setPurpose] = useState('');
+  const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
   const [participants, setParticipants] = useState('');
@@ -55,6 +56,7 @@ export default function CreateGroupModal() {
       title,
       course,
       purpose,
+      date,
       time,
       location,
       numberOfParticipants: Number(participants),
@@ -65,6 +67,7 @@ export default function CreateGroupModal() {
     setTitle('');
     setCourse('');
     setPurpose('');
+    setDate('');
     setTime('');
     setLocation('');
     setParticipants('');
@@ -139,7 +142,15 @@ export default function CreateGroupModal() {
           />
           <input
             className="mb-2 w-full rounded border p-2"
-            type="text"
+            type="date"
+            placeholder="Date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+          />
+          <input
+            className="mb-2 w-full rounded border p-2"
+            type="time"
             placeholder="Time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
