@@ -9,63 +9,12 @@ import { useUser } from "@clerk/nextjs";
 // import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
 
-function InClass() {
-  const { user } = useUser();
-  const [classes, setClasses] = useState<any[]>([]);
-  const [newClass, setNewClass] = useState({
-    title: "",
-    professor: "",
-    section: "",
-  });
-
-  const addClass = () => {
-    if (newClass.title && newClass.professor && newClass.section) {
-      setNewClass({ title: "", professor: "", section: "" });
-
-      const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId ? userId : "");
-      const classesRef = collection(usersDocRef, "Classes");
-      setDoc(doc(classesRef, newClass.title), {
-        title: newClass.title,
-        professor: newClass.professor,
-        section: newClass.section,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
-    const classesRef = collection(usersDocRef, "Classes");
-    const q = query(classesRef);
-
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const classes = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-        }));
-        setClasses(classes);
-      },
-      (error) => {
-        console.error("Error getting documents: ", error);
-      },
-    );
-
-    return () => unsubscribe();
-  }, [user]);
-  classes.map((cls) => console.log(cls.id));
-  console.log(classes);
-  return classes.length > 0;
-}
-
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
   useEffect(() => {
     if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
+    // const userId = user?.emailAddresses[0]?.emailAddress;
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
@@ -182,7 +131,6 @@ const displayDetails = () => {
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
-          {/* <li>{group.purpose}</li> */}
           <li>{group.time}</li>
           <li>{group.location}</li>
         </ul>

@@ -82,10 +82,10 @@ export default function CreateGroupModal() {
   };
 
   useEffect(() => {
+    if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
+    const usersDocRef = doc(db, "Users", userId? userId : "");
     const classesRef = collection(usersDocRef, "Classes");
-
     getDocs(classesRef).then(querySnapshot => {
       const classlist = [];
       querySnapshot.forEach(doc => {
