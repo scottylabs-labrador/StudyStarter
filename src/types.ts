@@ -1,6 +1,5 @@
 export default interface groupDetails {
     title: string
-    numParticipants: number,
     totalSeats: number,
     location: string,
     time: string,
@@ -8,7 +7,7 @@ export default interface groupDetails {
     participantDetails: {
         name: string,
         url: string
-        
+        email: string
     }[],
     details: string
 }
