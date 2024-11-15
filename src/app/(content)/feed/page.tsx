@@ -98,10 +98,10 @@ const displayDetails = () => {
 
   const displaymyGroup = myGroup.map((group) => (
     <div
-      className="max-w-sm cursor-pointer overflow-hidden rounded bg-white shadow-lg"
+      className="max-w-sm cursor-pointer overflow-hidden rounded dark:bg-darkSelected shadow-lg"
       onClick={() => setShowDetails([group, "myGroup"])}
     >
-      <div className="px-6 py-4">
+      <div className="px-6 py-4 ">
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
@@ -113,7 +113,7 @@ const displayDetails = () => {
   ));
 
   const displayScheduled = groups.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
+    <div className="max-w-sm overflow-hidden rounded dark:text-white bg-darkSidebar shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
@@ -126,7 +126,7 @@ const displayDetails = () => {
   ));
 
   return (
-    <main className="container relative h-screen">
+    <main className="container relative h-screen ">
       <div className={`${showDetails ? 'flex' : 'w-full'}`}>
         <div className={`${showDetails ? 'w-[60%]' : 'w-[100%]'}`}>
           <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -138,7 +138,7 @@ const displayDetails = () => {
             >
               <li className="mr-1 ml-1" role="presentation">
                 <button
-                  className="inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
+                  className="inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium dark:text-white hover:border-darkHighlight hover:text-darkHighlight"
                   id="myGroup-tab"
                   data-tabs-target="#myGroup"
                   type="button"
@@ -152,7 +152,7 @@ const displayDetails = () => {
               </li>
               <li className="mr-1 ml-1" role="presentation">
                 <button
-                  className="active inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
+                  className="active inline-block rounded-t-lg border-b-2 border-transparent px-4 py-4 text-center text-sm font-medium dark:text-white hover:border-darkHighlight hover:text-darkHighlight"
                   id="scheduled-tab"
                   data-tabs-target="#scheduled"
                   type="button"
@@ -168,7 +168,7 @@ const displayDetails = () => {
           </div>
           <div id="myTabContent">
             <div
-              className="hidden rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
+              className="hidden rounded-lg text-white"
               id="myGroup"
               role="tabpanel"
               aria-labelledby="myGroup-tab"

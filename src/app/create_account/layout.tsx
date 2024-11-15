@@ -16,7 +16,7 @@ export default async function ContentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen w-screen">
+    <div className="flex h-screen w-screen bg-darkbg">
       <div className="flex-1 overflow-auto">
         <main className="container mx-auto px-4 py-8">
           {children}

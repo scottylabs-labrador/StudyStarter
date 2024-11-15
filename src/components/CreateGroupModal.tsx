@@ -65,8 +65,8 @@ export default function CreateGroupModal() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-96 rounded-lg bg-white p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center ">
+      <div className="w-96 rounded-lg dark:bg-white p-8">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">Create New Study Group</h2>
           <button onClick={handleClose} className="text-xl">
@@ -75,14 +75,14 @@ export default function CreateGroupModal() {
         </div>
         <form onSubmit={handleSubmit}>
           <input
-            className="mb-2 w-full rounded border p-2"
+            className="mb-2 w-full rounded border-b-4 border-b-darkAccent dark:bg-white p-2"
             type="text"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
           <input
-            className="mb-2 w-full rounded border p-2"
+            className="mb-2 w-full rounded border p-2 dark:bg-darkHighlight"
             type="text"
             placeholder="Course"
             value={course}
@@ -96,21 +96,21 @@ export default function CreateGroupModal() {
             onChange={(e) => setPrerequisites(e.target.value)}
           />
           <input
-            className="mb-2 w-full rounded border p-2"
+            className="mb-2 w-full rounded border p-2 dark:bg-darkHighlight"
             type="text"
             placeholder="Time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
           />
           <input
-            className="mb-2 w-full rounded border p-2"
+            className="mb-2 w-full rounded border p-2 dark:bg-darkHighlight"
             type="text"
             placeholder="Location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
           <input
-            className="mb-2 w-full rounded border p-2"
+            className="mb-2 w-full rounded border p-2 dark:bg-darkHighlight" 
             type="number"
             placeholder="Number of Participants"
             value={participants}
@@ -125,7 +125,7 @@ export default function CreateGroupModal() {
           ></input>
           <button
             type="submit"
-            className="w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            className="w-full rounded bg-blue-500 px-4 py-2 font-bold text-white bg-darkAccent"
           >
             Create Group
           </button>

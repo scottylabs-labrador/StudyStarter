@@ -55,22 +55,22 @@ function ProfilePage() {
           className="h-20 w-20 rounded-full"
         />
         <h1 className="mt-2 text-2xl font-bold text-white">{displayName}</h1>
-        <p className="text-gray-500">{user?.emailAddresses[0]?.emailAddress}</p>
+        <p className="text-white">{user?.emailAddresses[0]?.emailAddress}</p>
         <div className="mt-4 text-white">
           <strong>Class of</strong> {gradYear}
         </div>
         <div className="mt-4 text-center text-white">
           <strong>About Me:</strong> {aboutSection}
         </div>
-        <button className="mt-4 rounded-lg bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600">
+        <button className="mt-4 rounded-lg px-4 py-2 font-bold text-white bg-darkAccent">
           Edit Profile
         </button>
       </div>
       <div className="mt-4 flex w-full flex-col items-center">
-        <h2 className="mb-2 text-2xl font-bold text-white">
+        <h2 className="mb-2 text-2xl  text-white">
           Majors and Minors
         </h2>
-        <div className="w-60 rounded-md border bg-gray-100 p-2 text-center">
+        <div className="w-60 rounded-md border bg-darkHighlight p-2 text-center">
           {majorsAndMinorsText}
         </div>
       </div>

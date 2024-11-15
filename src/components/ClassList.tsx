@@ -86,7 +86,7 @@ export function ClassList() {
         />
         <button
           onClick={addClass}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500 text-white border-b-2  hover:text-darkAccent"
         >
           Add Class
         </button>
@@ -95,7 +95,7 @@ export function ClassList() {
       
         {classes.map((cls) => (
           <li key={cls.id} 
-            className="bg-gray-100 p-2 rounded"
+            className="text-white p-2 rounded border-2"
             style={{ display: "flex", justifyContent: "space-between", width: "100%"}}
             >
             <div>

@@ -23,7 +23,7 @@ const Details = ({ onClick, details }: Props) => {
 
   return (
     <div
-      className="card text-dark bg-white h-[80%] w-[30%]"
+      className="card text-dark dark:bg-darkHighlight h-[80%] w-[30%]"
       style={{borderRadius: "10px", position: "fixed", right: "1rem", bottom: "2rem", padding: "1rem", marginRight:"4rem"}}
 >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
