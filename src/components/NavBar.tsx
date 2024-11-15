@@ -39,7 +39,7 @@ export default function NavBar() {
         </button>
         <a
           href="/profile"
-          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg dark:bg-darkAccent"
+          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg dark:bg-darkAccent" style={{ zIndex: 1000 }}
         >
           P
         </a>
