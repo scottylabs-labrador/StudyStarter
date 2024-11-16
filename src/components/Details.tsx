@@ -24,7 +24,7 @@ const Details = ({ onClick, details }: Props) => {
       const groupDocRef = doc(db, "Study Groups", details.title ? details.title : "");
       const groupDoc = await getDoc(groupDocRef);
       const participants = groupDoc.data()?.participantDetails;
-  
+
       if (participants && user) {
         const isParticipant = participants.some(
           (participant: any) => participant.email === user.emailAddresses[0]?.emailAddress
@@ -34,28 +34,33 @@ const Details = ({ onClick, details }: Props) => {
         joinedSetState(false);
       }
     };
-  
+
     checkParticipantStatus();
   }, [user, details]);
 
   const currentParticipants = details?.participantDetails.length || 0;
   const maxSeats = details?.totalSeats || 0;
   const joinGroup = async () => {
-    
-    if (currentParticipants >= maxSeats) {
-      toast.error("Group is full");
-      return;
+    if (!joinedState) {
+      if (currentParticipants >= maxSeats) {
+        toast.error("Group is full");
+        return;
+      }
+      const groupDocRef = doc(db, "Study Groups", details.title ? details.title : "");
+      await updateDoc(groupDocRef, {
+        participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
+      });
+      joinedSetState(!joinedState);
+    } if (joinedState) {
+      const groupDocRef = doc(db, "Study Groups", details.title ? details.title : "");
+      await updateDoc(groupDocRef, {
+        participantDetails: arrayRemove({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
+      });
+      joinedSetState(!joinedState);
     }
-    const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
-    await updateDoc(groupDocRef, {
-      participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress}),
-      numberOfParticipants: increment(1),
-      isAvailable: currentParticipants + 1 < maxSeats
-    });
-    joinedSetState(!joinedState);
   };
 
-  if(!details) return null;
+  if (!details) return null;
   return (
     <div
       className="bg-white h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
@@ -84,21 +89,21 @@ const Details = ({ onClick, details }: Props) => {
           </button>
         </p>
         <div className="h-20 overflow-y-scroll p-[10px]">
-        {participantsState &&
-          details.participantDetails.map((participantDetail) => (
-            <div className="flex items-center p-[5px]">
-              <img
-                className="w-[2rem] h-[2rem] rounded-full"
-                src={participantDetail.url}
-                alt="Example"
-              />
-              <p className="card-text text-[16px] font-['Verdana'] indent-[2rem]">
-                {" "}
-                <strong>Name</strong>: {participantDetail.name}
-              </p>
+          {participantsState &&
+            details.participantDetails.map((participantDetail) => (
+              <div className="flex items-center p-[5px]">
+                <img
+                  className="w-[2rem] h-[2rem] rounded-full"
+                  src={participantDetail.url}
+                  alt="Example"
+                />
+                <p className="card-text text-[16px] font-['Verdana'] indent-[2rem]">
+                  {" "}
+                  <strong>Name</strong>: {participantDetail.name}
+                </p>
               </div>
-          ))}
-          </div>
+            ))}
+        </div>
         <p className="text-[20px] font-['Verdana']">
           {" "}
           <strong>Details</strong>:
