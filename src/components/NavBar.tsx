@@ -24,9 +24,20 @@ export default function NavBar() {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
+  const toggleTheme = () => {
+    if(document.documentElement.classList.contains('dark')){
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }else{
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+      
+  }
+
   return (
     <Fragment>
-      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] dark:text-white">
+      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] bg-lightSidebar dark:bg-darkSidebar dark:text-white">
         <div className="text-lg font-bold">Study Group Finder</div>
         <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
           Feed
@@ -37,6 +48,11 @@ export default function NavBar() {
         >
           + Create
         </button>
+
+        <button onClick={toggleTheme} className="round-lg bg-darkbg dark:bg-white text-white dark:text-darkbg">
+          Dark mode
+        </button>
+
         <a
           href="/profile"
           className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg dark:bg-darkAccent"

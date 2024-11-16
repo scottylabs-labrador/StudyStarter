@@ -31,7 +31,7 @@ export default function FeedPage() {
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
 
   const displayScheduled = groups.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer px-6 py-4" onClick={() => setShowDetails(group)}>
+    <div className="max-w-sm overflow-hidden rounded-xl bg-white dark:bg-darkSidebar dark:text-white shadow-lg cursor-pointer px-6 py-4" onClick={() => setShowDetails(group)}>
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
@@ -44,10 +44,7 @@ export default function FeedPage() {
   return (
     <main className="container relative h-screen">
       <div className={`${showDetails ? 'w-[60%]' : 'w-[100%]'}`}>
-        <div className="mb-4 border-b dark:border-gray-700">
-            <p className="inline-block rounded-t-lg border-b-2 px-4 py-4 text-sm text-white ">Scheduled</p>
-        </div>
-          <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayScheduled}</div>
+      <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayScheduled}</div>
         <div>
           {<Details details={showDetails!} onClick={() => setShowDetails(null)}></Details>}
         </div>

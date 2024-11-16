@@ -47,27 +47,27 @@ function ProfilePage() {
   const majorsAndMinorsText = "Majors and minors go here";
 
   return (
-    <div className="flex flex-col items-center p-4 font-sans">
+    <div className="flex flex-col items-center p-4 font-sans text-black dark:text-white">
       <div className="mb-4 flex flex-col items-center">
         <img
           src={user?.imageUrl || "https://via.placeholder.com/80"}
           alt="Profile"
           className="h-20 w-20 rounded-full"
         />
-        <h1 className="mt-2 text-2xl font-bold text-white">{displayName}</h1>
-        <p className="text-white">{user?.emailAddresses[0]?.emailAddress}</p>
-        <div className="mt-4 text-white">
+        <h1 className="mt-2 text-2xl font-bold ">{displayName}</h1>
+        <p className="">{user?.emailAddresses[0]?.emailAddress}</p>
+        <div className="mt-4">
           <strong>Class of</strong> {gradYear}
         </div>
-        <div className="mt-4 text-center text-white">
+        <div className="mt-4 text-center">
           <strong>About Me:</strong> {aboutSection}
         </div>
-        <button className="mt-4 rounded-lg px-4 py-2 font-bold text-white bg-darkAccent">
+        <button className="mt-4 rounded-lg px-4 py-2 font-bold  bg-darkAccent">
           Edit Profile
         </button>
       </div>
       <div className="mt-4 flex w-full flex-col items-center">
-        <h2 className="mb-2 text-2xl  text-white">
+        <h2 className="mb-2 text-2xl  ">
           Majors and Minors
         </h2>
         <div className="w-60 rounded-md border bg-darkHighlight p-2 text-center">
