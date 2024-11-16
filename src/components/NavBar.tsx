@@ -11,6 +11,7 @@ import {
 import { usePathname } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
 import { useAppSelector } from "~/lib/hooks";
+import { useEffect } from "react";
 
 export default function NavBar() {
   const dispatch = useDispatch();
@@ -24,9 +25,27 @@ export default function NavBar() {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
+  useEffect(() => {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    if(document.documentElement.classList.contains('dark')){
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }else{
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+      
+  }
+
   return (
     <Fragment>
-      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] dark:text-white">
+      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] bg-lightSidebar dark:bg-darkSidebar dark:text-white">
         <div className="text-lg font-bold">Study Group Finder</div>
         <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
           Feed
@@ -37,9 +56,14 @@ export default function NavBar() {
         >
           + Create
         </button>
+
+        <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-white text-white dark:text-darkbg">
+          Dark mode
+        </button>
+
         <a
           href="/profile"
-          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg dark:bg-darkAccent"
+          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg bg-darkAccent"
           style={{ zIndex: 1000 }}
         >
           <svg

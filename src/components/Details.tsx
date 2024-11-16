@@ -58,7 +58,7 @@ const Details = ({ onClick, details }: Props) => {
   if(!details) return null;
   return (
     <div
-      className="bg-white h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
+      className="bg-white dark:bg-darkHighlight h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
       <div className="flex justify-end">
         <button className="btn-close me-5 mt-3 text-[20px] mb-[-12px]" onClick={onClick}>X</button>
       </div>
