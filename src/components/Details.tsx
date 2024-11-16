@@ -1,14 +1,13 @@
 "use client";
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import groupDetails from "~/types";
 interface Props {
   onClick: () => void;
   details: groupDetails;
 }
 import { useUser } from "@clerk/nextjs";
-import { updateDoc, arrayUnion, arrayRemove, doc, getDoc } from "firebase/firestore";
+import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
-import { join } from "path";
 
 const Details = ({ onClick, details }: Props) => {
   const { user } = useUser();
@@ -16,6 +15,10 @@ const Details = ({ onClick, details }: Props) => {
   const [joinedState, joinedSetState] = useState(false);
 
   useEffect(() => {
+    if (!details || !user) {
+      joinedSetState(false);
+      return;
+    }
     const checkParticipantStatus = async () => {
       const groupDocRef = doc(db, "Study Groups", details.title ? details.title : "");
       const groupDoc = await getDoc(groupDocRef);
@@ -32,7 +35,8 @@ const Details = ({ onClick, details }: Props) => {
     };
   
     checkParticipantStatus();
-  }, [user, details.title]);
+  }, [user, details]);
+
 
   const joinGroup = async () => {
     if (!joinedState) {
@@ -40,6 +44,7 @@ const Details = ({ onClick, details }: Props) => {
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress})
       });
+
       joinedSetState(!joinedState);
     } if (joinedState) {
       const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
@@ -50,13 +55,14 @@ const Details = ({ onClick, details }: Props) => {
     }
   };
 
+  if(!details) return null;
   return (
     <div
       className="bg-white h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
       <div className="flex justify-end">
         <button className="btn-close me-5 mt-3 text-[20px] mb-[-12px]" onClick={onClick}>X</button>
       </div>
-      <div className="card-header text-[35px] font-['Verdana']">
+      <div className="text-[35px] font-['Verdana']">
         {details.title}
       </div>
       <div className="card-body">

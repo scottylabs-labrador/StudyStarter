@@ -6,7 +6,6 @@ import { db } from "~/lib/api/firebaseConfig";
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 
-
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
@@ -29,28 +28,16 @@ export default function FeedPage() {
     return () => unsubscribe();
   }, [user]);
 
-const displayDetails = () => {
-  // Ensure the study group selection for details card is the same as the currently open tab
-  if (showDetails && showDetails[1] == tabOpen) {
-    return showDetails;
-  }
-  return null;
-};
-
-  const [showDetails, setShowDetails] = useState<[groupDetails, "Open" | "Scheduled"] | null>(null); // index 1 for open or scheduled
-  const [tabOpen, setTabOpen] = useState<"Open" | "Scheduled">("Scheduled");
-
+  const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
 
   const displayScheduled = groups.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
-      <div className="px-6 py-4">
+    <div className="max-w-sm overflow-hidden rounded bg-white shadow-lg cursor-pointer px-6 py-4" onClick={() => setShowDetails(group)}>
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
           <li>{group.course}</li>
           <li>{group.time}</li>
           <li>{group.location}</li>
         </ul>
-      </div>
     </div>
   ));
 
@@ -62,12 +49,7 @@ const displayDetails = () => {
         </div>
           <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayScheduled}</div>
         <div>
-          {displayDetails() && (
-            <Details
-              details={showDetails![0]}
-              onClick={() => setShowDetails(null)}
-            ></Details>
-          )}
+          {<Details details={showDetails!} onClick={() => setShowDetails(null)}></Details>}
         </div>
       </div>
     </main>
