@@ -34,6 +34,7 @@ export default function CreateGroupModal() {
         time: time,
         location: location,
         totalSeats: Number(participants),
+        isAvailable: true,
         participantDetails: [
           { name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress},
         ],

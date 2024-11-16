@@ -3,7 +3,7 @@ import Details from "~/components/Details";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import { collection, query, onSnapshot } from "firebase/firestore";
+import { collection, query, onSnapshot, where } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 
 export default function FeedPage() {
@@ -14,7 +14,7 @@ export default function FeedPage() {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
     const classesRef = collection(db, "Study Groups");
-    const q = query(classesRef);
+    const q = query(classesRef, where("isAvailable", "==", true));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const groups = querySnapshot.docs.map((doc) => ({
