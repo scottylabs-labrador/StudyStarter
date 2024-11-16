@@ -24,7 +24,7 @@ function ProfileGrid({ photos }: { photos: Photo[] }) {
 
 function ContinueButton() {
     return (
-        <a href="/feed" className="px-4 py-2 bg-gray-200 text-black font-bold rounded-lg margintop-100 hover:bg-gray-300">
+        <a href="/feed" className="px-4 py-2 border-2 hover:bg-darkAccent hover:border-darkbg text-white font-bold rounded-lg margintop-100 hover:bg-gray-300">
             Continue
         </a>
     )
@@ -51,7 +51,7 @@ export default function ProfilePage() {
 
   return (
     
-    <div className="p-4 font-sans">
+    <div className="p-4 font-sans ">
       <div className="flex items-center mb-4">
         <img
           src={user?.imageUrl || "https://via.placeholder.com/80"}
@@ -60,12 +60,12 @@ export default function ProfilePage() {
         />
         <div className="ml-4">
           <h1 className="text-2xl font-bold text-white">{displayName}</h1>
-          <p className="text-gray-500">{user?.emailAddresses[0]?.emailAddress}</p>
+          <p className="text-white">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
         <div className="ml-auto">
           <SignOutButton>
             <button
-              className="px-4 py-2 bg-gray-200 text-black font-bold rounded-lg hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 text-white font-bold rounded-lg bg-darkAccent"
             >
               Logout
             </button>

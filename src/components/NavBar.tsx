@@ -26,31 +26,31 @@ export default function NavBar() {
 
   return (
     <Fragment>
-      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] text-white">
+      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] dark:text-white">
         <div className="text-lg font-bold">Study Group Finder</div>
         <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
           Feed
         </a>
         <button
           onClick={handleCreateGroupClick}
-          className="rounded-lg bg-white px-2 py-1 font-bold text-slate-800"
+          className="rounded-lg bg-white px-2 py-1 font-bold dark:bg-darkAccent"
         >
           + Create
         </button>
         <a
           href="/profile"
-          className="fixed bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-500 font-bold text-white shadow-lg hover:bg-blue-600"
-          style={{ zIndex: 1000 }}
+          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg dark:bg-darkAccent" style={{ zIndex: 1000 }}
         >
           P
         </a>
-      </div>
 
-      <SignOutButton>
-        <button className="fixed bottom-4 left-4 rounded-lg bg-gray-200 px-4 py-2 font-bold text-black hover:bg-gray-300">
+        
+        <SignOutButton>
+        <button className="fixed bottom-4 left-4 rounded-lg px-4 py-2 font-bold dark:bg-darkAccent dark:text-white">
           Logout
         </button>
       </SignOutButton>
+      </div>
 
       <UploadModal />
       <CreateGroupModal />
