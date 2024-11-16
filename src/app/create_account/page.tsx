@@ -24,7 +24,7 @@ function ProfileGrid({ photos }: { photos: Photo[] }) {
 
 function ContinueButton() {
     return (
-        <a href="/feed" className="px-4 py-2 border-2 hover:bg-darkAccent hover:border-darkbg text-white font-bold rounded-lg margintop-100 hover:bg-gray-300">
+        <a href="/feed" className="px-4 py-2 border-2 text-black hover:bg-darkAccent dark:hover:bg-darkAccent dark:hover:border-darkbg dark:text-white font-bold rounded-lg margintop-100 hover:bg-gray-300">
             Continue
         </a>
     )
@@ -59,20 +59,20 @@ export default function ProfilePage() {
           className="w-20 h-20 rounded-full"
         />
         <div className="ml-4">
-          <h1 className="text-2xl font-bold text-white">{displayName}</h1>
-          <p className="text-white">{user?.emailAddresses[0]?.emailAddress}</p>
+          <h1 className="text-2xl font-bold ">{displayName}</h1>
+          <p className="">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
         <div className="ml-auto">
           <SignOutButton>
             <button
-              className="px-4 py-2 bg-gray-200 text-white font-bold rounded-lg bg-darkAccent"
+              className="px-4 py-2 bg-gray-200   text-white font-bold rounded-lg bg-darkAccent"
             >
               Logout
             </button>
           </SignOutButton>
         </div>
       </div>
-      <h1 className="text-xl font-bold mb-4 text-white">Add Your Classes Below</h1>
+      <h1 className="text-xl font-bold mb-4 ">Add Your Classes Below</h1>
       <div className="mt-8">
         <ProfileGrid photos={photos} />
       </div>

@@ -49,13 +49,13 @@ export default function NavBar() {
           + Create
         </button>
 
-        <button onClick={toggleTheme} className="round-lg bg-darkbg dark:bg-white text-white dark:text-darkbg">
+        <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-white text-white dark:text-darkbg">
           Dark mode
         </button>
 
         <a
           href="/profile"
-          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg dark:bg-darkAccent"
+          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg bg-darkAccent"
           style={{ zIndex: 1000 }}
         >
           <svg
