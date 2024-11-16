@@ -113,7 +113,7 @@ const displayDetails = () => {
   ));
 
   const displayScheduled = groups.map((group) => (
-    <div className="max-w-sm overflow-hidden rounded dark:text-white bg-darkSidebar shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
+    <div className="max-w-sm overflow-hidden rounded-xl dark:text-white bg-darkSidebar shadow-lg cursor-pointer" onClick={() => setShowDetails([group, "Scheduled"])}>
       <div className="px-6 py-4">
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul>
