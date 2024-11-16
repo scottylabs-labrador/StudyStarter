@@ -11,6 +11,7 @@ import {
 import { usePathname } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
 import { useAppSelector } from "~/lib/hooks";
+import { useEffect } from "react";
 
 export default function NavBar() {
   const dispatch = useDispatch();
@@ -23,6 +24,13 @@ export default function NavBar() {
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
   };
+
+  useEffect(() => {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
 
   const toggleTheme = () => {
     if(document.documentElement.classList.contains('dark')){
