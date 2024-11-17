@@ -17,7 +17,7 @@ export default function CreateGroupModal() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
-  const [participants, setParticipants] = useState('');
+  const [seats, setSeats] = useState('');
   const [details, setDetails] = useState('');
   const [classes, setClasses] = useState([]); // Define classes state
 
@@ -59,7 +59,7 @@ export default function CreateGroupModal() {
       date,
       time,
       location,
-      numberOfParticipants: Number(participants),
+      totalSeats: Number(seats),
       participantDetails: [{ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress }],
       details,
     });
@@ -70,7 +70,7 @@ export default function CreateGroupModal() {
     setDate('');
     setTime('');
     setLocation('');
-    setParticipants('');
+    setSeats('');
     setDetails('');
     handleClose();
 
@@ -167,9 +167,9 @@ export default function CreateGroupModal() {
           <input
             className="mb-2 w-full rounded border p-2"
             type="number"
-            placeholder="Number of Participants"
-            value={participants}
-            onChange={(e) => setParticipants(e.target.value)}
+            placeholder="Max Seats"
+            value={seats}
+            onChange={(e) => setSeats(e.target.value)}
             required
             min="2" // Minimum participants of 2
           />
