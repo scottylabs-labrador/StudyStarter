@@ -11,6 +11,7 @@ import {
 import { usePathname } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
 import { useAppSelector } from "~/lib/hooks";
+import { useEffect } from "react";
 
 export default function NavBar() {
   const dispatch = useDispatch();
@@ -24,32 +25,63 @@ export default function NavBar() {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
+  useEffect(() => {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    if(document.documentElement.classList.contains('dark')){
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }else{
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+      
+  }
+
   return (
     <Fragment>
-      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] text-white">
+      <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] bg-lightSidebar dark:bg-darkSidebar dark:text-white">
         <div className="text-lg font-bold">Study Group Finder</div>
         <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
           Feed
         </a>
         <button
           onClick={handleCreateGroupClick}
-          className="rounded-lg bg-white px-2 py-1 font-bold text-slate-800"
+          className="rounded-lg bg-white px-2 py-1 font-bold dark:bg-darkAccent"
         >
           + Create
         </button>
+
+        <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-white text-white dark:text-darkbg">
+          Dark mode
+        </button>
+
         <a
           href="/profile"
-          className="fixed bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-500 font-bold text-white shadow-lg hover:bg-blue-600"
+          className="fixed top-4 right-6 flex h-10 w-10 items-center justify-center rounded-full font-bold shadow-lg bg-darkAccent"
+          style={{ zIndex: 1000 }}
         >
-          P
+          <svg
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="h-6 w-6"
+          >
+            <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
+          </svg>
         </a>
-      </div>
 
-      <SignOutButton>
-        <button className="fixed bottom-4 left-4 rounded-lg bg-gray-200 px-4 py-2 font-bold text-black hover:bg-gray-300">
+        
+        <SignOutButton>
+        <button className="fixed bottom-4 left-4 rounded-lg px-4 py-2 font-bold dark:bg-darkAccent dark:text-white">
           Logout
         </button>
       </SignOutButton>
+      </div>
 
       <UploadModal />
       <CreateGroupModal />

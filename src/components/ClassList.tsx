@@ -61,7 +61,7 @@ export function ClassList() {
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-bold mb-4 text-white">My Classes</h2>
+      <h2 className="text-xl font-bold mb-4 text-black dark:text-white">My Classes</h2>
       <div className="mb-4">
         <input
           type="text"
@@ -86,7 +86,7 @@ export function ClassList() {
         />
         <button
           onClick={addClass}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500 text-black dark:text-white border-b-2  hover:text-darkAccent"
         >
           Add Class
         </button>
@@ -95,7 +95,7 @@ export function ClassList() {
       
         {classes.map((cls) => (
           <li key={cls.id} 
-            className="bg-gray-100 p-2 rounded"
+            className="text-black dark:text-white p-2 rounded border-2"
             style={{ display: "flex", justifyContent: "space-between", width: "100%"}}
             >
             <div>
