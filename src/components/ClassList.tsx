@@ -1,42 +1,115 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, collection, query, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
+import axios from 'axios';
 
-
-interface Class {
-  title: string;
-  professor: string;
-  section: string;
+interface Course {
+  name: string;
+  courseID: string;
+  id: string
 }
+
+const Courses: React.FC = () => {
+  const { user } = useUser();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get<Course[]>(
+          "https://course-tool-backend-2kh6wuzobq-uc.a.run.app/courses/all"
+        );
+        setCourses(response.data); // Store the entire course list
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (query === "") {
+      setFilteredCourses([]);
+      return;
+    }
+
+    // Filter courses and limit to the top 10
+    const filtered = courses
+      .filter((course) =>
+        course.name.toLowerCase().includes(query) || 
+        course.courseID.toLowerCase().includes(query)
+      )
+      .slice(0, 30);
+
+    setFilteredCourses(filtered);
+  };
+
+  const addClass = async (course: Course) => {
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    try {
+      const usersDocRef = doc(db, "Users", userId? userId : "");
+      const classesRef = collection(usersDocRef, "Classes");
+      await setDoc(doc(classesRef, course.courseID), course);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  if (loading) return <p className='text-white'>Loading...</p>;
+
+  return (
+    <div className="p-4">
+      <h1 className="text-white text-xl font-bold mb-4">Search Courses</h1>
+
+      {/* Search Bar */}
+      <input
+        type="text"
+        placeholder="Search courses..."
+        value={searchQuery}
+        onChange={handleSearch}
+        className="border border-gray-300 rounded p-2 mb-4 w-full"
+      />
+
+      {/* Course List */}
+      {filteredCourses.length > 0 ? (
+        <ul className="text-white list-disc pl-6">
+          {filteredCourses.map((course) => (
+            <li key={course.id}>
+              <div className='flex flex-row'>
+                <p className="font-medium">{course.courseID}  {course.name}</p>
+                <button
+                  onClick={async () => await addClass(course)}
+                  className="text-white text-xl px-3 py-1 rounded hover:bg-gray-700 focus:outline-none ml-2"
+                >+</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        searchQuery && <p className="text-white">No courses found.</p>
+      )}
+    </div>
+  );
+};
 
 export function ClassList() {
   const { user } = useUser();
   var [classes, setClasses] = useState<any[]>([]);
-  const [newClass, setNewClass] = useState({ title: '', professor: '', section: '' });
-
-  const addClass = () => {
-    if (newClass.title && newClass.professor && newClass.section) {
-
-      setNewClass({ title: '', professor: '', section: '' });
-      
-      const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId? userId : "");
-      const classesRef = collection(usersDocRef, "Classes");
-      setDoc(doc(classesRef, newClass.title), {
-        title: newClass.title,
-        professor: newClass.professor,
-        section: newClass.section,
-      });
-    }
-  };
 
   const deleteClass = (cls: any) => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId? userId : "");
     const classesRef = collection(usersDocRef, "Classes");
-    console.log(cls)
-    console.log(typeof cls)
     deleteDoc(doc(classesRef, cls));
   };
 
@@ -60,61 +133,27 @@ export function ClassList() {
   }, [user]);
 
   return (
-    <div className="mt-8">
-      <h2 className="text-xl font-bold mb-4 text-white">My Classes</h2>
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Course Title"
-          value={newClass.title}
-          onChange={(e) => setNewClass({ ...newClass, title: e.target.value })}
-          className="mr-2 p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Professor"
-          value={newClass.professor}
-          onChange={(e) => setNewClass({ ...newClass, professor: e.target.value })}
-          className="mr-2 p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Section"
-          value={newClass.section}
-          onChange={(e) => setNewClass({ ...newClass, section: e.target.value })}
-          className="mr-2 p-2 border rounded"
-        />
-        <button
-          onClick={addClass}
-          className="px-4 py-2 bg-blue-500 text-white border-b-2  hover:text-darkAccent"
-        >
-          Add Class
-        </button>
-      </div>
-      <ul className="space-y-2">
-      
-        {classes.map((cls) => (
-          <li key={cls.id} 
-            className="text-white p-2 rounded border-2"
-            style={{ display: "flex", justifyContent: "space-between", width: "100%"}}
+    <div className="flex flex-row justify-between">
+      <Courses />
+      <div className="flex flex-1 flex-col">
+        <h2 className="text-xl font-bold mb-4 text-white">My Classes</h2>
+        <ul className="space-y-2">
+          {classes.map((cls) => (
+            <li
+              key={cls.id}
+              className="flex justify-between items-center p-2 bg-gray-800 rounded border border-gray-600 text-white"
             >
-            <div>
-              <strong>{cls.title}</strong> - Prof. {cls.professor}, Section: {cls.section}
-            </div>
-            <span>
-            <div style={{ display: "inline-block", justifyContent: "space-between"}}>
+              <div>
+                <strong>{cls.courseID}</strong> {cls.professor}: {cls.name}
+              </div>
               <button
-                onClick={async () => await deleteClass(cls.title)}
-                className="text-lightgray-500 text-xl"
-                style={{ marginLeft: "flex-end"}}
+                onClick={async () => await deleteClass(cls.courseID)}
+                className="text-red-500 text-xl px-3 py-1 rounded hover:bg-gray-700 focus:outline-none"
               >x</button>
-            </div>
-            </span>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-    
   );
-
 }
