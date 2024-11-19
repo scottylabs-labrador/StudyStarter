@@ -12,7 +12,6 @@ export default function FeedPage() {
   
   useEffect(() => {
     if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef, where("isAvailable", "==", true));
 
@@ -49,7 +48,7 @@ export default function FeedPage() {
         </div>
           <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayScheduled}</div>
         <div>
-          {<Details details={showDetails!} onClick={() => setShowDetails(null)}></Details>}
+          {showDetails && <Details details={showDetails!} onClick={() => setShowDetails(null)}></Details>}
         </div>
       </div>
     </main>
