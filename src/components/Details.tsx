@@ -107,7 +107,7 @@ const Details = ({ onClick, details }: Props) => {
           className="mb-3 h-[8rem] max-w-[20rem] bg-[#e0ded7] rounded-[10px] mx-auto mt-[10px]"
         >
           <div className="text-black p-[5px]">
-            {details.details}
+            {details.details || "There are no details for this group."}
           </div>
         </div>
         <button

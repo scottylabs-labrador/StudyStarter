@@ -4,7 +4,7 @@ import { useAppSelector } from "~/lib/hooks";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import { setDoc, doc, getDoc, getDocs, collection, DocumentReference } from "firebase/firestore";
+import { setDoc, doc, getDoc, getDocs, collection, DocumentReference, Timestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 
@@ -41,6 +41,25 @@ export default function CreateGroupModal() {
     for (let i = 0; i < 20; i++) {
       id += characters.charAt(Math.floor(Math.random() * characters.length));
     }
+    let timestamp: Date;
+    try {
+        const [year, month, day] = date.split("-");
+        const [hours, minutes] = time.split(":");
+        timestamp = new Date(
+          parseInt(year!),
+          parseInt(month!) - 1,
+          parseInt(day!),
+          parseInt(hours!),
+          parseInt(minutes!)
+        ) 
+      } catch (error) {
+        return;
+      }
+    if (!timestamp) {
+      toast.error("Invalid Date Input!")
+      return 
+    }
+    
 
     let groupDocRef = doc(db, "Study Groups", id);
     while (await checkId(groupDocRef)) {
@@ -50,14 +69,13 @@ export default function CreateGroupModal() {
       }
       groupDocRef = doc(db, "Study Groups", id);
     }
-
+    const firestoreTimestamp = Timestamp.fromDate(timestamp)
     await setDoc(groupDocRef, {
-      id,
       title,
+      id,
       course,
       purpose,
-      date,
-      time,
+      startTime: firestoreTimestamp,
       location,
       totalSeats: Number(seats),
       participantDetails: [{ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress }],

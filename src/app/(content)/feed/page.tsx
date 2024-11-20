@@ -3,30 +3,28 @@ import Details from "~/components/Details";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import { collection, query, onSnapshot } from "firebase/firestore";
+import { collection, query, onSnapshot, Timestamp } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 // import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
 
-function formatTime(timeString) {
-  // Combine with a dummy date to parse correctly
-  const date = new Date(`1970-01-01T${timeString}:00Z`); // Adding `:00` for seconds and `Z` for UTC
+function formatDateTime(timestamp: Timestamp): [String | null, String | null] {
+  if (!timestamp) {
+    return [null,null];
+  }
+  const date = timestamp.toDate()
+  const month = String(date.getMonth() + 1).padStart(2, '0');  // getMonth() is 0-indexed (January is 0)
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = String(date.getFullYear()).slice(-2);
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
 
-  let hours = date.getUTCHours();
-  let minutes = date.getUTCMinutes();
+
+  
   const ampm = hours >= 12 ? 'PM' : 'AM';
   hours = hours % 12;
   hours = hours ? hours : 12; // '0' hour should be '12'
-  minutes = minutes < 10 ? '0' + minutes : minutes; // pad minutes with zero if needed
-
-  return `${hours}:${minutes} ${ampm}`;
-}
-function formatDate(dateString) {
-  const date = new Date(dateString); // assuming dateString is the stored date in year-month-day format
-  const month = date.getMonth() + 1; // months are 0-indexed
-  const day = date.getDate();
-  const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
+  return [`${month}/${day}/${year}`, `${hours}:${minutes} ${ampm}`];
 }
 
 function InClass() {
@@ -103,8 +101,9 @@ export default function FeedPage() {
   }, [user]);
 
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
-
-  const displayScheduled = groups.map((group) => (
+  const displayScheduled = groups.map((group) => {
+    const [formattedDate, formattedTime] = formatDateTime(group.startTime);
+    return (
     <div className="max-w-sm overflow-hidden rounded-xl bg-white dark:bg-darkSidebar dark:text-white shadow-lg cursor-pointer px-6 py-4" onClick={() => setShowDetails(group)}>
         <div className="mb-2 text-xl font-bold">{group.title}</div>
         <ul style={{ display: 'flex', flexDirection: 'row' }}>
@@ -114,16 +113,16 @@ export default function FeedPage() {
           <li className="font-bold" > Purpose: &nbsp; </li> <li>{group.purpose}</li>
         </ul>
         <ul style={{ display: 'flex', flexDirection: 'row' }}>
-          <li className="font-bold" > Time: &nbsp; </li> <li>{formatTime(group.time)}</li> 
+          <li className="font-bold" > Time: &nbsp; </li> <li>{formattedTime}</li> 
         </ul>
         <ul style={{ display: 'flex', flexDirection: 'row' }}>
-          <li className="font-bold" > Date: &nbsp; </li> <li>{formatDate(group.date)}</li>
+          <li className="font-bold" > Date: &nbsp; </li> <li>{formattedDate}</li>
         </ul>
         <ul style={{ display: 'flex', flexDirection: 'row' }}>
           <li className="font-bold" > Location: &nbsp; </li> <li>{group.location}</li>
         </ul>
     </div>
-  ));
+  )});
 
   return (
     <main className="container relative h-screen">
