@@ -4,7 +4,7 @@ import { useAppSelector } from "~/lib/hooks";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import { setDoc, doc, getDoc, getDocs, collection } from "firebase/firestore";
+import { setDoc, doc, getDoc, getDocs, collection, DocumentReference } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 
@@ -19,7 +19,7 @@ export default function CreateGroupModal() {
   const [location, setLocation] = useState('');
   const [seats, setSeats] = useState('');
   const [details, setDetails] = useState('');
-  const [classes, setClasses] = useState([]); // Define classes state
+  const [classes, setClasses] = useState<string[]>([]); // Define classes state
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
@@ -28,12 +28,12 @@ export default function CreateGroupModal() {
     dispatch(setIsCreateGroupModalOpen(false));
   };
 
-  async function checkId(docRef) {
+  async function checkId(docRef: DocumentReference): Promise<boolean> {
     const docSnap = await getDoc(docRef);
     return docSnap.exists();
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -90,11 +90,11 @@ export default function CreateGroupModal() {
     const usersDocRef = doc(db, "Users", userId? userId : "");
     const classesRef = collection(usersDocRef, "Classes");
     getDocs(classesRef).then(querySnapshot => {
-      const classlist = [];
+      const classList: string[] = [];
       querySnapshot.forEach(doc => {
-        classlist.push(doc.id);
+        classList.push(doc.id);
       });
-      setClasses(classlist);
+      setClasses(classList);
     });
   }, [user]);
 
