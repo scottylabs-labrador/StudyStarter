@@ -30,10 +30,6 @@ export default function HomePage() {
 
     return () => unsubscribe();
   }, [user]);
-  classes.map((cls) => (
-    console.log(cls.id)
-  ))
-  console.log(classes);
 
   const router = useRouter();
 
@@ -41,16 +37,13 @@ export default function HomePage() {
     const doStuff = () => {
       const id = setInterval(() => {
         if (classes.length != 0) { 
-          console.log("feed");
           router.push("/feed");
         }
       }, 10);
       setTimeout(() => {
         if (classes.length === 0) { 
-          console.log("create");
           router.push("/create_account");
         } else {
-          console.log("feed");
           router.push("/feed");
         }
         clearInterval(id);

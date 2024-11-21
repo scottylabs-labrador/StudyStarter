@@ -6,35 +6,32 @@ interface Props {
   details: groupDetails;
 }
 import { useUser } from "@clerk/nextjs";
-import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, setDoc, query } from "firebase/firestore";
+import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, setDoc, query, collection } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 
 const Details = ({ onClick, details }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
-  const [joinedState, joinedSetState] = useState(false);
-
+  const [joinedState, joinedSetState] = useState(false)
+  const [updatedDetails, setUpdatedDetails] = useState(details);
   useEffect(() => {
-    if (!details || !user) {
+    if (!updatedDetails || !user) {
       joinedSetState(false);
       return;
     }
     const checkParticipantStatus = async () => {
 
       if (user) {
-        const groupId = details.id;
+        const groupId = updatedDetails.id;
         const userId = user?.emailAddresses[0]?.emailAddress;
         const userDocRef = doc(db, "Users", userId ? userId : "");
-        const userDocSnap = getDoc(userDocRef);
-        const joinedGroups = (await userDocSnap)
-        if (!joinedGroups.exists()) {
+        const userDocSnap = await getDoc(userDocRef);
+        if (!userDocSnap.exists()) {
           joinedSetState(false);
         }
         else {
-          const joinedGroupsData = joinedGroups.data().joinedGroups || [];
-          if (joinedGroupsData.includes(groupId)) {
-            joinedSetState(true)
-          }
+          const joinedGroupsData = userDocSnap.data().joinedGroups || [];
+            joinedSetState(joinedGroupsData.includes(groupId))
         }
       } else {
         joinedSetState(false);
@@ -42,35 +39,52 @@ const Details = ({ onClick, details }: Props) => {
     };
 
     checkParticipantStatus();
-  }, [user, details]);
+  }, [user, updatedDetails]);
+  useEffect(() => {
+    const updateDetails = async () => {
+      const classRef = doc(db, "Study Groups", updatedDetails.id);
+      const classDocSnap = await getDoc(classRef);
+      if (classDocSnap.exists()) {
+        setUpdatedDetails(classDocSnap.data() as groupDetails);
+      }
+
+    }
+    if (!updatedDetails) {
+      return;
+    }
+    updateDetails();
+  }, [user, joinedState])
+  useEffect(() => {
+    setUpdatedDetails(details)
+  }, [details])
 
 
   const joinGroup = async () => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId ? userId : "");
     if (!joinedState) {
-      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+      const groupDocRef = doc(db, "Study Groups", updatedDetails.id ? updatedDetails.id : "");
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
       });
       await setDoc(usersDocRef, {
-        joinedGroups: arrayUnion(details.id)
+        joinedGroups: arrayUnion(updatedDetails.id)
       }, { merge: true });
 
       joinedSetState(!joinedState);
     } if (joinedState) {
-      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+      const groupDocRef = doc(db, "Study Groups", updatedDetails.id ? updatedDetails.id : "");
       await updateDoc(groupDocRef, {
         participantDetails: arrayRemove({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
       });
       await setDoc(usersDocRef, {
-        joinedGroups: arrayRemove(details.id)
+        joinedGroups: arrayRemove(updatedDetails.id)
       }, { merge: true });
       joinedSetState(!joinedState);
     }
   };
 
-  if (!details) return null;
+  if (!updatedDetails) return null;
   return (
     <div
       className="bg-white dark:bg-darkHighlight h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
@@ -78,19 +92,19 @@ const Details = ({ onClick, details }: Props) => {
         <button className="btn-close me-5 mt-3 text-[20px] mb-[-12px]" onClick={onClick}>X</button>
       </div>
       <div className="text-[35px] font-['Verdana']">
-        {details.title}
+        {updatedDetails.title}
       </div>
       <div className="card-body">
         <p className="card-text text-[20px] font-['Verdana']">
-          <strong>Course</strong>: {details.course}
+          <strong>Course</strong>: {updatedDetails.course}
         </p>
         <p className="card-text text-[20px] font-['Verdana']">
-          <strong>Location</strong>: {details.location}{" "}
+          <strong>Location</strong>: {updatedDetails.location}{" "}
         </p>
         <p
           className="card-text text-[20px] font-['Verdana']"
         >
-          <strong>Participants</strong>: {details.participantDetails.length}{" "}/ {details.totalSeats}{" "}
+          <strong>Participants</strong>: {updatedDetails.participantDetails.length}{" "}/ {updatedDetails.totalSeats}{" "}
           <button
             onClick={() => participantsSetState(!participantsState)}
             className="dropdown-button text-black text-[12px]"
@@ -100,7 +114,7 @@ const Details = ({ onClick, details }: Props) => {
         </p>
         <div className="h-20 overflow-y-scroll p-[10px]">
           {participantsState &&
-            details.participantDetails.map((participantDetail) => (
+            updatedDetails.participantDetails.map((participantDetail) => (
               <div className="flex items-center p-[5px]">
                 <img
                   className="w-[2rem] h-[2rem] rounded-full"
@@ -122,7 +136,7 @@ const Details = ({ onClick, details }: Props) => {
           className="mb-3 h-[8rem] max-w-[20rem] bg-[#e0ded7] rounded-[10px] mx-auto mt-[10px]"
         >
           <div className="text-black p-[5px]">
-            {details.details || "There are no details for this group."}
+            {updatedDetails.details || "There are no details for this group."}
           </div>
         </div>
         <button

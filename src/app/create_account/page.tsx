@@ -31,7 +31,6 @@ function ContinueButton() {
 }
 
 export default function ProfilePage() {
-  console.log("why");
 //   if (InClass()) { redirect("/feed");}
   const { user } = useUser();
   const [photos, setPhotos] = useState<Photo[]>([]);

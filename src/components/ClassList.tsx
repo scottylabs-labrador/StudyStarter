@@ -35,8 +35,6 @@ export function ClassList() {
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId? userId : "");
     const classesRef = collection(usersDocRef, "Classes");
-    console.log(cls)
-    console.log(typeof cls)
     deleteDoc(doc(classesRef, cls));
   };
 

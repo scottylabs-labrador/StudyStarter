@@ -55,8 +55,6 @@ function InClass() {
 
     return () => unsubscribe();
   }, [user]);
-  classes.map((cls) => console.log(cls.id));
-  console.log(classes);
   return classes.length > 0;
 }
 
