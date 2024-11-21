@@ -82,6 +82,11 @@ export default function FeedPage() {
 
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const displayScheduled = groups.map((group) => {
+    if (group.participantDetails.length >= group.totalSeats) { 
+      // Make it so you can see your own full joined groups
+      // Also add marker that groups are full and if you're in it make it blue
+      return;
+    }
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
     return (
     <div className="max-w-sm overflow-hidden rounded-xl bg-white dark:bg-darkSidebar dark:text-white shadow-lg cursor-pointer px-6 py-4" onClick={() => setShowDetails(group)}>
