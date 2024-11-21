@@ -6,7 +6,7 @@ interface Props {
   details: groupDetails;
 }
 import { useUser } from "@clerk/nextjs";
-import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 
 const Details = ({ onClick, details }: Props) => {
@@ -39,11 +39,16 @@ const Details = ({ onClick, details }: Props) => {
 
 
   const joinGroup = async () => {
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    const usersDocRef = doc(db, "Users", userId ? userId : "");
     if (!joinedState) {
       const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress})
       });
+      await setDoc(usersDocRef, {
+        joinedGroups: arrayUnion(details.id)
+      }, {merge: true});
 
       joinedSetState(!joinedState);
     } if (joinedState) {
@@ -51,6 +56,9 @@ const Details = ({ onClick, details }: Props) => {
       await updateDoc(groupDocRef, {
         participantDetails: arrayRemove({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress})
       });
+      await setDoc(usersDocRef, {
+        joinedGroups: arrayRemove(details.id)
+      }, {merge: true});
       joinedSetState(!joinedState);
     }
   };

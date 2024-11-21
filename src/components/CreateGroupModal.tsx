@@ -3,14 +3,14 @@ import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import { useEffect, useState } from "react";
-import { db } from "~/lib/api/firebaseConfig";
-import { setDoc, doc, getDoc, getDocs, collection, DocumentReference, Timestamp } from "firebase/firestore";
+import { db, usersRef } from "~/lib/api/firebaseConfig";
+import { setDoc, doc, getDoc, getDocs, collection, DocumentReference, Timestamp, updateDoc, arrayUnion } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
-  
+  const userId = user?.emailAddresses[0]?.emailAddress;
   const [title, setTitle] = useState('');
   const [course, setCourse] = useState('');
   const [purpose, setPurpose] = useState('');
@@ -81,6 +81,10 @@ export default function CreateGroupModal() {
       participantDetails: [{ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress }],
       details,
     });
+    const usersDocRef = doc(db, "Users", userId? userId : "");
+    await setDoc(usersDocRef, {
+      joinedGroups: arrayUnion(id)
+    }, {merge: true});
 
     setTitle('');
     setCourse('');

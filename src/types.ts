@@ -1,8 +1,11 @@
+import { Timestamp } from "firebase/firestore";
+
 export default interface groupDetails {
-    title: string
+    title: string,
+    id: string,
     totalSeats: number,
     location: string,
-    time: string,
+    startTime: Timestamp,
     course: string,
     participantDetails: {
         name: string,
