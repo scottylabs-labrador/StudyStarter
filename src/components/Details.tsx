@@ -8,6 +8,7 @@ interface Props {
 import { useUser } from "@clerk/nextjs";
 import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, setDoc, query, collection } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
+import formatDateTime from "~/helpers/date_helper";
 
 const Details = ({ onClick, details }: Props) => {
   const { user } = useUser();
@@ -85,6 +86,7 @@ const Details = ({ onClick, details }: Props) => {
   };
 
   if (!updatedDetails) return null;
+  const [formattedDate, formattedTime] = formatDateTime(details.startTime);
   return (
     <div
       className="bg-white dark:bg-darkHighlight h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
@@ -97,6 +99,15 @@ const Details = ({ onClick, details }: Props) => {
       <div className="card-body">
         <p className="card-text text-[20px] font-['Verdana']">
           <strong>Course</strong>: {updatedDetails.course}
+        </p>
+        <p className="card-text text-[20px] font-['Verdana']">
+          <strong>Purpose</strong>: {updatedDetails.purpose}
+        </p>
+        <p className="card-text text-[20px] font-['Verdana']">
+          <strong>Time</strong>: {formattedTime}
+        </p>
+        <p className="card-text text-[20px] font-['Verdana']">
+          <strong>Date</strong>: {formattedDate}
         </p>
         <p className="card-text text-[20px] font-['Verdana']">
           <strong>Location</strong>: {updatedDetails.location}{" "}

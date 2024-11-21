@@ -5,6 +5,7 @@ export default interface groupDetails {
     id: string,
     totalSeats: number,
     location: string,
+    purpose: string,
     startTime: Timestamp,
     course: string,
     participantDetails: {
