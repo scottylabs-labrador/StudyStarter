@@ -6,7 +6,7 @@ interface Props {
   details: groupDetails;
 }
 import { useUser } from "@clerk/nextjs";
-import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
+import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, setDoc, query } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 
 const Details = ({ onClick, details }: Props) => {
@@ -20,20 +20,27 @@ const Details = ({ onClick, details }: Props) => {
       return;
     }
     const checkParticipantStatus = async () => {
-      const groupDocRef = doc(db, "Study Groups", details.title ? details.title : "");
-      const groupDoc = await getDoc(groupDocRef);
-      const participants = groupDoc.data()?.participantDetails;
-  
-      if (participants && user) {
-        const isParticipant = participants.some(
-          (participant: any) => participant.email === user.emailAddresses[0]?.emailAddress
-        );
-        joinedSetState(isParticipant);
+
+      if (user) {
+        const groupId = details.id;
+        const userId = user?.emailAddresses[0]?.emailAddress;
+        const userDocRef = doc(db, "Users", userId ? userId : "");
+        const userDocSnap = getDoc(userDocRef);
+        const joinedGroups = (await userDocSnap)
+        if (!joinedGroups.exists()) {
+          joinedSetState(false);
+        }
+        else {
+          const joinedGroupsData = joinedGroups.data().joinedGroups || [];
+          if (joinedGroupsData.includes(groupId)) {
+            joinedSetState(true)
+          }
+        }
       } else {
         joinedSetState(false);
       }
     };
-  
+
     checkParticipantStatus();
   }, [user, details]);
 
@@ -42,28 +49,28 @@ const Details = ({ onClick, details }: Props) => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId ? userId : "");
     if (!joinedState) {
-      const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
+      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
       await updateDoc(groupDocRef, {
-        participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl , email: user?.emailAddresses[0]?.emailAddress})
+        participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
       });
       await setDoc(usersDocRef, {
         joinedGroups: arrayUnion(details.id)
-      }, {merge: true});
+      }, { merge: true });
 
       joinedSetState(!joinedState);
     } if (joinedState) {
-      const groupDocRef = doc(db, "Study Groups", details.title? details.title : "");
+      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
       await updateDoc(groupDocRef, {
-        participantDetails: arrayRemove({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress})
+        participantDetails: arrayRemove({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
       });
       await setDoc(usersDocRef, {
         joinedGroups: arrayRemove(details.id)
-      }, {merge: true});
+      }, { merge: true });
       joinedSetState(!joinedState);
     }
   };
 
-  if(!details) return null;
+  if (!details) return null;
   return (
     <div
       className="bg-white dark:bg-darkHighlight h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
@@ -92,21 +99,21 @@ const Details = ({ onClick, details }: Props) => {
           </button>
         </p>
         <div className="h-20 overflow-y-scroll p-[10px]">
-        {participantsState &&
-          details.participantDetails.map((participantDetail) => (
-            <div className="flex items-center p-[5px]">
-              <img
-                className="w-[2rem] h-[2rem] rounded-full"
-                src={participantDetail.url}
-                alt="Example"
-              />
-              <p className="card-text text-[16px] font-['Verdana'] indent-[2rem]">
-                {" "}
-                <strong>Name</strong>: {participantDetail.name}
-              </p>
+          {participantsState &&
+            details.participantDetails.map((participantDetail) => (
+              <div className="flex items-center p-[5px]">
+                <img
+                  className="w-[2rem] h-[2rem] rounded-full"
+                  src={participantDetail.url}
+                  alt="Example"
+                />
+                <p className="card-text text-[16px] font-['Verdana'] indent-[2rem]">
+                  {" "}
+                  <strong>Name</strong>: {participantDetail.name}
+                </p>
               </div>
-          ))}
-          </div>
+            ))}
+        </div>
         <p className="text-[20px] font-['Verdana']">
           {" "}
           <strong>Details</strong>:

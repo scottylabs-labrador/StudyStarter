@@ -71,8 +71,8 @@ export default function CreateGroupModal() {
     }
     const firestoreTimestamp = Timestamp.fromDate(timestamp)
     await setDoc(groupDocRef, {
-      title,
       id,
+      title,
       course,
       purpose,
       startTime: firestoreTimestamp,
