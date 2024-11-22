@@ -47,8 +47,11 @@ export default function NavBar() {
     <Fragment>
       <div className="grid grid-rows-3 gap-y-6 overflow-hidden px-4 pt-[50px] bg-lightSidebar dark:bg-darkSidebar dark:text-white">
         <div className="text-lg font-bold">Study Group Finder</div>
-        <a href="/feed" className={page == "feed" ? "font-bold" : ""}>
+        <a href="/feed" className={page == "feed" ? "font-bold dark:text-darkAccent" : ""}>
           Feed
+        </a>
+        <a href="/myGroup" className={page == "myGroup" ? "font-bold dark:text-darkAccent" : ""}>
+          My Group
         </a>
         <button
           onClick={handleCreateGroupClick}
