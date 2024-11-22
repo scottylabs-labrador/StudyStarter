@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import formatDateTime from "~/helpers/date_helper";
 
+
 function InClass() {
   const { user } = useUser();
   const [classes, setClasses] = useState<any[]>([]);
@@ -65,7 +66,8 @@ export default function FeedPage() {
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const classesRef = collection(db, "Study Groups");
+    const usersDocRef = doc(db, "Users", userId ? userId : "");
+    const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
