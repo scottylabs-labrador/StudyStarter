@@ -17,6 +17,22 @@ export function ClassList() {
 
   const addClass = () => {
     if (newClass.title && newClass.professor && newClass.section) {
+      if (newClass.title.length == 5) {
+      for (let i = 0; i < 5; i++) {
+        if (!"1234567890".includes(newClass.title.substring(i,i+1))) return;
+      }
+      newClass.title = newClass.title.substring(0, 2)+'-'+newClass.title.substring(2);
+    } else if (newClass.title.length == 6) {
+      for (let i = 0; i < 2; i++) {
+        if (!"1234567890".includes(newClass.title.substring(i,i+1))) return;
+      }
+      if (newClass.title.substring(2,3) != '-') return;
+      for (let i = 3; i < 6; i++) {
+        if (!"1234567890".includes(newClass.title.substring(i,i+1))) return;
+      }
+    } else {
+      return;
+    }
 
       setNewClass({ title: '', professor: '', section: '' });
       
