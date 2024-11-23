@@ -1,16 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import groupDetails from "~/types";
-interface Props {
-  onClick: () => void;
-  details: groupDetails;
-}
 import { useUser } from "@clerk/nextjs";
+import { UserResource } from "@clerk/types";
 import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, setDoc, query, collection } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 import formatDateTime from "~/helpers/date_helper";
+import { checkParticipantStatus } from "~/helpers/firebase_helper";
+interface Props {
+  onClick: () => void;
+  details: groupDetails;
+  triggerParentRefresh: () => void;
+}
 
-const Details = ({ onClick, details }: Props) => {
+const Details = ({ onClick, details, triggerParentRefresh }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false)
@@ -20,26 +23,10 @@ const Details = ({ onClick, details }: Props) => {
       joinedSetState(false);
       return;
     }
-    const checkParticipantStatus = async () => {
+    (async () => {
+      joinedSetState(await checkParticipantStatus(db, user, details.id));
+    })();
 
-      if (user) {
-        const groupId = updatedDetails.id;
-        const userId = user?.emailAddresses[0]?.emailAddress;
-        const userDocRef = doc(db, "Users", userId ? userId : "");
-        const userDocSnap = await getDoc(userDocRef);
-        if (!userDocSnap.exists()) {
-          joinedSetState(false);
-        }
-        else {
-          const joinedGroupsData = userDocSnap.data().joinedGroups || [];
-            joinedSetState(joinedGroupsData.includes(groupId))
-        }
-      } else {
-        joinedSetState(false);
-      }
-    };
-
-    checkParticipantStatus();
   }, [user, updatedDetails]);
   useEffect(() => {
     const updateDetails = async () => {
@@ -83,6 +70,7 @@ const Details = ({ onClick, details }: Props) => {
       }, { merge: true });
       joinedSetState(!joinedState);
     }
+    triggerParentRefresh();
   };
 
   if (!updatedDetails) return null;

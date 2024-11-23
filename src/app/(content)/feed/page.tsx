@@ -8,63 +8,86 @@ import { useUser } from "@clerk/nextjs";
 // import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
 import formatDateTime from "~/helpers/date_helper";
+import { returnUserGroups } from "~/helpers/firebase_helper";
 
-function InClass() {
-  const { user } = useUser();
-  const [classes, setClasses] = useState<any[]>([]);
-  const [newClass, setNewClass] = useState({
-    title: "",
-    professor: "",
-    section: "",
-  });
+// function InClass() {
+//   const { user } = useUser();
+//   const [classes, setClasses] = useState<any[]>([]);
+//   const [newClass, setNewClass] = useState({
+//     title: "",
+//     professor: "",
+//     section: "",
+//   });
 
-  const addClass = () => {
-    if (newClass.title && newClass.professor && newClass.section) {
-      setNewClass({ title: "", professor: "", section: "" });
+//   const addClass = () => {
+//     if (newClass.title && newClass.professor && newClass.section) {
+//       setNewClass({ title: "", professor: "", section: "" });
 
-      const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId ? userId : "");
-      const classesRef = collection(usersDocRef, "Classes");
-      setDoc(doc(classesRef, newClass.title), {
-        title: newClass.title,
-        professor: newClass.professor,
-        section: newClass.section,
-      });
-    }
-  };
+//       const userId = user?.emailAddresses[0]?.emailAddress;
+//       const usersDocRef = doc(db, "Users", userId ? userId : "");
+//       const classesRef = collection(usersDocRef, "Classes");
+//       setDoc(doc(classesRef, newClass.title), {
+//         title: newClass.title,
+//         professor: newClass.professor,
+//         section: newClass.section,
+//       });
+//     }
+//   };
 
-  useEffect(() => {
-    if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
-    const classesRef = collection(usersDocRef, "Classes");
-    const q = query(classesRef);
+//   useEffect(() => {
+//     if (!user) return;
+//     const userId = user?.emailAddresses[0]?.emailAddress;
+//     const usersDocRef = doc(db, "Users", userId ? userId : "");
+//     const classesRef = collection(usersDocRef, "Classes");
+//     const q = query(classesRef);
 
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const classes = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-        }));
-        setClasses(classes);
-      },
-      (error) => {
-        console.error("Error getting documents: ", error);
-      },
-    );
+//     const unsubscribe = onSnapshot(
+//       q,
+//       (querySnapshot) => {
+//         const classes = querySnapshot.docs.map((doc) => ({
+//           ...doc.data(),
+//         }));
+//         setClasses(classes);
+//       },
+//       (error) => {
+//         console.error("Error getting documents: ", error);
+//       },
+//     );
 
-    return () => unsubscribe();
-  }, [user]);
-  return classes.length > 0;
-}
-
+//     return () => unsubscribe();
+//   }, [user]);
+//   return classes.length > 0;
+// }
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
+  const [cardColors, setCardColors] = useState<{ [key: string]: "darkSidebar" | "darkSelected" }>({});
+  const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
   const { user } = useUser();
-  
+  const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
+  const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
+
+  const refreshJoinedGroups = async () => {
+    if (!user) return;
+    (async () => {
+      const updatedJoinedGroups = await returnUserGroups(db, user)
+      setJoinedGroups(updatedJoinedGroups);
+      if (joinedGroups) {
+        console.log("Updating Colors");
+        console.log(joinedGroups);
+        const updatedCardColors: { [key: string]: "darkSidebar" | "darkSelected" } = {};
+        groups.forEach(
+          group => {
+            updatedCardColors[group.id] = joinedGroups.includes(group.id) ? "darkSelected" : "darkSidebar";
+          }
+        )
+        setCardColors(updatedCardColors);
+      }
+    }
+    )();
+  }
   useEffect(() => {
     if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
+
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
@@ -76,47 +99,50 @@ export default function FeedPage() {
     }, (error) => {
       console.error('Error getting documents: ', error);
     });
-
+    refreshJoinedGroups();
     return () => unsubscribe();
   }, [user]);
 
-  const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
-  const displayScheduled = groups.map((group) => {
-    if (group.participantDetails.length >= group.totalSeats) { 
-      // Make it so you can see your own full joined groups
-      // Also add marker that groups are full and if you're in it make it blue
-      return;
-    }
-    const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-    return (
-    <div className="max-w-sm overflow-hidden rounded-xl bg-white dark:bg-darkSidebar dark:text-white shadow-lg cursor-pointer px-6 py-4" onClick={() => setShowDetails(group)}>
-        <div className="mb-2 text-xl font-bold">{group.title}</div>
-        <ul style={{ display: 'flex', flexDirection: 'row' }}>
-          <li className="font-bold" > Course: &nbsp; </li> <li>{group.course}</li>
-        </ul>
-        <ul style={{ display: 'flex', flexDirection: 'row' }}>
-          <li className="font-bold" > Purpose: &nbsp; </li> <li>{group.purpose}</li>
-        </ul>
-        <ul style={{ display: 'flex', flexDirection: 'row' }}>
-          <li className="font-bold" > Time: &nbsp; </li> <li>{formattedTime}</li> 
-        </ul>
-        <ul style={{ display: 'flex', flexDirection: 'row' }}>
-          <li className="font-bold" > Date: &nbsp; </li> <li>{formattedDate}</li>
-        </ul>
-        <ul style={{ display: 'flex', flexDirection: 'row' }}>
-          <li className="font-bold" > Location: &nbsp; </li> <li>{group.location}</li>
-        </ul>
-    </div>
-  )});
-
+const displayScheduled = groups.map((group) => {
+  const isAvailable = group.participantDetails.length >= group.totalSeats;
+  const isParticipant = joinedGroups?.includes(group.id);
+  if (isAvailable && !showFullFilter && !isParticipant) {
+    // Make it so you can see your own full joined groups
+    // Also add marker that groups are full and if you're in it make it blue
+    return;
+  }
+  const [formattedDate, formattedTime] = formatDateTime(group.startTime);
+  const cardColor = cardColors[group.id] ? cardColors[group.id] : "darkSidebar";
   return (
-    <main className="container relative h-screen">
-      <div className={`${showDetails ? 'w-[60%]' : 'w-[100%]'}`}>
+    <div key={group.id} className={`max-w-sm overflow-hidden rounded-xl bg-white dark:bg-${cardColor} dark:text-white shadow-lg cursor-pointer px-6 py-4`} onClick={() => setShowDetails(group)}>
+      <div className="mb-2 text-xl font-bold">{group.title}</div>
+      <ul style={{ display: 'flex', flexDirection: 'row' }}>
+        <li className="font-bold" > Course: &nbsp; </li> <li>{group.course}</li>
+      </ul>
+      <ul style={{ display: 'flex', flexDirection: 'row' }}>
+        <li className="font-bold" > Purpose: &nbsp; </li> <li>{group.purpose}</li>
+      </ul>
+      <ul style={{ display: 'flex', flexDirection: 'row' }}>
+        <li className="font-bold" > Time: &nbsp; </li> <li>{formattedTime}</li>
+      </ul>
+      <ul style={{ display: 'flex', flexDirection: 'row' }}>
+        <li className="font-bold" > Date: &nbsp; </li> <li>{formattedDate}</li>
+      </ul>
+      <ul style={{ display: 'flex', flexDirection: 'row' }}>
+        <li className="font-bold" > Location: &nbsp; </li> <li>{group.location}</li>
+      </ul>
+    </div>
+  )
+});
+
+return (
+  <main className="container relative h-screen">
+    <div className={`${showDetails ? 'w-[60%]' : 'w-[100%]'}`}>
       <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayScheduled}</div>
-        <div>
-          {<Details details={showDetails!} onClick={() => setShowDetails(null)}></Details>}
-        </div>
+      <div>
+        {<Details details={showDetails!} onClick={() => setShowDetails(null)} triggerParentRefresh={refreshJoinedGroups}></Details>}
       </div>
-    </main>
-  );
+    </div>
+  </main>
+);
 }
