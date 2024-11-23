@@ -86,7 +86,6 @@ export default function FeedPage() {
 
   useEffect(() => {
     if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
