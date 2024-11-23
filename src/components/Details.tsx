@@ -86,7 +86,7 @@ const Details = ({ onClick, details }: Props) => {
   };
 
   if (!updatedDetails) return null;
-  const [formattedDate, formattedTime] = formatDateTime(details.startTime);
+  const [formattedDate, formattedTime] = formatDateTime(updatedDetails.startTime);
   return (
     <div
       className="bg-white dark:bg-darkHighlight h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
