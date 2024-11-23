@@ -36,11 +36,29 @@ export default function NavBar() {
     if(document.documentElement.classList.contains('dark')){
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
+      document.getElementById("mode").innerHTML = "Dark Mode";
     }else{
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
+      document.getElementById("mode").innerHTML = "Light Mode";
+    } 
+  }
+
+  const getTheme = () => {
+    const themey = localStorage.getItem('theme');
+    if (themey === 'dark') {
+      return (
+        <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-white text-white dark:text-darkbg" id="mode">
+          Light Mode
+        </button>
+      )
+    } else {
+      return (
+        <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-white text-white dark:text-darkbg" id="mode">
+          Dark Mode
+        </button>
+      )
     }
-      
   }
 
   return (
@@ -60,9 +78,10 @@ export default function NavBar() {
           + Create
         </button>
 
-        <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-white text-white dark:text-darkbg">
-          Dark mode
-        </button>
+        {/* <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-white text-white dark:text-darkbg" id="mode">
+          
+        </button> */}
+        {getTheme()}
 
         <a
           href="/profile"
