@@ -107,7 +107,15 @@ export default function FeedPage() {
   return (
     <main className="container relative h-screen">
       <div className={`${showDetails ? 'w-[60%]' : 'w-[100%]'}`}>
-      <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>{displayScheduled}</div>
+        <select className="mb-4 p-2 rounded-md border border-gray-300 dark:bg-darkSidebar dark:text-white dark:border-gray-600">
+          <option value="option1">Option 1</option>
+          <option value="option2">Option 2</option>
+          <option value="option3">Option 3</option>
+        </select>
+        
+        <div className={`${showDetails ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-5'}`}>
+          {displayScheduled}
+        </div>
         <div>
           {<Details details={showDetails!} onClick={() => setShowDetails(null)}></Details>}
         </div>
