@@ -12,7 +12,6 @@ import {
   doc,
 } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
-// import { redirect } from "next/dist/server/api-utils";
 import { redirect } from "next/navigation";
 import formatDateTime from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
@@ -20,7 +19,9 @@ import TopFilterBar from "~/components/FilterBar";
 
 function InClass() {
   const { user } = useUser();
-  const [classes, setClasses] = useState<any[]>([]);
+  const [classes, setClasses] = useState<{ value: string; label: string }[]>(
+    [],
+  );
   const [newClass, setNewClass] = useState({
     title: "",
     professor: "",
@@ -52,10 +53,11 @@ function InClass() {
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
-        const classes = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
+        const classOptions = querySnapshot.docs.map((doc) => ({
+          value: doc.id,
+          label: doc.id,
         }));
-        setClasses(classes);
+        setClasses(classOptions);
       },
       (error) => {
         console.error("Error getting documents: ", error);
@@ -64,6 +66,7 @@ function InClass() {
 
     return () => unsubscribe();
   }, [user]);
+
   return classes.length > 0;
 }
 
@@ -77,6 +80,9 @@ export default function FeedPage() {
     MultiValue<{ value: string; label: string }>
   >([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [classes, setClasses] = useState<{ value: string; label: string }[]>(
+    [],
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -91,6 +97,30 @@ export default function FeedPage() {
           ...doc.data(),
         }));
         setGroups(groups);
+      },
+      (error) => {
+        console.error("Error getting documents: ", error);
+      },
+    );
+
+    return () => unsubscribe();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    const usersDocRef = doc(db, "Users", userId ? userId : "");
+    const classesRef = collection(usersDocRef, "Classes");
+    const q = query(classesRef);
+
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const classOptions = querySnapshot.docs.map((doc) => ({
+          value: doc.id,
+          label: doc.id,
+        }));
+        setClasses(classOptions);
       },
       (error) => {
         console.error("Error getting documents: ", error);
@@ -131,28 +161,22 @@ export default function FeedPage() {
     );
   });
 
-  const courseOptions = [
-    { value: "15-122", label: "15-122" },
-    { value: "15-151", label: "15-151" },
-    { value: "21-241", label: "21-241" },
-    {
-      value: "need to link to courses on profile",
-      label: "need to link to courses on profile",
-    },
-  ];
-
   const locationOptions = [
     { value: "Gates", label: "Gates" },
     { value: "Wean", label: "Wean" },
     { value: "Zoom", label: "Zoom" },
-    { value: "Hunt", label: "Hunt" },
-    { value: "etc", label: "etc" },
+    { value: "Doherty", label: "Doherty" },
+    { value: "Posner", label: "Posner" },
+    { value: "Porter", label: "Porter" },
+    { value: "Mudge", label: "Mudge" },
+    { value: "Stever", label: "Stever" },
+    { value: "Hammerschlag", label: "Hammerschlag" },
   ];
 
   return (
     <main className="container relative h-screen">
       <TopFilterBar
-        courseOptions={courseOptions}
+        courseOptions={classes}
         locationOptions={locationOptions}
         selectedCourses={selectedCourses}
         setSelectedCourses={setSelectedCourses}
