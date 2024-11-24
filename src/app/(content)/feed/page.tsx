@@ -101,10 +101,11 @@ export default function FeedPage() {
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
-        const groups = querySnapshot.docs.map((doc) => ({
+        const updatedGroups = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
         }));
-        setGroups(groups);
+        updatedGroups.sort((a, b) => a.startTime - b.startTime);
+        setGroups(updatedGroups);
       },
       (error) => {
         console.error("Error getting documents: ", error);
