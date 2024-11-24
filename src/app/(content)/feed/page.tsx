@@ -16,59 +16,60 @@ import { redirect } from "next/navigation";
 import formatDateTime from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
+import { returnUserGroups } from "~/helpers/firebase_helper";
 
-function InClass() {
-  const { user } = useUser();
-  const [classes, setClasses] = useState<{ value: string; label: string }[]>(
-    [],
-  );
-  const [newClass, setNewClass] = useState({
-    title: "",
-    professor: "",
-    section: "",
-  });
+// function InClass() {
+//   const { user } = useUser();
+//   const [classes, setClasses] = useState<{ value: string; label: string }[]>(
+//     [],
+//   );
+//   const [newClass, setNewClass] = useState({
+//     title: "",
+//     professor: "",
+//     section: "",
+//   });
 
-  const addClass = () => {
-    if (newClass.title && newClass.professor && newClass.section) {
-      setNewClass({ title: "", professor: "", section: "" });
+//   const addClass = () => {
+//     if (newClass.title && newClass.professor && newClass.section) {
+//       setNewClass({ title: "", professor: "", section: "" });
 
-      const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId ? userId : "");
-      const classesRef = collection(usersDocRef, "Classes");
-      setDoc(doc(classesRef, newClass.title), {
-        title: newClass.title,
-        professor: newClass.professor,
-        section: newClass.section,
-      });
-    }
-  };
+//       const userId = user?.emailAddresses[0]?.emailAddress;
+//       const usersDocRef = doc(db, "Users", userId ? userId : "");
+//       const classesRef = collection(usersDocRef, "Classes");
+//       setDoc(doc(classesRef, newClass.title), {
+//         title: newClass.title,
+//         professor: newClass.professor,
+//         section: newClass.section,
+//       });
+//     }
+//   };
 
-  useEffect(() => {
-    if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
-    const classesRef = collection(usersDocRef, "Classes");
-    const q = query(classesRef);
+//   useEffect(() => {
+//     if (!user) return;
+//     const userId = user?.emailAddresses[0]?.emailAddress;
+//     const usersDocRef = doc(db, "Users", userId ? userId : "");
+//     const classesRef = collection(usersDocRef, "Classes");
+//     const q = query(classesRef);
 
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const classOptions = querySnapshot.docs.map((doc) => ({
-          value: doc.id,
-          label: doc.id,
-        }));
-        setClasses(classOptions);
-      },
-      (error) => {
-        console.error("Error getting documents: ", error);
-      },
-    );
+//     const unsubscribe = onSnapshot(
+//       q,
+//       (querySnapshot) => {
+//         const classOptions = querySnapshot.docs.map((doc) => ({
+//           value: doc.id,
+//           label: doc.id,
+//         }));
+//         setClasses(classOptions);
+//       },
+//       (error) => {
+//         console.error("Error getting documents: ", error);
+//       },
+//     );
 
-    return () => unsubscribe();
-  }, [user]);
+//     return () => unsubscribe();
+//   }, [user]);
 
-  return classes.length > 0;
-}
+//   return classes.length > 0;
+// }
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -78,11 +79,18 @@ export default function FeedPage() {
   >([]);
   const [selectedLocations, setSelectedLocations] = useState<
     MultiValue<{ value: string; label: string }>
-  >([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [classes, setClasses] = useState<{ value: string; label: string }[]>(
-    [],
-  );
+    >([]);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [classes, setClasses] = useState<{ value: string; label: string }[]>(
+      [],
+    );
+    const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
+    const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
+    const [updateCardColors, setUpdateCardColors] = useState<boolean>(false); // Used to activate UseEffect
+    const cardColorMapping = new Map<boolean, [string, string]>([
+      [true, ["darkAccent", "darkAccent"]],
+      [false, ["white", "darkSidebar"]],
+  ]);
 
   useEffect(() => {
     if (!user) return;
@@ -125,16 +133,30 @@ export default function FeedPage() {
         console.error("Error getting documents: ", error);
       },
     );
-
     return () => unsubscribe();
   }, [user]);
+  useEffect(() => {
+    if (!user) return;
+    console.log("Running effect");
+    (
+      async () => {
+        const updatedJoinedGroups = await returnUserGroups(db, user);
+        console.log(updatedJoinedGroups);
+        setJoinedGroups(updatedJoinedGroups);
+      }
+    )();
+  }, [user, updateCardColors])
 
-  const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
+    if (group.id == showDetails?.id) {
+
+      console.log(group.id+" " + joinedGroups?.includes(group.id))
+    }
+    const [lightColor, darkColor] = cardColorMapping.get(joinedGroups ? joinedGroups.includes(group.id) : false)!;
     return (
       <div
-        className="max-w-sm cursor-pointer overflow-hidden rounded-xl bg-white px-6 py-4 shadow-lg dark:bg-darkSidebar dark:text-white"
+        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} px-6 py-4 shadow-lg dark:bg-${darkColor} dark:text-white`}
         onClick={() => setShowDetails(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -195,6 +217,7 @@ export default function FeedPage() {
             <Details
               details={showDetails!}
               onClick={() => setShowDetails(null)}
+              updateCardColors={setUpdateCardColors}
             ></Details>
           }
         </div>

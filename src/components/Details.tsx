@@ -9,9 +9,10 @@ import formatDateTime from "~/helpers/date_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
+  updateCardColors: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Details = ({ onClick, details }: Props) => {
+const Details = ({ onClick, details, updateCardColors }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
@@ -36,7 +37,7 @@ const Details = ({ onClick, details }: Props) => {
     return () => unsubscribe();
   }, [user, details]);
   useEffect(() => {
-    setCurrentDetails(details)
+    setCurrentDetails(details);
   }, [details]);
 
   const joinGroup = async () => {
@@ -65,8 +66,10 @@ const Details = ({ onClick, details }: Props) => {
         joinedGroups: arrayRemove(currentDetails.id)
       }, {merge: true});
       toast.success("Left group");
+      console.log("Setting joined state");
       joinedSetState(!joinedState);
     }
+    updateCardColors(prev => !prev);
   };
 
   if (!currentDetails) return null;
