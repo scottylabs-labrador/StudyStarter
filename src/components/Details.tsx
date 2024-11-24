@@ -66,7 +66,6 @@ const Details = ({ onClick, details, updateCardColors }: Props) => {
         joinedGroups: arrayRemove(currentDetails.id)
       }, {merge: true});
       toast.success("Left group");
-      console.log("Setting joined state");
       joinedSetState(!joinedState);
     }
     updateCardColors(prev => !prev);

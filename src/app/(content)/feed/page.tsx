@@ -137,11 +137,9 @@ export default function FeedPage() {
   }, [user]);
   useEffect(() => {
     if (!user) return;
-    console.log("Running effect");
     (
       async () => {
         const updatedJoinedGroups = await returnUserGroups(db, user);
-        console.log(updatedJoinedGroups);
         setJoinedGroups(updatedJoinedGroups);
       }
     )();
@@ -149,10 +147,6 @@ export default function FeedPage() {
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-    if (group.id == showDetails?.id) {
-
-      console.log(group.id+" " + joinedGroups?.includes(group.id))
-    }
     const [lightColor, darkColor] = cardColorMapping.get(joinedGroups ? joinedGroups.includes(group.id) : false)!;
     return (
       <div
