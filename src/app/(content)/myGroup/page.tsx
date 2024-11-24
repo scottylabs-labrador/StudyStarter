@@ -87,7 +87,7 @@ export default function FeedPage() {
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
-  const [updateCardColors, setUpdateCardColors] = useState<boolean>(false); // Used to activate UseEffect
+  const [updateJoinedGroups, setUpdateJoinedGroups] = useState<boolean>(false); // Used to activate UseEffect
   const cardColorMapping = new Map<boolean, [string, string]>([
     [true, ["darkAccent", "darkAccent"]],
     [false, ["white", "darkSidebar"]],
@@ -143,18 +143,15 @@ export default function FeedPage() {
       const updatedJoinedGroups = await returnUserGroups(db, user);
       setJoinedGroups(updatedJoinedGroups);
     })();
-  }, [user, updateCardColors]);
+  }, [user, updateJoinedGroups]);
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-    const [lightColor, darkColor] = cardColorMapping.get(
-      joinedGroups ? joinedGroups.includes(group.id) : false,
-    )!;
     const isParticipant = joinedGroups?.includes(group.id);
     if (!isParticipant) return;
     return (
       <div
-        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} px-6 py-4 shadow-lg dark:bg-${darkColor} dark:text-white`}
+        className="max-w-sm cursor-pointer overflow-hidden rounded-xl bg-darkAccent px-6 py-4 shadow-lg dark:bg-darkAccent dark:text-white"
         onClick={() => setShowDetails(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -215,7 +212,7 @@ export default function FeedPage() {
             <Details
               details={showDetails!}
               onClick={() => setShowDetails(null)}
-              updateCardColors={setUpdateCardColors}
+              updateJoinedGroups={setUpdateJoinedGroups}
             ></Details>
           }
         </div>

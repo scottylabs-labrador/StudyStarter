@@ -87,7 +87,7 @@ export default function FeedPage() {
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
-  const [updateCardColors, setUpdateCardColors] = useState<boolean>(false); // Used to activate UseEffect
+  const [updateJoinedGroups, setUpdateJoinedGroups] = useState<boolean>(false); // Used to activate UseEffect
   const cardColorMapping = new Map<boolean, [string, string]>([
     [true, ["darkAccent", "darkAccent"]],
     [false, ["white", "darkSidebar"]],
@@ -143,7 +143,7 @@ export default function FeedPage() {
       const updatedJoinedGroups = await returnUserGroups(db, user);
       setJoinedGroups(updatedJoinedGroups);
     })();
-  }, [user, updateCardColors]);
+  }, [user, updateJoinedGroups]);
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
@@ -221,7 +221,7 @@ export default function FeedPage() {
             <Details
               details={showDetails!}
               onClick={() => setShowDetails(null)}
-              updateCardColors={setUpdateCardColors}
+              updateJoinedGroups={setUpdateJoinedGroups}
             ></Details>
           }
         </div>
