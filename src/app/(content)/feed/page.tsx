@@ -79,17 +79,18 @@ export default function FeedPage() {
   >([]);
   const [selectedLocations, setSelectedLocations] = useState<
     MultiValue<{ value: string; label: string }>
-    >([]);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [classes, setClasses] = useState<{ value: string; label: string }[]>(
-      [],
-    );
-    const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
-    const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
-    const [updateCardColors, setUpdateCardColors] = useState<boolean>(false); // Used to activate UseEffect
-    const cardColorMapping = new Map<boolean, [string, string]>([
-      [true, ["darkAccent", "darkAccent"]],
-      [false, ["white", "darkSidebar"]],
+  >([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [classes, setClasses] = useState<{ value: string; label: string }[]>(
+    [],
+  );
+  const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
+  const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
+  const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
+  const [updateCardColors, setUpdateCardColors] = useState<boolean>(false); // Used to activate UseEffect
+  const cardColorMapping = new Map<boolean, [string, string]>([
+    [true, ["darkAccent", "darkAccent"]],
+    [false, ["white", "darkSidebar"]],
   ]);
 
   useEffect(() => {
@@ -137,17 +138,25 @@ export default function FeedPage() {
   }, [user]);
   useEffect(() => {
     if (!user) return;
-    (
-      async () => {
-        const updatedJoinedGroups = await returnUserGroups(db, user);
-        setJoinedGroups(updatedJoinedGroups);
-      }
-    )();
-  }, [user, updateCardColors])
+    (async () => {
+      const updatedJoinedGroups = await returnUserGroups(db, user);
+      setJoinedGroups(updatedJoinedGroups);
+    })();
+  }, [user, updateCardColors]);
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-    const [lightColor, darkColor] = cardColorMapping.get(joinedGroups ? joinedGroups.includes(group.id) : false)!;
+    const [lightColor, darkColor] = cardColorMapping.get(
+      joinedGroups ? joinedGroups.includes(group.id) : false,
+    )!;
+    const isAvailable = group.participantDetails.length >= group.totalSeats;
+    const isParticipant = joinedGroups?.includes(group.id);
+    if (isAvailable && !showFullFilter && !isParticipant) {
+      // @David Fish
+      // Please add full group filter
+      // And show own groups filter
+      return;
+    }
     return (
       <div
         className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} px-6 py-4 shadow-lg dark:bg-${darkColor} dark:text-white`}
