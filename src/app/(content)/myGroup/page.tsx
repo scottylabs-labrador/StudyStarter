@@ -86,12 +86,7 @@ export default function FeedPage() {
   );
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
-  const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
   const [updateJoinedGroups, setUpdateJoinedGroups] = useState<boolean>(false); // Used to activate UseEffect
-  const cardColorMapping = new Map<boolean, [string, string]>([
-    [true, ["darkAccent", "darkAccent"]],
-    [false, ["white", "darkSidebar"]],
-  ]);
 
   useEffect(() => {
     if (!user) return;
