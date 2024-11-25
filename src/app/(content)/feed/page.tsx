@@ -92,6 +92,32 @@ export default function FeedPage() {
     [true, ["darkAccent", "darkAccent"]],
     [false, ["white", "darkSidebar"]],
   ]);
+  const shouldFilter = (group: groupDetails) => {
+    const isFull = group.participantDetails.length >= group.totalSeats;
+    const isParticipant = joinedGroups?.includes(group.id);
+    if (isFull && !showFullFilter && !isParticipant) {
+      // @David Fish
+      // Please add full group filter
+      // And show own groups filter
+      return true;
+    }
+    if (selectedDate) {
+      if (group.startTime.toDate().getDate() !== selectedDate.getDate()) {
+        return true;
+      }
+    }
+    if (selectedLocations.length > 0) {
+      if (!selectedLocations.some((entry) => entry.value === group.location)) {
+        return true;
+      }
+    }
+    if (selectedCourses.length > 0) {
+      if (!selectedCourses.some((entry) => entry.value === group.course)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -150,14 +176,8 @@ export default function FeedPage() {
     const [lightColor, darkColor] = cardColorMapping.get(
       joinedGroups ? joinedGroups.includes(group.id) : false,
     )!;
-    const isAvailable = group.participantDetails.length >= group.totalSeats;
-    const isParticipant = joinedGroups?.includes(group.id);
-    if (isAvailable && !showFullFilter && !isParticipant) {
-      // @David Fish
-      // Please add full group filter
-      // And show own groups filter
-      return;
-    }
+
+    if (shouldFilter(group)) return;
     return (
       <div
         className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} px-6 py-4 shadow-lg dark:bg-${darkColor} dark:text-white`}
