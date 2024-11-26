@@ -21,7 +21,8 @@ export default {
       'white': '#FFFFFF',
       'lightbg': '#F0F4F8',
       'lightSidebar': '#DDEAF0',
-      'black':'#000000'
+      'black':'#000000',
+      'lightGrey': '#F3F7F8'
     }
   },
   plugins: [
