@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import formatDateTime from "~/helpers/date_helper";
+import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
 import { returnUserGroups } from "~/helpers/firebase_helper";
@@ -87,7 +87,6 @@ export default function FeedPage() {
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
-  const [updateJoinedGroups, setUpdateJoinedGroups] = useState<boolean>(false); // Used to activate UseEffect
   const cardColorMapping = new Map<boolean, [string, string]>([
     [true, ["darkAccent", "darkAccent"]],
     [false, ["white", "darkSidebar"]],
@@ -95,14 +94,21 @@ export default function FeedPage() {
   const shouldFilter = (group: groupDetails) => {
     const isFull = group.participantDetails.length >= group.totalSeats;
     const isParticipant = joinedGroups?.includes(group.id);
+    const groupDate = group.startTime.toDate();
     if (isFull && !showFullFilter && !isParticipant) {
       // @David Fish
       // Please add full group filter
       // And show own groups filter
       return true;
     }
+    if (isInThePast(group.startTime)) return true;
+
     if (selectedDate) {
-      if (group.startTime.toDate().getDate() !== selectedDate.getDate()) {
+      if (
+        groupDate.getDate() !== selectedDate.getDate() ||
+        groupDate.getMonth() !== selectedDate.getMonth() ||
+        groupDate.getFullYear() !== selectedDate.getFullYear()
+      ) {
         return true;
       }
     }
@@ -121,6 +127,10 @@ export default function FeedPage() {
 
   useEffect(() => {
     if (!user) return;
+    (async () => {
+      const updatedJoinedGroups = await returnUserGroups(db, user);
+      setJoinedGroups(updatedJoinedGroups);
+    })();
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
@@ -163,13 +173,6 @@ export default function FeedPage() {
     );
     return () => unsubscribe();
   }, [user]);
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const updatedJoinedGroups = await returnUserGroups(db, user);
-      setJoinedGroups(updatedJoinedGroups);
-    })();
-  }, [user, updateJoinedGroups]);
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
@@ -241,7 +244,7 @@ export default function FeedPage() {
             <Details
               details={showDetails!}
               onClick={() => setShowDetails(null)}
-              updateJoinedGroups={setUpdateJoinedGroups}
+              updateJoinedGroups={setJoinedGroups}
             ></Details>
           }
         </div>

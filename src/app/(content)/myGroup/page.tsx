@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import formatDateTime from "~/helpers/date_helper";
+import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
 import { returnUserGroups } from "~/helpers/firebase_helper";
@@ -86,10 +86,47 @@ export default function FeedPage() {
   );
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
-  const [updateJoinedGroups, setUpdateJoinedGroups] = useState<boolean>(false); // Used to activate UseEffect
+  const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
+  const shouldFilter = (group: groupDetails) => {
+    const isFull = group.participantDetails.length >= group.totalSeats;
+    const isParticipant = joinedGroups?.includes(group.id);
+    const groupDate = group.startTime.toDate();
+    if (isFull && !showFullFilter && !isParticipant) {
+      // @David Fish
+      // Please add full group filter
+      // And show own groups filter
+      return true;
+    }
+    if (isInThePast(group.startTime)) return true;
+
+    if (selectedDate) {
+      if (
+        groupDate.getDate() !== selectedDate.getDate() ||
+        groupDate.getMonth() !== selectedDate.getMonth() ||
+        groupDate.getFullYear() !== selectedDate.getFullYear()
+      ) {
+        return true;
+      }
+    }
+    if (selectedLocations.length > 0) {
+      if (!selectedLocations.some((entry) => entry.value === group.location)) {
+        return true;
+      }
+    }
+    if (selectedCourses.length > 0) {
+      if (!selectedCourses.some((entry) => entry.value === group.course)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   useEffect(() => {
     if (!user) return;
+    (async () => {
+      const updatedJoinedGroups = await returnUserGroups(db, user);
+      setJoinedGroups(updatedJoinedGroups);
+    })();
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
@@ -132,18 +169,12 @@ export default function FeedPage() {
     );
     return () => unsubscribe();
   }, [user]);
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const updatedJoinedGroups = await returnUserGroups(db, user);
-      setJoinedGroups(updatedJoinedGroups);
-    })();
-  }, [user, updateJoinedGroups]);
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
     const isParticipant = joinedGroups?.includes(group.id);
     if (!isParticipant) return;
+    if (shouldFilter(group)) return;
     return (
       <div
         className="max-w-sm cursor-pointer overflow-hidden rounded-xl bg-darkAccent px-6 py-4 shadow-lg dark:bg-darkAccent dark:text-white"
@@ -207,7 +238,7 @@ export default function FeedPage() {
             <Details
               details={showDetails!}
               onClick={() => setShowDetails(null)}
-              updateJoinedGroups={setUpdateJoinedGroups}
+              updateJoinedGroups={setJoinedGroups}
             ></Details>
           }
         </div>

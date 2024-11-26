@@ -2,14 +2,23 @@
 import React, { useState, useEffect } from "react";
 import groupDetails from "~/types";
 import { useUser } from "@clerk/nextjs";
-import { updateDoc, arrayUnion, arrayRemove, doc, getDoc, onSnapshot, increment, setDoc } from "firebase/firestore";
+import {
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  doc,
+  getDoc,
+  onSnapshot,
+  increment,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
-import formatDateTime from "~/helpers/date_helper";
+import { formatDateTime } from "~/helpers/date_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
-  updateJoinedGroups: React.Dispatch<React.SetStateAction<boolean>>;
+  updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 
 const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
@@ -28,7 +37,8 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
         setCurrentDetails(data);
         const participants = docSnapshot.data()?.participantDetails;
         const isParticipant = participants.some(
-          (participant: any) => participant.email === user.emailAddresses[0]?.emailAddress
+          (participant: any) =>
+            participant.email === user.emailAddresses[0]?.emailAddress,
         );
         joinedSetState(isParticipant);
       }
@@ -44,68 +54,95 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId ? userId : "");
     if (!joinedState) {
-      if (currentDetails.participantDetails.length >= currentDetails.totalSeats) {
+      if (
+        currentDetails.participantDetails.length >= currentDetails.totalSeats
+      ) {
         toast.error("Group is full");
         return;
       }
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
       await updateDoc(groupDocRef, {
-        participantDetails: arrayUnion({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
+        participantDetails: arrayUnion({
+          name: user?.fullName,
+          url: user?.imageUrl,
+          email: user?.emailAddresses[0]?.emailAddress,
+        }),
       });
-      await setDoc(usersDocRef, {
-        joinedGroups: arrayUnion(currentDetails.id)
-      }, {merge: true});
+      await setDoc(
+        usersDocRef,
+        {
+          joinedGroups: arrayUnion(currentDetails.id),
+        },
+        { merge: true },
+      );
       toast.success("Joined group");
       joinedSetState(!joinedState);
-    } if (joinedState) {
+      updateJoinedGroups((prev) => {
+        if (!prev) return null;
+        return prev.concat(currentDetails.id);
+      });
+    }
+    if (joinedState) {
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
       await updateDoc(groupDocRef, {
-        participantDetails: arrayRemove({ name: user?.fullName, url: user?.imageUrl, email: user?.emailAddresses[0]?.emailAddress })
+        participantDetails: arrayRemove({
+          name: user?.fullName,
+          url: user?.imageUrl,
+          email: user?.emailAddresses[0]?.emailAddress,
+        }),
       });
-      await setDoc(usersDocRef, {
-        joinedGroups: arrayRemove(currentDetails.id)
-      }, {merge: true});
+      await setDoc(
+        usersDocRef,
+        {
+          joinedGroups: arrayRemove(currentDetails.id),
+        },
+        { merge: true },
+      );
       toast.success("Left group");
       joinedSetState(!joinedState);
+      updateJoinedGroups((prev) => {
+        if (!prev) return null;
+        return prev.filter((item) => item !== currentDetails.id);
+      });
     }
-    updateJoinedGroups(prev => !prev);
+    // updateJoinedGroups(prev => !prev);
   };
 
   if (!currentDetails) return null;
-  const[formattedDate, formattedTime] = formatDateTime(currentDetails.startTime)
+  const [formattedDate, formattedTime] = formatDateTime(
+    currentDetails.startTime,
+  );
   return (
-    <div className="bg-white h-[80%] w-[30%] rounded-[10px] fixed right-[1rem] bottom-[2rem] p-[1rem] mr-[4rem]">
+    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[80%] w-[30%] rounded-[10px] bg-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
-        <button
-          className="me-5 mt-3 text-[20px] mb-[-12px]"
-          onClick={onClick}
-        >
+        <button className="mb-[-12px] me-5 mt-3 text-[20px]" onClick={onClick}>
           X
         </button>
       </div>
 
       {/* Title */}
-      <div className="text-[35px] font-['Verdana']">{currentDetails.title}</div>
+      <div className="font-['Verdana'] text-[35px]">{currentDetails.title}</div>
 
       {/* Card Body */}
-      <p className="text-[20px] font-['Verdana']">
+      <p className="font-['Verdana'] text-[20px]">
         <strong>Course:</strong> {currentDetails.course}
       </p>
-      <p className="card-text text-[20px] font-['Verdana']">
-          <strong>Purpose</strong>: {currentDetails.purpose}
-        </p>
-        <p className="card-text text-[20px] font-['Verdana']">
-          <strong>Time</strong>: {formattedTime}
-        </p>
-        <p className="card-text text-[20px] font-['Verdana']">
-          <strong>Date</strong>: {formattedDate}
-        </p>
-      <p className="text-[20px] font-['Verdana']">
+      <p className="card-text font-['Verdana'] text-[20px]">
+        <strong>Purpose</strong>: {currentDetails.purpose}
+      </p>
+      <p className="card-text font-['Verdana'] text-[20px]">
+        <strong>Time</strong>: {formattedTime}
+      </p>
+      <p className="card-text font-['Verdana'] text-[20px]">
+        <strong>Date</strong>: {formattedDate}
+      </p>
+      <p className="font-['Verdana'] text-[20px]">
         <strong>Location:</strong> {currentDetails.location}
       </p>
-      <p className="text-[20px] font-['Verdana']">
-        <strong>Participants:</strong> {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
+      <p className="font-['Verdana'] text-[20px]">
+        <strong>Participants:</strong>{" "}
+        {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
         <button
           onClick={() => participantsSetState(!participantsState)}
           className="text-[12px]"
@@ -120,23 +157,31 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
           {currentDetails.participantDetails.map((participantDetail, index) => (
             <div key={index} className="flex items-center p-[5px]">
               <img
-                className="w-[2rem] h-[2rem] rounded-full"
+                className="h-[2rem] w-[2rem] rounded-full"
                 src={participantDetail.url}
               />
-              <strong className="text-[16px] font-['Verdana'] indent-[2rem]">Name:</strong> {participantDetail.name}
+              <strong className="indent-[2rem] font-['Verdana'] text-[16px]">
+                Name:
+              </strong>{" "}
+              {participantDetail.name}
             </div>
           ))}
         </div>
       )}
 
       {/* Details Section */}
-      <strong className="text-[20px] font-['Verdana']">Details:</strong>
-      <div className="mb-3 h-[8rem] max-w-[20rem] bg-[#e0ded7] rounded-[10px] mx-auto mt-[10px] p-[5px]">{currentDetails.details}</div>
+      <strong className="font-['Verdana'] text-[20px]">Details:</strong>
+      <div className="mx-auto mb-3 mt-[10px] h-[8rem] max-w-[20rem] rounded-[10px] bg-[#e0ded7] p-[5px]">
+        {currentDetails.details}
+      </div>
 
       {/* Join Button */}
       <button
-        className={`float-end me-3 mt-3 border-4 rounded-[26px] p-[10px] w-[100px] ${
-          joinedState ? "border-blue-500 bg-[#226cf5]" : "border-black bg-[#f5f4f0]"}`}
+        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] border-4 p-[10px] ${
+          joinedState
+            ? "border-blue-500 bg-[#226cf5]"
+            : "border-black bg-[#f5f4f0]"
+        }`}
         onClick={joinGroup}
       >
         {joinedState ? "Joined" : "Join"}
