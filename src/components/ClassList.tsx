@@ -93,7 +93,7 @@ const Courses: React.FC = () => {
                 <li className="flex items-center my-2" key={course.id}>
                   <button
                     onClick={async () => await addClass(course)}
-                    className="dark:text-white text-black text-l px-2 py-1 rounded hover:bg-gray-700 focus:outline-none flex items-center w-full"
+                    className="hover:text-darkAccent dark:text-white text-black text-l px-2 py-1 rounded hover:bg-gray-700 focus:outline-none flex items-center w-full"
                   >
                     {/* '+' Symbol */}
                     <span className="mr-2 text-xl flex-shrink-0">+</span>
