@@ -41,7 +41,7 @@ export default function ProfilePage() {
           </SignOutButton>
         </div>
       </div>
-      <h1 className="text-xl font-bold mb-4 text-white">Add Your Classes Below</h1>
+      {/* <h1 className="text-xl font-bold mb-4 dark:text-white text-back">Add Your Classes Below</h1> */}
       <ClassList />
       <br></br>
       <ContinueButton />

@@ -146,7 +146,7 @@ export default function CreateGroupModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center ">
-      <div className="w-96 rounded-lg p-8 dark:bg-white">
+      <div className="w-96 rounded-lg p-8 dark:bg-darkHighlight bg-lightSidebar">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">Create New Study Group</h2>
           <button onClick={handleClose} className="text-xl">
@@ -205,7 +205,7 @@ export default function CreateGroupModal() {
             required
           />
           <input
-            className="mb-2 w-full rounded border p-2 dark:bg-darkHighlight"
+            className="mb-2 w-full rounded border p-2"
             type="text"
             placeholder="Location"
             value={location}
@@ -213,7 +213,7 @@ export default function CreateGroupModal() {
             required
           />
           <input
-            className="mb-2 w-full rounded border p-2 dark:bg-darkHighlight"
+            className="mb-2 w-full rounded border p-2"
             type="number"
             placeholder="Max Seats"
             value={seats}
@@ -223,7 +223,7 @@ export default function CreateGroupModal() {
             max="100"
           />
           <input
-            className="mb-2 w-full rounded border p-2"
+            className="mb-2 w-full rounded border p-2 bg-lightGrey"
             type="text"
             placeholder="Details"
             value={details}
