@@ -1,43 +1,9 @@
 "use client";
-import "~/styles/globals.css";
 import { useUser } from "@clerk/nextjs";
-import { getUserPhotos } from "~/lib/api/getUserPhotos";
-import { Photo } from "~/types";
-import { useEffect, useState } from "react";
 import { ClassList } from "~/components/ClassList";
-
-function ProfileGrid({ photos }: { photos: Photo[] }) {
-  return (
-    <div className="grid grid-cols-3 gap-4">
-      {photos.map((photo) => (
-        <div key={photo.id} className="aspect-h-1 aspect-w-1 w-full bg-[#DDD]">
-          <img
-            src={photo.url}
-            alt="Uploaded"
-            className="h-full w-full object-cover object-center"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function ProfilePage() {
   const { user } = useUser();
-  const [photos, setPhotos] = useState<Photo[]>([]);
-
-  useEffect(() => {
-    const loadPhotos = async () => {
-      if (user) {
-        const userPhotos = await getUserPhotos(
-          user.emailAddresses[0]?.emailAddress as string,
-        );
-        setPhotos(userPhotos);
-      }
-    };
-
-    loadPhotos();
-  }, [user]);
 
   const displayName =
     user?.fullName || user?.firstName || user?.username || "User";

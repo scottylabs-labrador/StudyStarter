@@ -1,7 +1,4 @@
 import "~/styles/globals.css";
-
-
-import NavBar from "~/components/NavBar";
 import React from "react";
 
 export const metadata = {

@@ -220,6 +220,7 @@ export default function CreateGroupModal() {
             onChange={(e) => setSeats(e.target.value)}
             required
             min="2" // Minimum participants of 2
+            max="100"
           />
           <input
             className="mb-2 w-full rounded border p-2"
