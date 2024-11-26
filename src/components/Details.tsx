@@ -9,9 +9,10 @@ import formatDateTime from "~/helpers/date_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
+  updateJoinedGroups: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Details = ({ onClick, details }: Props) => {
+const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
@@ -36,7 +37,7 @@ const Details = ({ onClick, details }: Props) => {
     return () => unsubscribe();
   }, [user, details]);
   useEffect(() => {
-    setCurrentDetails(details)
+    setCurrentDetails(details);
   }, [details]);
 
   const joinGroup = async () => {
@@ -67,6 +68,7 @@ const Details = ({ onClick, details }: Props) => {
       toast.success("Left group");
       joinedSetState(!joinedState);
     }
+    updateJoinedGroups(prev => !prev);
   };
 
   if (!currentDetails) return null;

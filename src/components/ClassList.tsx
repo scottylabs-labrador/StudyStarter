@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, collection, query, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
