@@ -195,7 +195,7 @@ export function ClassList() {
                 <strong>{cls.courseID}</strong> - {cls.name}
               </div>
               <button
-                onClick={async () => await deleteClass(cls.title)}
+                onClick={async () => await deleteClass(cls.courseID)}
                 className="text-lightgray-500 text-xl"
               >
                 x
