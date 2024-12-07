@@ -36,11 +36,11 @@ export default function NavBar() {
     if (document.documentElement.classList.contains("dark")) {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
-      document.getElementById("mode").innerHTML = "Dark Mode";
+      document.getElementById("mode")!.innerHTML = "Dark Mode";
     } else {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
-      document.getElementById("mode").innerHTML = "Light Mode";
+      document.getElementById("mode")!.innerHTML = "Light Mode";
     }
   };
 
