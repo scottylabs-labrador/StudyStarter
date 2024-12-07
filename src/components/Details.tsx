@@ -172,7 +172,7 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
       {/* Details Section */}
       <strong className="font-['Verdana'] text-[20px]">Details:</strong>
       <div className="mx-auto mb-3 mt-[10px] h-[8rem] max-w-[20rem] rounded-[10px] bg-[#e0ded7] p-[5px]">
-        {currentDetails.details}
+        {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
       </div>
 
       {/* Join Button */}
