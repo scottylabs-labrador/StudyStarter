@@ -15,9 +15,9 @@ export default {
     colors: {
       'darkbg': '#161616',
       'darkSidebar':'#29363C',
-      'darkAccent': '#258EBD',
+      'darkAccent': '#275163',
       'darkHighlight':'#C9DEE7',
-      'darkSelected':'#275163',
+      'darkSelected':'#0CA8EF',
       'white': '#FFFFFF',
       'lightbg': '#F0F4F8',
       'lightSidebar': '#DDEAF0',

@@ -75,13 +75,13 @@ export default function NavBar() {
         <div className="text-lg font-bold">CMU Meets</div>
         <a
           href="/feed"
-          className={page == "feed" ? "font-bold dark:text-darkAccent" : ""}
+          className={page == "feed" ? "font-bold dark:text-darkSelected" : ""}
         >
           Feed
         </a>
         <a
           href="/myGroup"
-          className={page == "myGroup" ? "font-bold dark:text-darkAccent" : ""}
+          className={page == "myGroup" ? "font-bold dark:text-darkSelected" : ""}
         >
           My Group
         </a>

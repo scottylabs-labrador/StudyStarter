@@ -113,7 +113,7 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
     currentDetails.startTime,
   );
   return (
-    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-white p-[1rem]">
+    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-darkSidebar text-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
         <button className="mb-[-12px] me-5 mt-3 text-[20px]" onClick={onClick}>
@@ -171,16 +171,16 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
 
       {/* Details Section */}
       <strong className="font-['Verdana'] text-[20px]">Details:</strong>
-      <div className="mx-auto mb-3 mt-[10px] h-[8rem] max-w-[20rem] rounded-[10px] bg-[#e0ded7] p-[5px]">
+      <div className="mx-auto mb-3 mt-[10px] h-[8rem] max-w-[20rem] rounded-[10px] border-2 p-[5px]">
         {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
       </div>
 
       {/* Join Button */}
       <button
-        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] border-4 p-[10px] ${
+        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] border-2 p-[10px] ${
           joinedState
             ? "border-blue-500 bg-[#226cf5]"
-            : "border-black bg-[#f5f4f0]"
+            : "border-white bg-[darkSelected]"
         }`}
         onClick={joinGroup}
       >
