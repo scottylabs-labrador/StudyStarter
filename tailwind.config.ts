@@ -3,9 +3,15 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 
 
 export default {
-  
+
   content: ["./src/**/*.tsx"],
-  darkMode:'selector',
+  darkMode: 'selector',
+  safelist: [
+    'bg-lightBlush',
+    'dark:bg-darkAccent',
+    'bg-white',
+    'dark:bg-darkSidebar',
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -13,16 +19,17 @@ export default {
       },
     },
     colors: {
-      'darkbg': '#161616',
-      'darkSidebar':'#29363C',
-      'darkAccent': '#275163',
-      'darkHighlight':'#C9DEE7',
-      'darkSelected':'#0CA8EF',
       'white': '#FFFFFF',
       'lightbg': '#F0F4F8',
+      'lightBlush': '#e5abf6',
       'lightSidebar': '#DDEAF0',
-      'black':'#000000',
-      'lightGrey': '#F3F7F8'
+      'black': '#000000',
+      'lightGrey': '#F3F7F8',
+      'darkbg': '#161616',
+      'darkSidebar': '#29363C',
+      'darkAccent': '#275163',
+      'darkHighlight': '#C9DEE7',
+      'darkSelected': '#0CA8EF',
     }
   },
   plugins: [
