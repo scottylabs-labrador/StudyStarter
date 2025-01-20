@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
@@ -21,32 +21,27 @@ export default function NavBar() {
   const isCreateGroupModalOpen = useAppSelector(
     (state) => state.ui.isCreateGroupModalOpen,
   );
+  const [theme, setTheme] = useState("dark")
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
   useEffect(() => {
-    const theme = localStorage.getItem("theme");
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
+    const storedTheme = localStorage.getItem("theme")
+    if (storedTheme) {
+      setTheme(storedTheme);
     }
   }, []);
 
   const toggleTheme = () => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-      document.getElementById("mode")!.innerHTML = "Dark Mode";
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-      document.getElementById("mode")!.innerHTML = "Light Mode";
-    }
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark");
   };
 
   const getTheme = () => {
-    const themey = localStorage.getItem("theme");
-    if (themey === "dark") {
+    if (theme === "dark") {
       return (
         <button
           onClick={toggleTheme}
