@@ -21,7 +21,7 @@ interface Props {
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 
-const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
+const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
@@ -190,4 +190,4 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
   );
 };
 
-export default Details;
+export default Card;

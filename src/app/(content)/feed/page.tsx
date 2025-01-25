@@ -1,18 +1,10 @@
 "use client";
-import Details from "~/components/Details";
+import Card from "~/components/Card";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import {
-  collection,
-  query,
-  onSnapshot,
-  Timestamp,
-  setDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, query, onSnapshot, doc,} from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
@@ -48,9 +40,6 @@ export default function FeedPage() {
     const isParticipant = joinedGroups?.includes(group.id);
     const groupDate = group.startTime.toDate();
     if (isFull && !showFullFilter && !isParticipant) {
-      // @David Fish
-      // Please add full group filter
-      // And show own groups filter
       return true;
     }
     if (isInThePast(group.startTime)) return true;
@@ -128,9 +117,6 @@ export default function FeedPage() {
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-    // const [lightColor, darkColor] = cardColorMapping.get(
-    //   joinedGroups ? joinedGroups.includes(group.id) : false,
-    // )!;
 
     const [lightColor, darkColor] = cardColorMapping.get(group.id === selectedGroup)!;
     if (shouldFilter(group)) return;
@@ -194,11 +180,11 @@ export default function FeedPage() {
         </div>
         <div>
           {
-            <Details
+            <Card
               details={showDetails!}
               onClick={() => setShowDetails(null)}
               updateJoinedGroups={setJoinedGroups}
-            ></Details>
+            ></Card>
           }
         </div>
       </div>

@@ -1,75 +1,14 @@
 "use client";
-import Details from "~/components/Details";
+import Card from "~/components/Card";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import {
-  collection,
-  query,
-  onSnapshot,
-  Timestamp,
-  setDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, query, onSnapshot, doc } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
 import { returnUserGroups } from "~/helpers/firebase_helper";
-
-// function InClass() {
-//   const { user } = useUser();
-//   const [classes, setClasses] = useState<{ value: string; label: string }[]>(
-//     [],
-//   );
-//   const [newClass, setNewClass] = useState({
-//     title: "",
-//     professor: "",
-//     section: "",
-//   });
-
-//   const addClass = () => {
-//     if (newClass.title && newClass.professor && newClass.section) {
-//       setNewClass({ title: "", professor: "", section: "" });
-
-//       const userId = user?.emailAddresses[0]?.emailAddress;
-//       const usersDocRef = doc(db, "Users", userId ? userId : "");
-//       const classesRef = collection(usersDocRef, "Classes");
-//       setDoc(doc(classesRef, newClass.title), {
-//         title: newClass.title,
-//         professor: newClass.professor,
-//         section: newClass.section,
-//       });
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (!user) return;
-//     const userId = user?.emailAddresses[0]?.emailAddress;
-//     const usersDocRef = doc(db, "Users", userId ? userId : "");
-//     const classesRef = collection(usersDocRef, "Classes");
-//     const q = query(classesRef);
-
-//     const unsubscribe = onSnapshot(
-//       q,
-//       (querySnapshot) => {
-//         const classOptions = querySnapshot.docs.map((doc) => ({
-//           value: doc.id,
-//           label: doc.id,
-//         }));
-//         setClasses(classOptions);
-//       },
-//       (error) => {
-//         console.error("Error getting documents: ", error);
-//       },
-//     );
-
-//     return () => unsubscribe();
-//   }, [user]);
-
-//   return classes.length > 0;
-// }
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -86,17 +25,8 @@ export default function FeedPage() {
   );
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
-  const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
   const shouldFilter = (group: groupDetails) => {
-    const isFull = group.participantDetails.length >= group.totalSeats;
-    const isParticipant = joinedGroups?.includes(group.id);
     const groupDate = group.startTime.toDate();
-    if (isFull && !showFullFilter && !isParticipant) {
-      // @David Fish
-      // Please add full group filter
-      // And show own groups filter
-      return true;
-    }
     if (isInThePast(group.startTime)) return true;
 
     if (selectedDate) {
@@ -235,11 +165,11 @@ export default function FeedPage() {
         </div>
         <div>
           {
-            <Details
+            <Card
               details={showDetails!}
               onClick={() => setShowDetails(null)}
               updateJoinedGroups={setJoinedGroups}
-            ></Details>
+            ></Card>
           }
         </div>
       </div>

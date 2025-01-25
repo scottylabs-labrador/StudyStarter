@@ -20,13 +20,12 @@ const Courses: React.FC = () => {
     const fetchCourses = async () => {
     try {
     const response = await axios.get<Course[]>(
-    "https://course-tools.apis.scottylabs.org/courses/all"
-    );
+    "https://course-tools.apis.scottylabs.org/courses/all");
     setCourses(response.data); // Store the entire course list
     setLoading(false);
     } catch (err) {
-    console.error(err);
-    setLoading(false);
+      console.error(err);
+      setLoading(false);
     }
     };
   
@@ -120,39 +119,12 @@ const Courses: React.FC = () => {
             searchQuery && <p className="dark:text-white text-black">No courses found.</p>
           )}
         </div>
-
-
-
     );
   };
-
-
-// interface Class {
-//   title: string;
-//   professor: string;
-//   section: string;
-// }
 
 export function ClassList() {
   const { user } = useUser();
   var [classes, setClasses] = useState<any[]>([]);
-  const [newClass, setNewClass] = useState({ title: '', professor: '', section: '' });
-
-  const addClass = () => {
-    if (newClass.title && newClass.professor && newClass.section) {
-
-      setNewClass({ title: '', professor: '', section: '' });
-      
-      const userId = user?.emailAddresses[0]?.emailAddress;
-      const usersDocRef = doc(db, "Users", userId? userId : "");
-      const classesRef = collection(usersDocRef, "Classes");
-      setDoc(doc(classesRef, newClass.title), {
-        title: newClass.title,
-        professor: newClass.professor,
-        section: newClass.section,
-      });
-    }
-  };
 
   const deleteClass = (cls: any) => {
     const userId = user?.emailAddresses[0]?.emailAddress;
@@ -184,13 +156,12 @@ export function ClassList() {
       <div className="mt-8">
         <Courses />
         <br></br>
-        <h2 className="text-xl font-bold mb-0 text-black dark:text-white mb-2">My Classes</h2>
+        <h2 className="text-xl font-bold text-black dark:text-white mb-2">My Classes</h2>
         <ul className="mt-212 space-y-2">
           {classes.map((cls) => (
             <li
               key={cls.id}
-              className="text-black dark:text-white dark:bg-darkSidebar bg-lightSidebar p-2 rounded w-full flex justify-between items-center"
-            >
+              className="text-black dark:text-white dark:bg-darkSidebar bg-lightSidebar p-2 rounded w-full flex justify-between items-center">
               <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
                 <strong>{cls.courseID}</strong> - {cls.name}
               </div>
@@ -205,7 +176,6 @@ export function ClassList() {
         </ul>
       </div>
 
-    
   );
 
 }
