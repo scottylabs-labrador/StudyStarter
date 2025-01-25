@@ -131,7 +131,7 @@ export default function FeedPage() {
     // const [lightColor, darkColor] = cardColorMapping.get(
     //   joinedGroups ? joinedGroups.includes(group.id) : false,
     // )!;
-
+    const isInGroup = joinedGroups ? joinedGroups.includes(group.id) : false;
     const [lightColor, darkColor] = cardColorMapping.get(group.id === selectedGroup)!;
     if (shouldFilter(group)) return;
     return (
@@ -158,9 +158,9 @@ export default function FeedPage() {
           <li className="font-bold"> Location: &nbsp; </li>{" "}
           <li>{group.location}</li>
         </ul>
-        <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
+        {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
           <li className="bg-joined text-joinedText px-3 py-1 rounded-md">Joined</li>
-        </ul>
+        </ul>}
       </div>
     );
   });
