@@ -21,8 +21,9 @@ export default {
     colors: {
       'white': '#FFFFFF',
       'lightbg': '#F0F4F8',
-      'lightBlush': '#e5abf6',
+      'lightBlush': '#F4EFF8',
       'lightSidebar': '#DDEAF0',
+      'lightHighlight': '#0CA8EF',
       'black': '#000000',
       'lightGrey': '#F3F7F8',
       'darkbg': '#161616',
