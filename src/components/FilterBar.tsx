@@ -39,14 +39,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           classNamePrefix="react-select"
           placeholder="Courses"
         />
-        <Select
-          isMulti
-          options={locationOptions}
-          value={selectedLocations}
-          onChange={setSelectedLocations}
-          classNamePrefix="react-select"
-          placeholder="Locations"
-        />
+        
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}

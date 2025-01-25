@@ -31,6 +31,8 @@ export default {
       'darkAccent': '#275163',
       'darkHighlight': '#C9DEE7',
       'darkSelected': '#0CA8EF',
+      'joined':'#E8FEF0',
+      'joinedText':'#74A385'
     }
   },
   plugins: [

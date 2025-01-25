@@ -180,7 +180,7 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
         className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px] border-2 ${
           joinedState
             ? " bg-lightHighlight text-white"
-            : "text-black"
+            : "dark: text-white text-black"
         }`}
         onClick={joinGroup}
       >

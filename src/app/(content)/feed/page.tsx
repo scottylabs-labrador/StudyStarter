@@ -158,6 +158,9 @@ export default function FeedPage() {
           <li className="font-bold"> Location: &nbsp; </li>{" "}
           <li>{group.location}</li>
         </ul>
+        <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
+          <li className="bg-joined text-joinedText px-3 py-1 rounded-md">Joined</li>
+        </ul>
       </div>
     );
   });
