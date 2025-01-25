@@ -28,7 +28,7 @@ function ProfilePage() {
         <div className="mt-4 text-center">
           <strong>About Me:</strong> {aboutSection}
         </div>
-        <button className="mt-4 rounded-lg px-4 py-2 font-bold  bg-darkAccent">
+        <button className="mt-4 rounded-lg px-4 py-2 font-bold bg-lightHighlight  text-white">
           Edit Profile
         </button>
       </div>
@@ -36,7 +36,7 @@ function ProfilePage() {
         <h2 className="mb-2 text-2xl  ">
           Majors and Minors
         </h2>
-        <div className="w-60 rounded-md border bg-darkHighlight p-2 text-center">
+        <div className="w-60 rounded-md bg-darkHighlight p-2 text-center dark:text-black">
           {majorsAndMinorsText}
         </div>
       </div>

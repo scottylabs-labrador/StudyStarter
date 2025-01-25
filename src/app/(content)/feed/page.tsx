@@ -36,6 +36,7 @@ export default function FeedPage() {
     setShowDetails(group);
   }
   const shouldFilter = (group: groupDetails) => {
+    console.log("Filter HERE")
     const isFull = group.participantDetails.length >= group.totalSeats;
     const isParticipant = joinedGroups?.includes(group.id);
     const groupDate = group.startTime.toDate();
@@ -117,7 +118,10 @@ export default function FeedPage() {
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-
+    // const [lightColor, darkColor] = cardColorMapping.get(
+    //   joinedGroups ? joinedGroups.includes(group.id) : false,
+    // )!;
+    const isInGroup = joinedGroups ? joinedGroups.includes(group.id) : false;
     const [lightColor, darkColor] = cardColorMapping.get(group.id === selectedGroup)!;
     if (shouldFilter(group)) return;
     return (
@@ -144,6 +148,9 @@ export default function FeedPage() {
           <li className="font-bold"> Location: &nbsp; </li>{" "}
           <li>{group.location}</li>
         </ul>
+        {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
+          <li className="bg-joined text-joinedText px-3 py-1 rounded-md">Joined</li>
+        </ul>}
       </div>
     );
   });
