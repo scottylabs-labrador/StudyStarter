@@ -177,10 +177,10 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
 
       {/* Join Button */}
       <button
-        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] border-2 p-[10px] ${
+        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px] border-2 ${
           joinedState
-            ? "border-blue-500 bg-[#226cf5]"
-            : "border-white bg-[darkSelected]"
+            ? " bg-lightHighlight text-white"
+            : "text-black"
         }`}
         onClick={joinGroup}
       >
