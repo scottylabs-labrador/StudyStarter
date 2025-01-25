@@ -21,8 +21,9 @@ export default {
     colors: {
       'white': '#FFFFFF',
       'lightbg': '#F0F4F8',
-      'lightBlush': '#a297d8',
+      'lightBlush': '#F4EFF8',
       'lightSidebar': '#DDEAF0',
+      'lightHighlight': '#0CA8EF',
       'black': '#000000',
       'lightGrey': '#F3F7F8',
       'darkbg': '#161616',
@@ -30,6 +31,8 @@ export default {
       'darkAccent': '#275163',
       'darkHighlight': '#C9DEE7',
       'darkSelected': '#0CA8EF',
+      'joined':'#E8FEF0',
+      'joinedText':'#74A385'
     }
   },
   plugins: [

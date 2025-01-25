@@ -29,7 +29,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   setSelectedDate,
 }) => {
   return (
-    <div className="border-gray-200 dark:border-gray-700 left-50 fixed top-0 z-10 w-full border-b bg-lightbg px-6 py-4 shadow-md dark:bg-darkbg">
+    <div className="border-gray-200 dark:border-gray-700 fixed top-0 z-10 w-full border-b bg-white px-6 py-4  dark:bg-darkbg">
       <div className="flex space-x-4">
         <Select
           isMulti
@@ -39,14 +39,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           classNamePrefix="react-select"
           placeholder="Courses"
         />
-        <Select
-          isMulti
-          options={locationOptions}
-          value={selectedLocations}
-          onChange={setSelectedLocations}
-          classNamePrefix="react-select"
-          placeholder="Locations"
-        />
+        
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
