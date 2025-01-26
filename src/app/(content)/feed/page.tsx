@@ -149,7 +149,7 @@ export default function FeedPage() {
           <li>{group.location}</li>
         </ul>
         {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
-          <li className="bg-joined text-joinedText px-3 py-1 rounded-md">Joined</li>
+          <li className="bg-joined text-joinedText px-3 py-1 rounded-md -mt-8">Joined</li>
         </ul>}
       </div>
     );
