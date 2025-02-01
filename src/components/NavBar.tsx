@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
@@ -21,32 +21,27 @@ export default function NavBar() {
   const isCreateGroupModalOpen = useAppSelector(
     (state) => state.ui.isCreateGroupModalOpen,
   );
+  const [theme, setTheme] = useState("dark")
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
   useEffect(() => {
-    const theme = localStorage.getItem("theme");
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
+    const storedTheme = localStorage.getItem("theme")
+    if (storedTheme) {
+      setTheme(storedTheme);
     }
   }, []);
 
   const toggleTheme = () => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-      document.getElementById("mode")!.innerHTML = "Dark Mode";
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-      document.getElementById("mode")!.innerHTML = "Light Mode";
-    }
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark");
   };
 
   const getTheme = () => {
-    const themey = localStorage.getItem("theme");
-    if (themey === "dark") {
+    if (theme === "dark") {
       return (
         <button
           onClick={toggleTheme}
@@ -75,13 +70,13 @@ export default function NavBar() {
         <div className="text-lg font-bold">CMU Meets</div>
         <a
           href="/feed"
-          className={page == "feed" ? "font-bold dark:text-darkAccent" : ""}
+          className={page == "feed" ? "font-bold dark:text-darkSelected" : ""}
         >
           Feed
         </a>
         <a
           href="/myGroup"
-          className={page == "myGroup" ? "font-bold dark:text-darkAccent" : ""}
+          className={page == "myGroup" ? "font-bold dark:text-darkSelected" : ""}
         >
           My Group
         </a>
@@ -99,10 +94,10 @@ export default function NavBar() {
 
         <a
           href="/profile"
-          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-darkAccent font-bold shadow-lg"
+          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
           style={{ zIndex: 1000 }}
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+          <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
             <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
           </svg>
         </a>

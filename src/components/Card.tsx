@@ -11,6 +11,7 @@ import {
   onSnapshot,
   increment,
   setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
@@ -21,7 +22,7 @@ interface Props {
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 
-const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
+const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
@@ -104,8 +105,19 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
         if (!prev) return null;
         return prev.filter((item) => item !== currentDetails.id);
       });
+
+      const updatedGroupSnap = await getDoc(groupDocRef);
+      if (updatedGroupSnap.exists()) {
+        const updatedData = updatedGroupSnap.data();
+        if (
+          !updatedData.participantDetails ||
+          updatedData.participantDetails.length === 0
+        ) {
+          await deleteDoc(groupDocRef);
+          onClick();
+        }
+      }
     }
-    // updateJoinedGroups(prev => !prev);
   };
 
   if (!currentDetails) return null;
@@ -113,7 +125,7 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
     currentDetails.startTime,
   );
   return (
-    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-white p-[1rem]">
+    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-lightBlush dark:bg-darkAccent text-black dark:text-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
         <button className="mb-[-12px] me-5 mt-3 text-[20px]" onClick={onClick}>
@@ -171,16 +183,16 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
 
       {/* Details Section */}
       <strong className="font-['Verdana'] text-[20px]">Details:</strong>
-      <div className="mx-auto mb-3 mt-[10px] h-[8rem] max-w-[20rem] rounded-[10px] bg-[#e0ded7] p-[5px]">
+      <div className="mx-auto mb-3 mt-[10px] h-[8rem] max-w-[20rem] rounded-[10px] border-2 p-[5px]">
         {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
       </div>
 
       {/* Join Button */}
       <button
-        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] border-4 p-[10px] ${
+        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px] border-2 ${
           joinedState
-            ? "border-blue-500 bg-[#226cf5]"
-            : "border-black bg-[#f5f4f0]"
+            ? " bg-lightHighlight text-white"
+            : "dark: text-black"
         }`}
         onClick={joinGroup}
       >
@@ -190,4 +202,4 @@ const Details = ({ onClick, details, updateJoinedGroups }: Props) => {
   );
 };
 
-export default Details;
+export default Card;
