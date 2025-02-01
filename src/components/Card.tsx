@@ -11,6 +11,7 @@ import {
   onSnapshot,
   increment,
   setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
@@ -104,8 +105,21 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         if (!prev) return null;
         return prev.filter((item) => item !== currentDetails.id);
       });
+
+      const updatedGroupSnap = await getDoc(groupDocRef);
+      if (updatedGroupSnap.exists()) {
+        const updatedData = updatedGroupSnap.data();
+        if (
+          !updatedData.participantDetails ||
+          updatedData.participantDetails.length === 0
+        ) {
+          // 4. Delete the group
+          await deleteDoc(groupDocRef);
+          onClick();
+        }
+      }
     }
-    // updateJoinedGroups(prev => !prev);
+    
   };
 
   if (!currentDetails) return null;

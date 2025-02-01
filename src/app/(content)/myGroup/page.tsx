@@ -20,9 +20,7 @@ export default function FeedPage() {
     MultiValue<{ value: string; label: string }>
   >([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [classes, setClasses] = useState<{ value: string; label: string }[]>(
-    [],
-  );
+  const [classes, setClasses] = useState<{ value: string; label: string }[]>([]);
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const shouldFilter = (group: groupDetails) => {
