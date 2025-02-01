@@ -77,7 +77,7 @@ export default function NavBar() {
           href="/myGroup"
           className={page == "myGroup" ? "font-bold dark:text-darkSelected" : ""}
         >
-          My Group
+          My Groups
         </a>
         <button
           onClick={handleCreateGroupClick}
