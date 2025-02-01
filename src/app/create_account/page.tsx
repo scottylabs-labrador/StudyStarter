@@ -30,7 +30,7 @@ export default function ProfilePage() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         year = docSnap.data().year;
-        document.getElementById("yearSelect").value = year;
+        document.getElementById("yearSelect").value = (year != undefined)? year : "default";
         return year;
       } else {
         console.log("No such document!");
@@ -47,7 +47,7 @@ export default function ProfilePage() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         majors = docSnap.data().majors;
-        document.getElementById("majorInput").value = majors;
+        document.getElementById("majorInput").value = (majors != undefined)? majors : "";
         return majors;
       } else {
         console.log("No such document!");
@@ -64,7 +64,7 @@ export default function ProfilePage() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         minors = docSnap.data().minors;
-        document.getElementById("minorInput").value = minors;
+        document.getElementById("minorInput").value = (minors != undefined)? minors : "";
         return minors;
       } else {
         console.log("No such document!");
@@ -149,9 +149,10 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-4 dark:text-white text-back">Majors:</h1>
       <input
         id="majorInput"
-        className="text-black border border-gray-300 rounded p-2 w-full mb-0"
+        className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightbg"
         type="text"
         onChange={changeMajors}
+        placeholder="Add your majors here"
         required
       />
       <br></br>
@@ -159,10 +160,10 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-4 dark:text-white text-back">Minors:</h1>
       <input
         id="minorInput"
-        className="text-black border border-gray-300 rounded p-2 w-full mb-0"
+        className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightbg"
         type="text"
         onChange={changeMinors}
-        required
+        placeholder="Add your minors or concentrations here or none if you don't have any"
       />  
       <ClassList />
       <br></br>
