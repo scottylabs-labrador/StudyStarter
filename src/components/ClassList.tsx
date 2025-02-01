@@ -15,6 +15,30 @@ const Courses: React.FC = () => {
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  var [classes, setClasses] = useState<any[]>([]);
+
+  useEffect(() => {
+        if (!user) return;
+        const userId = user?.emailAddresses[0]?.emailAddress;
+        const usersDocRef = doc(db, "Users", userId? userId : "");
+        const classesRef = collection(usersDocRef, "Classes");
+        const q = query(classesRef);
+    
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const classes = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+          }));
+          setClasses(classes)
+        }, (error) => {
+          console.error('Error getting documents: ', error);
+        });
+    
+        return () => unsubscribe();
+      }, [user]);
+
+  // for (let i = 0; i < classes.length; i++) {
+  //   classes[i] = classes[i].courseID;
+  // }
   
   useEffect(() => {
     const fetchCourses = async () => {
@@ -34,8 +58,9 @@ const Courses: React.FC = () => {
     }, []);
   
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-  var query = event.target.value.toLowerCase();
-  setSearchQuery(query);
+  if (event) {
+    var query = event.target.value.toLowerCase();
+    setSearchQuery(query);
   
   if (query === "") {
     setFilteredCourses([]);
@@ -47,12 +72,24 @@ const Courses: React.FC = () => {
  // document.getElementById("searchBar").value = query;
   setSearchQuery(query);
   }
+  } else {
+    var query = document.getElementById("searchBar").value.toLowerCase();
+    console.log(query)
+  }
   
   // Filter courses and limit to the top 10
+  if (typeof classes[0] == "object") {
+    for (let i = 0; i < classes.length; i++) {
+      console.log(typeof classes[i])
+      classes[i] = classes[i].courseID;
+    }
+  }
+  console.log(classes);
   const filtered = courses
   .filter((course) =>
-  course.name.toLowerCase().includes(query) || 
-  course.courseID.toLowerCase().includes(query)
+  (course.name.toLowerCase().includes(query) || 
+  course.courseID.toLowerCase().includes(query)) &&
+  !(classes.includes(course.courseID))
   )
  .slice(0, 10);
   
@@ -65,9 +102,11 @@ const Courses: React.FC = () => {
         const usersDocRef = doc(db, "Users", userId? userId : "");
         const classesRef = collection(usersDocRef, "Classes");
         await setDoc(doc(classesRef, course.courseID), course);
+        classes.push(course.courseID);
       } catch (err) {
         console.error(err);
       }
+      handleSearch(null);
     }
   
     if (loading) return <p className='text-white'>Loading...</p>;
