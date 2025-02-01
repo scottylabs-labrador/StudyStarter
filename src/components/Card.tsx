@@ -113,13 +113,11 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           !updatedData.participantDetails ||
           updatedData.participantDetails.length === 0
         ) {
-          // 4. Delete the group
           await deleteDoc(groupDocRef);
           onClick();
         }
       }
     }
-    
   };
 
   if (!currentDetails) return null;
