@@ -21,22 +21,21 @@ export default function NavBar() {
   const isCreateGroupModalOpen = useAppSelector(
     (state) => state.ui.isCreateGroupModalOpen,
   );
-  const [theme, setTheme] = useState("dark")
+  const [theme, setTheme] = useState("light")
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme")
-    if (storedTheme) {
-      setTheme(storedTheme);
+    if(theme === 'dark'){
+      document.querySelector('html')?.classList.add('dark');
+    }else{
+      document.querySelector('html')?.classList.remove('dark');
     }
-  }, []);
+  }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
+    setTheme( theme === "light" ? "dark" : "light");
     document.documentElement.classList.toggle("dark");
   };
 
@@ -72,7 +71,7 @@ export default function NavBar() {
           href="/feed"
           className={page == "feed" ? "font-bold dark:text-darkSelected" : ""}
         >
-          Feed
+          Group Finder
         </a>
         <a
           href="/myGroup"
