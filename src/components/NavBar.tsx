@@ -93,7 +93,7 @@ export default function NavBar() {
 
         <a
           href="/profile"
-          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
+          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-darkAccent font-bold shadow-lg"
           style={{ zIndex: 1000 }}
         >
           <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">

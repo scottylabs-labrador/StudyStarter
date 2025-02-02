@@ -123,18 +123,9 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold dark:text-white">{displayName}</h1>
           <p className="dark:text-white">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
-        <div className="ml-auto">
-          <SignOutButton>
-            <button
-              className="px-4 py-2 bg-gray-200   text-white font-bold rounded-lg bg-darkAccent"
-            >
-              Logout
-            </button>
-          </SignOutButton>
-        </div>
       </div>
       <div>
-        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 border-2 text-black hover:bg-lightSidebar dark:bg-darkSidebar dark:hover:bg-darkAccent dark:hover:border-darkbg dark:text-white font-bold rounded-lg margintop-100 hover:bg-gray-300 bg-lightbg">
+        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 border-2 text-black bg-lightbg dark:bg-lightSidebar hover:bg-lightSidebar dark:bg-darkSidebar dark:hover:bg-darkAccent dark:hover:border-darkbg font-bold rounded-lg margintop-100 hover:bg-gray-300">
           <option disabled selected value={"default"}>Select Year</option>
           <option value={years[0]}>Class of {years[0]}</option>
           <option value={years[1]}>Class of {years[1]}</option>
@@ -149,7 +140,7 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-4 dark:text-white text-back">Majors:</h1>
       <input
         id="majorInput"
-        className="text-black border border-gray-300 bg-lightbg rounded p-2 w-full mb-0"
+        className="text-black border border-gray-300 bg-lightbg dark:bg-lightSidebar rounded p-2 w-full mb-0"
         type="text"
         onChange={changeMajors}
         placeholder="Add your majors here"
@@ -160,7 +151,7 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-4 dark:text-white text-back">Minors:</h1>
       <input
         id="minorInput"
-        className="text-black border border-gray-300 bg-lightbg rounded p-2 w-full mb-0"
+        className="text-black border border-gray-300 bg-lightbg dark:bg-lightSidebar rounded p-2 w-full mb-0"
         type="text"
         onChange={changeMinors}
         placeholder="Add your minors or concentrations here or none if you don't have any"
