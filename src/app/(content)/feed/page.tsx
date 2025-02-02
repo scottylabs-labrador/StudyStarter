@@ -36,7 +36,6 @@ export default function FeedPage() {
     setShowDetails(group);
   }
   const shouldFilter = (group: groupDetails) => {
-    console.log("Filter HERE")
     const isFull = group.participantDetails.length >= group.totalSeats;
     const isParticipant = joinedGroups?.includes(group.id);
     const groupDate = group.startTime.toDate();

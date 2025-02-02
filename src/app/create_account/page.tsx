@@ -16,15 +16,43 @@ function ContinueButton() {
 
 export default function ProfilePage() {
   const { user } = useUser();
+  const userId = user?.emailAddresses[0]?.emailAddress;
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();
   const years = [(startYear).toString(), (startYear+1).toString(), (startYear+2).toString(), (startYear+3).toString(), (startYear+4).toString(), (startYear+5).toString()];
+  var theme = "dark";
   var year = "default";
   var majors = "";
   var minors = "";
 
+  async function getThemeData() {
+    try {
+      const docRef = doc(db, "Users", userId? userId : "");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        theme = docSnap.data().theme;
+        if(theme === 'dark'){
+          document.querySelector('html')?.classList.add('dark');
+        }else{
+          document.querySelector('html')?.classList.remove('dark');
+        }
+        const modeButton = document.getElementById("mode");
+        if (modeButton) {
+          modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
+        }
+        console.log(theme);
+        return theme;
+      } else {
+        console.log("No such document!");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  getThemeData();
+
   async function getYear() {
-    const userId = user?.emailAddresses[0]?.emailAddress;
     try {
       const docRef = doc(db, "Users", userId? userId : "");
       const docSnap = await getDoc(docRef);
@@ -41,7 +69,6 @@ export default function ProfilePage() {
   }
 
   async function getMajors() {
-    const userId = user?.emailAddresses[0]?.emailAddress;
     try {
       const docRef = doc(db, "Users", userId? userId : "");
       const docSnap = await getDoc(docRef);
@@ -58,7 +85,6 @@ export default function ProfilePage() {
   }
 
   async function getMinors() {
-    const userId = user?.emailAddresses[0]?.emailAddress;
     try {
       const docRef = doc(db, "Users", userId? userId : "");
       const docSnap = await getDoc(docRef);
@@ -120,8 +146,8 @@ export default function ProfilePage() {
           className="w-20 h-20 rounded-full"
         />
         <div className="ml-4">
-          <h1 className="text-2xl font-bold ">{displayName}</h1>
-          <p className="">{user?.emailAddresses[0]?.emailAddress}</p>
+          <h1 className="text-2xl font-bold dark:text-white">{displayName}</h1>
+          <p className="dark:text-white">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
         <div className="ml-auto">
           <SignOutButton>
@@ -134,7 +160,7 @@ export default function ProfilePage() {
         </div>
       </div>
       <div>
-        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 border-2 text-black hover:bg-lightSidebar dark:hover:bg-darkAccent dark:hover:border-darkbg dark:text-white font-bold rounded-lg margintop-100 hover:bg-gray-300 bg-lightbg">
+        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 border-2 text-black bg-lightbg dark:bg-lightSidebar hover:bg-lightSidebar dark:bg-darkSidebar dark:hover:bg-darkAccent dark:hover:border-darkbg font-bold rounded-lg margintop-100 hover:bg-gray-300">
           <option disabled selected value={"default"}>Select Year</option>
           <option value={years[0]}>Class of {years[0]}</option>
           <option value={years[1]}>Class of {years[1]}</option>
@@ -149,7 +175,7 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-4 dark:text-white text-back">Majors:</h1>
       <input
         id="majorInput"
-        className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightbg"
+        className="text-black border border-gray-300 bg-lightbg dark:bg-lightSidebar rounded p-2 w-full mb-0"
         type="text"
         onChange={changeMajors}
         placeholder="Add your majors here"
@@ -160,7 +186,7 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-4 dark:text-white text-back">Minors:</h1>
       <input
         id="minorInput"
-        className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightbg"
+        className="text-black border border-gray-300 bg-lightbg dark:bg-lightSidebar rounded p-2 w-full mb-0"
         type="text"
         onChange={changeMinors}
         placeholder="Add your minors or concentrations here or none if you don't have any"

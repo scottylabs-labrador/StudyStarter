@@ -12,8 +12,14 @@ import { usePathname } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
 import { useAppSelector } from "~/lib/hooks";
 import { useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { db } from '~/lib/api/firebaseConfig';
+import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
+
 
 export default function NavBar() {
+  const { user } = useUser();
+  const userId = user?.emailAddresses[0]?.emailAddress;
   const dispatch = useDispatch();
   const pathname = usePathname();
   const page = pathname.split("/")[1];
@@ -21,26 +27,72 @@ export default function NavBar() {
   const isCreateGroupModalOpen = useAppSelector(
     (state) => state.ui.isCreateGroupModalOpen,
   );
-  const [theme, setTheme] = useState("light")
+  // var [theme, setTheme] = useState("light")
+  var theme = "light";
+  
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
-  useEffect(() => {
+  async function getThemeData() {
+    try {
+      const docRef = doc(db, "Users", userId? userId : "");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        theme = docSnap.data().theme;
+        if(theme === 'dark'){
+          document.querySelector('html')?.classList.add('dark');
+        }else{
+          document.querySelector('html')?.classList.remove('dark');
+        }
+        const modeButton = document.getElementById("mode");
+        if (modeButton) {
+          modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
+        }
+        console.log(theme);
+        return theme;
+      } else {
+        console.log("No such document!");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  getThemeData();
+  
+  const updateTheme = async () => {
+    // theme = document.getElementById("yearSelect").value;
+    const userId = user?.emailAddresses[0]?.emailAddress;
+    try {
+      const usersDocRef = doc(db, "Users", userId? userId : "");
+      console.log(theme);
+      await setDoc(usersDocRef, { theme: theme }, { merge: true });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const toggleTheme = () => {
+    theme = (theme == "light") ? "dark" : "light";
+    document.documentElement.classList.toggle("dark");
+    console.log(theme);
     if(theme === 'dark'){
       document.querySelector('html')?.classList.add('dark');
     }else{
       document.querySelector('html')?.classList.remove('dark');
     }
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme( theme === "light" ? "dark" : "light");
-    document.documentElement.classList.toggle("dark");
+    const modeButton = document.getElementById("mode");
+    if (modeButton) {
+      modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
+    }
+    updateTheme();
   };
 
   const getTheme = () => {
-    if (theme === "dark") {
+    console.log(theme);
+    if (theme == "dark") {
+      console.log("show light mode");
       return (
         <button
           onClick={toggleTheme}

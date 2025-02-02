@@ -16,6 +16,7 @@ function ContinueButton() {
 
 export default function ProfilePage() {
   const { user } = useUser();
+  const userId = user?.emailAddresses[0]?.emailAddress;
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();
   const years = [(startYear).toString(), (startYear+1).toString(), (startYear+2).toString(), (startYear+3).toString(), (startYear+4).toString(), (startYear+5).toString()];
@@ -24,7 +25,6 @@ export default function ProfilePage() {
   var minors = "";
 
   async function getYear() {
-    const userId = user?.emailAddresses[0]?.emailAddress;
     try {
       const docRef = doc(db, "Users", userId? userId : "");
       const docSnap = await getDoc(docRef);
@@ -41,7 +41,6 @@ export default function ProfilePage() {
   }
 
   async function getMajors() {
-    const userId = user?.emailAddresses[0]?.emailAddress;
     try {
       const docRef = doc(db, "Users", userId? userId : "");
       const docSnap = await getDoc(docRef);
@@ -58,7 +57,6 @@ export default function ProfilePage() {
   }
 
   async function getMinors() {
-    const userId = user?.emailAddresses[0]?.emailAddress;
     try {
       const docRef = doc(db, "Users", userId? userId : "");
       const docSnap = await getDoc(docRef);
