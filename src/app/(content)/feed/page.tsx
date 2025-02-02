@@ -3,7 +3,7 @@ import Card from "~/components/Card";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
-import { collection, query, onSnapshot, doc,} from "firebase/firestore";
+import { collection, query, onSnapshot, doc } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
@@ -36,7 +36,6 @@ export default function FeedPage() {
     setShowDetails(group);
   }
   const shouldFilter = (group: groupDetails) => {
-    console.log("Filter HERE")
     const isFull = group.participantDetails.length >= group.totalSeats;
     const isParticipant = joinedGroups?.includes(group.id);
     const groupDate = group.startTime.toDate();
@@ -69,10 +68,7 @@ export default function FeedPage() {
 
   useEffect(() => {
     if (!user) return;
-    (async () => {
-      const updatedJoinedGroups = await returnUserGroups(db, user);
-      setJoinedGroups(updatedJoinedGroups);
-    })();
+    
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
@@ -113,6 +109,21 @@ export default function FeedPage() {
         console.error("Error getting documents: ", error);
       },
     );
+    return () => unsubscribe();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const userId = user.emailAddresses[0]?.emailAddress;
+  
+    const userDocRef = doc(db, "Users", userId ? userId : "");
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setJoinedGroups(data.joinedGroups || []);
+      }
+    });
+  
     return () => unsubscribe();
   }, [user]);
 

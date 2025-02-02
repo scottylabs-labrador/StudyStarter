@@ -23,7 +23,7 @@ export function formatDateTime(
   return [`${month}/${day}/${year}`, `${hours}:${minutes} ${ampm}`];
 };
 export function isInThePast(timestamp: Timestamp) {
-  console.log("isInThePast")
+  // console.log("isInThePast")
   const groupDate = timestamp.toDate();
   const now = new Date();
   if (groupDate.getFullYear() > now.getFullYear()) {

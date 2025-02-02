@@ -51,10 +51,7 @@ export default function FeedPage() {
 
   useEffect(() => {
     if (!user) return;
-    (async () => {
-      const updatedJoinedGroups = await returnUserGroups(db, user);
-      setJoinedGroups(updatedJoinedGroups);
-    })();
+
     const classesRef = collection(db, "Study Groups");
     const q = query(classesRef);
 
@@ -74,6 +71,21 @@ export default function FeedPage() {
 
     return () => unsubscribe();
   }, [user]);
+
+  useEffect(() => {
+      if (!user) return;
+      const userId = user.emailAddresses[0]?.emailAddress;
+    
+      const userDocRef = doc(db, "Users", userId ? userId : "");
+      const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setJoinedGroups(data.joinedGroups || []);
+        }
+      });
+    
+      return () => unsubscribe();
+    }, [user]);
 
   useEffect(() => {
     if (!user) return;

@@ -5,7 +5,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 export default {
 
   content: ["./src/**/*.tsx"],
-  darkMode: 'selector',
+  darkMode: 'class',
   safelist: [
     'bg-lightBlush',
     'dark:bg-darkAccent',
