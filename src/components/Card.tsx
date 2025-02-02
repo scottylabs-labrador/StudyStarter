@@ -1,7 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import groupDetails from "~/types";
+import {
+  setIsProfileOpen,
+  setIsViewProfileOpen,
+} from "~/lib/features/uiSlice";
 import { useUser } from "@clerk/nextjs";
+import CreateProfilePopUp from "./CreateProfilePopUp";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "~/lib/hooks";
 import {
   updateDoc,
   arrayUnion,
@@ -27,6 +34,16 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
   const [currentDetails, setCurrentDetails] = useState(details);
+
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
+  const isViewProfileOpen = useAppSelector(
+    (state) => state.ui.isViewProfileOpen,
+  );
+
+  const handleViewProfileClick = () => {
+    dispatch(setIsViewProfileOpen(true));
+  };
 
   useEffect(() => {
     if (!details || !user) return;
@@ -170,6 +187,10 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         <div className="h-20 overflow-y-scroll p-[10px]">
           {currentDetails.participantDetails.map((participantDetail, index) => (
             <div key={index} className="flex items-center p-[5px]">
+              <button
+              onClick={handleViewProfileClick}
+              className = "flex items-center p-[5px]"
+              >
               <img
                 className="h-[2rem] w-[2rem] rounded-full"
                 src={participantDetail.url}
@@ -178,6 +199,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
                 Name:
               </strong>{" "}
               {participantDetail.name}
+              </button>
             </div>
           ))}
         </div>
@@ -200,6 +222,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       >
         {joinedState ? "Joined" : "Join"}
       </button>
+      <CreateProfilePopUp/>
     </div>
   );
 };

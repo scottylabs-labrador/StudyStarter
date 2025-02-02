@@ -110,7 +110,7 @@ export default function NavBar() {
       </div>
 
       <UploadModal />
-      <CreateGroupModal />
+      <CreateGroupModal/>
     </Fragment>
   );
 }

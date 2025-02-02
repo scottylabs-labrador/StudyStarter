@@ -41,10 +41,17 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
         />
         
         <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
+          // selected={selectedDate}
+          // onChange={(date) => setSelectedDate(date)}
+          // className="rounded-md border px-2 py-1.5"
+          // placeholderText="Date"
+
           className="rounded-md border px-2 py-1.5"
-          placeholderText="Date"
+          type="date"
+          placeholder="Date"
+          //value={date}
+          selected={selectedDate}
+          onChange={(e) => setSelectedDate(date)}
         />
       </div>
     </div>
