@@ -34,6 +34,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
   const [currentDetails, setCurrentDetails] = useState(details);
+  const [viewUser, setViewUser] = useState<string | null>(null);
+  const [viewEmail, setViewEmail] = useState<string | null>(null);
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
@@ -41,7 +43,11 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     (state) => state.ui.isViewProfileOpen,
   );
 
-  const handleViewProfileClick = () => {
+  // var viewUser = null;
+
+  const handleViewProfileClick = (event) => {
+    setViewUser(event.currentTarget.getAttribute('data-username'));
+    setViewEmail(event.currentTarget.getAttribute('data-email'));
     dispatch(setIsViewProfileOpen(true));
   };
 
@@ -145,8 +151,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-lightBlush dark:bg-darkAccent text-black dark:text-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
-        <button className="mb-[-12px] me-5 mt-3 text-[20px]" onClick={onClick}>
-          X
+        <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
+          <big>&times;</big>
         </button>
       </div>
 
@@ -186,17 +192,19 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           {currentDetails.participantDetails.map((participantDetail, index) => (
             <div key={index} className="flex items-center p-[5px]">
               <button
-              onClick={handleViewProfileClick}
-              className = "flex items-center p-[5px]"
-              >
-              <img
-                className="h-[2rem] w-[2rem] rounded-full"
-                src={participantDetail.url}
-              />
-              <strong className="indent-[2rem] font-['Verdana'] text-[16px]">
-                Name:
-              </strong>{" "}
-              {participantDetail.name}
+                onClick={handleViewProfileClick}
+                className = "flex items-center p-[5px]"
+                data-username={participantDetail.name}
+                data-email={participantDetail.email}
+                >
+                <img
+                  className="h-[2rem] w-[2rem] rounded-full"
+                  src={participantDetail.url}
+                />
+                <strong className="indent-[2rem] font-['Verdana'] text-[16px]">
+                  Name:
+                </strong>{" "}
+                {participantDetail.name}
               </button>
             </div>
           ))}
@@ -220,7 +228,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       >
         {joinedState ? "Joined" : "Join"}
       </button>
-      <CreateProfilePopUp/>
+      {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
     </div>
   );
 };

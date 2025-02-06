@@ -149,8 +149,8 @@ export default function CreateGroupModal() {
       <div className="w-96 rounded-lg p-8 dark:bg-darkHighlight bg-lightSidebar">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">Create New Study Group</h2>
-          <button onClick={handleClose} className="text-xl">
-            &times;
+          <button onClick={handleClose} className="text-xl font-bold">
+            <big>&times;</big>
           </button>
         </div>
         <form onSubmit={handleSubmit}>

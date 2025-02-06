@@ -3,6 +3,34 @@ import Select, { MultiValue } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+interface CustomInputProps {
+  value?: string;
+  onClick?: () => void;
+  onClear?: () => void;
+}
+
+const CustomDateInput: React.FC<CustomInputProps> = ({ value, onClick, onClear }) => {
+  return (
+    <div className="relative w-full">
+      <input
+        type="text"
+        value={value || ""}
+        onClick={onClick}
+        readOnly
+        placeholder="Date"
+        className="rounded-md border px-2 py-1.5"
+      />
+      {value && (
+        <button
+          onClick={onClear}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+        >&times;
+        </button>
+      )}
+    </div>
+  );
+};
+
 interface TopFilterBarProps {
   courseOptions: { value: string; label: string }[];
   locationOptions: { value: string; label: string }[];
@@ -41,17 +69,16 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
         />
         
         <DatePicker
-          // selected={selectedDate}
-          // onChange={(date) => setSelectedDate(date)}
-          // className="rounded-md border px-2 py-1.5"
-          // placeholderText="Date"
-
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
           className="rounded-md border px-2 py-1.5"
           type="date"
-          placeholder="Date"
-          //value={date}
-          selected={selectedDate}
-          onChange={(e) => setSelectedDate(date)}
+          // placeholder="Date"
+          customInput={
+            <CustomDateInput
+              onClear={() => setSelectedDate(null)}
+            />
+          }
         />
       </div>
     </div>

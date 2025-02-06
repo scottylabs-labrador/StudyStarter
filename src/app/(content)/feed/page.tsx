@@ -178,6 +178,13 @@ export default function FeedPage() {
     { value: "Hammerschlag", label: "Hammerschlag" },
   ];
 
+  console.log(displayScheduled);
+
+  let showNone = true;
+  displayScheduled.forEach( (group) => {
+    if (group != undefined) showNone = false;
+  })
+
   return (
     <main className="container relative h-screen">
       <TopFilterBar
@@ -194,7 +201,7 @@ export default function FeedPage() {
         <div
           className={`${showDetails ? "grid grid-cols-2 gap-4" : "grid grid-cols-3 gap-5"}`}
         >
-          {displayScheduled}
+          {showNone ? (<p className="text-black dark:text-white">No groups found</p>) : displayScheduled}
         </div>
         <div>
           {

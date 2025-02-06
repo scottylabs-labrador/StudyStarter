@@ -20,30 +20,71 @@ import { useUser } from "@clerk/nextjs";
 
 console.log("Blue Turkey!");
 
-export default function CreateProfilePopUp(){
-    const dispatch = useDispatch();
-    const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
+interface CreateProfilePopUpProps {
+  username: string;
+  email: string;
+}
 
-    console.log("Purple Turkey!");
-    
-    const handleClose = () => {
-        dispatch(setIsViewProfileOpen(false));
-    };
+const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email }) => {
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
 
-    console.log("Green Turkey!");
+  console.log("Purple Turkey!");
+  
+  const handleClose = () => {
+      dispatch(setIsViewProfileOpen(false));
+  };
 
-    if (!isOpen) return null;
+  console.log("Green Turkey!");
+
+  if (!isOpen) return null;
+
+  async function getProfile() {
+    const userId = email;
+    try {
+      const docRef = doc(db, "Users", userId? userId : "");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const elem = document.getElementById("profileData")
+        let year = data.year;
+        year = year ? `<p class="font-bold">Class of `+year+`</p>` : ''
+        let majors = data.majors;
+        majors = majors ? `<p class=""><strong>Majors: </strong>`+majors+`</p>` : ''
+        let minors = data.minors;
+        minors = minors ? `<p class=""><strong>Minors: </strong>`+minors+`</p>` : ''
+        if (elem)
+          elem.innerHTML = `
+            <div>
+              <h2 class="text-xl font-bold"><big>`+username+`</big></h2>
+              <p class="text-l">`+email+`</p>
+              `+year+`
+              `+majors+`
+              `+minors+`
+            </div>
+          `
+      } else {
+        console.log("No such document!");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  getProfile();
 
   return ( 
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="w-96 rounded-lg p-8 dark:bg-darkHighlight bg-lightSidebar">
-            <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold">Create New Study Group</h2>
-                <button onClick={handleClose} className="text-xl">
-                &times;
+    // <div className="fixed inset-0 z-50 flex items-center justify-center y-50">
+    <div className="absolute inset-0 z-50 flex items-center justify-center">
+        <div className="w-96 rounded-lg p-6 dark:bg-darkSidebar bg-lightSidebar">
+            <div className="flex items-center justify-between">
+                <div id="profileData" className="text-black dark:text-white"></div>
+                <button onClick={handleClose} className="text-xl font-bold">
+                  <big>&times;</big>
                  </button>
             </div>
         </div>
     </div>
   );
 }
+
+export default CreateProfilePopUp;
