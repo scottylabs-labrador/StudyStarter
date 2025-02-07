@@ -57,7 +57,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   setSelectedDate,
 }) => {
   return (
-    <div className="border-gray-200 dark:border-gray-700 fixed top-0 z-10 w-full border-b bg-white px-6 py-4  dark:bg-darkbg">
+    <div className="fixed top-0 z-10 w-full border-b-darkbg dark:border-b-lightbg border-b bg-lightbg dark:bg-darkbg px-6 py-4">
       <div className="flex space-x-4">
         <Select
           isMulti

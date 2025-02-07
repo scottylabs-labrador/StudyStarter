@@ -117,7 +117,7 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className="max-w-sm cursor-pointer overflow-hidden rounded-xl bg-lightBlush px-6 py-4 shadow-lg dark:bg-darkAccent dark:text-white"
+        className="max-w-sm cursor-pointer overflow-hidden rounded-xl px-6 py-4 shadow-lg bg-lightAccent dark:bg-darkAccent text-black dark:text-white"
         onClick={() => setShowDetails(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>

@@ -52,7 +52,7 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
         let majors = data.majors;
         majors = majors ? `<p class=""><strong>Majors: </strong>`+majors+`</p>` : ''
         let minors = data.minors;
-        minors = minors ? `<p class=""><strong>Minors: </strong>`+minors+`</p>` : ''
+        minors = (minors && minors != '') ? `<p class=""><strong>Minors: </strong>`+minors+`</p>` : ''
         if (elem)
           elem.innerHTML = `
             <div>
@@ -75,7 +75,7 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
   return ( 
     // <div className="fixed inset-0 z-50 flex items-center justify-center y-50">
     <div className="absolute inset-0 z-50 flex items-center justify-center">
-        <div className="w-96 rounded-lg p-6 dark:bg-darkSidebar bg-lightSidebar">
+        <div className="w-96 rounded-lg p-6 bg-lightSidebar dark:bg-darkSidebar">
             <div className="flex items-center justify-between">
                 <div id="profileData" className="text-black dark:text-white"></div>
                 <button onClick={handleClose} className="text-xl font-bold">

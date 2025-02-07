@@ -148,7 +148,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     currentDetails.startTime,
   );
   return (
-    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-lightBlush dark:bg-darkAccent text-black dark:text-white p-[1rem]">
+    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-lightAccent dark:bg-darkAccent text-black dark:text-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
         <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
@@ -188,7 +188,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
 
       {/* Participant List */}
       {participantsState && (
-        <div className="h-20 overflow-y-scroll p-[10px]">
+        <div className="h-40 overflow-y-scroll p-[10px]">
           {currentDetails.participantDetails.map((participantDetail, index) => (
             <div key={index} className="flex items-center p-[5px]">
               <button
@@ -213,16 +213,16 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
 
       {/* Details Section */}
       <strong className="font-['Verdana'] text-[20px]">Details:</strong>
-      <div className="mx-auto mb-3 mt-[10px] h-[8rem] max-w-[20rem] rounded-[10px] border-2 p-[5px]">
+      <div className="mx-auto mb-1 mt-[1px] h-[4rem] max-w-[25rem] rounded-[10px] p-[3px]">
         {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
       </div>
 
       {/* Join Button */}
       <button
-        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px] border-2 ${
+        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px]  ${
           joinedState
-            ? " bg-lightHighlight text-white"
-            : "dark: text-black"
+            ? " bg-lightSelected dark:bg-darkSelected text-white"
+            : "text-black dark:text-white border-2"
         }`}
         onClick={joinGroup}
       >

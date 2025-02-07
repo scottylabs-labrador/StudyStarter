@@ -28,8 +28,8 @@ export default function FeedPage() {
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
   const cardColorMapping = new Map<boolean, [string, string]>([
-    [true, ['lightBlush', "darkAccent"]],
-    [false, ["white", "darkSidebar"]],
+    [true, ['lightAccent', "darkAccent"]],
+    [false, ["lightSidebar", "darkSidebar"]],
   ]);
   const handleCardClick = (group: any) => {
     setSelectedGroup(group.id);
@@ -137,7 +137,7 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} px-6 py-4 shadow-lg dark:bg-${darkColor} dark:text-white`}
+        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
         onClick={() => handleCardClick(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -177,8 +177,6 @@ export default function FeedPage() {
     { value: "Stever", label: "Stever" },
     { value: "Hammerschlag", label: "Hammerschlag" },
   ];
-
-  console.log(displayScheduled);
 
   let showNone = true;
   displayScheduled.forEach( (group) => {

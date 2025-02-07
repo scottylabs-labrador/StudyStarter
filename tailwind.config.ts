@@ -7,9 +7,9 @@ export default {
   content: ["./src/**/*.tsx"],
   darkMode: 'class',
   safelist: [
-    'bg-lightBlush',
+    'bg-lightAccent',
     'dark:bg-darkAccent',
-    'bg-white',
+    'bg-lightSidebar',
     'dark:bg-darkSidebar',
   ],
   theme: {
@@ -20,18 +20,26 @@ export default {
     },
     colors: {
       'white': '#FFFFFF',
-      'lightbg': '#F0F4F8',
-      'lightBlush': '#F4EFF8',
-      'lightSidebar': '#DDEAF0',
-      'lightHighlight': '#0CA8EF',
       'black': '#000000',
-      'lightGrey': '#F3F7F8',
-      'darkbg': '#161616',
-      'darkSidebar': '#29363C',
-      'darkAccent': '#275163',
-      'darkHighlight': '#C9DEE7',
-      'darkSelected': '#0CA8EF',
-      'joined':'#E8FEF0',
+
+      //light mode
+      'lightbg': '#f0f9fc',
+      'lightSidebar': '#DDEAF0', // sidebar, unselected cards
+      'lightAccent': '#c0e1f0',  // selected card, details, profile create and logout buttons, createGroup bg
+      'lightSelected': '#30b6f0', // selected page, joined button
+      'lightButton': '#84cff0', // logout and create buttons
+      'lightInput': '#f0f5f7', // profile input boxes
+
+      //dark mode
+      'darkbg': '#171717',
+      'darkSidebar': '#2f3e45', // sidebar, unselected cards
+      'darkAccent': '#275163', // selected card, details, profile create and logout buttons, createGroup bg
+      'darkSelected': '#5ec6f2', // selected page, joined button
+      'darkButton': '#3c7d99', // logout and create buttons
+      'darkInput': '#DDEAF0', // profile input boxes
+
+      // green joined label
+      'joined':'#E8FEF0', 
       'joinedText':'#74A385'
     }
   },
