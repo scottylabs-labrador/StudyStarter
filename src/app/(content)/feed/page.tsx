@@ -137,7 +137,7 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
+        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
         onClick={() => handleCardClick(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>

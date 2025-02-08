@@ -186,7 +186,7 @@ export function ClassList() {
     <div className="mt-8">
       <Courses />
       <br></br>
-      <h2 className="text-l font-bold mb-1 text-black dark:text-white">My Classes</h2>
+      <h2 className="text-l font-bold mb-1 text-black dark:text-white">{(classes == undefined || classes == null || classes.length == 0) ? '' : "My Classes"}</h2>
       <ul className="mt-212 space-y-2">
         {classes.map((cls) => (
           <li

@@ -113,7 +113,7 @@ export default function NavBar() {
   return (
     <Fragment>
       <div className="grid grid-rows-3 gap-y-6 overflow-hidden bg-lightSidebar dark:bg-darkSidebar px-4 pt-[50px] text-black dark:text-white">
-        <div className="text-lg font-bold">CMU Meets</div>
+        <div className="text-xl font-bold">CMU Study</div>
         <a
           href="/feed"
           className={page == "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}
