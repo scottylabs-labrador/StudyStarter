@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();
   const years = [(startYear).toString(), (startYear+1).toString(), (startYear+2).toString(), (startYear+3).toString(), (startYear+4).toString(), (startYear+5).toString()];
+  // const schools = ["CIT", "CFA", "Dietrich", "Heinz/IS"]
   var year = "default";
   var majors = "";
   var minors = "";
@@ -122,7 +123,17 @@ export default function ProfilePage() {
           <p className="text-black dark:text-white">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
       </div>
-      {/* <br></br> */}
+      {/* <div>
+        <select id="schoolSelect" name="schoolSelect" onChange={changeSchool} className= "px-4 py-2 mt-3 w-1/3 border-2 text-black bg-lightInput dark:bg-darkInput hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
+          <option disabled selected value={"default"}>Select School</option>
+          <option value={schools[0]}>{schools[0]}</option>
+          <option value={schools[1]}>{schools[1]}</option>
+          <option value={schools[2]}>{schools[2]}</option>
+          <option value={schools[3]}>{schools[3]}</option>
+          <option value={schools[4]}>{schools[4]}</option>
+          <option value={schools[5]}>{schools[5]}</option>
+        </select>
+      </div> */}
       <div>
         <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 mt-3 w-1/3 border-2 text-black bg-lightInput dark:bg-darkInput hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
           <option disabled selected value={"default"}>Select Year</option>

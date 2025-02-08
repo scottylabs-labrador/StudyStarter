@@ -201,10 +201,13 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
                   className="h-[2rem] w-[2rem] rounded-full"
                   src={participantDetail.url}
                 />
-                <strong className="indent-[2rem] font-['Verdana'] text-[16px]">
-                  Name:
+                {/* <p className="indent-[1rem]"><strong className="indent-[2rem] font-['Verdana'] text-[16px]">
+                  Name: 
                 </strong>{" "}
-                {participantDetail.name}
+                {" "+participantDetail.name}</p> */}
+                <p className="indent-[0.5rem] font-['Verdana'] text-[16px]">
+                  {participantDetail.name}
+                </p>
               </button>
             </div>
           ))}

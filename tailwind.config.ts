@@ -26,7 +26,7 @@ export default {
       'lightbg': '#f0f9fc',
       'lightSidebar': '#DDEAF0', // sidebar, unselected cards
       'lightAccent': '#c0e1f0',  // selected card, details, profile create and logout buttons, createGroup bg
-      'lightSelected': '#30b6f0', // selected page, joined button
+      'lightSelected': '#0cacf0', // selected page, joined button
       'lightButton': '#84cff0', // logout and create buttons
       'lightInput': '#f0f5f7', // profile input boxes
 
