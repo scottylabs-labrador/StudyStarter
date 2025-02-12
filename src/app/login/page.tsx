@@ -30,7 +30,6 @@ export default function LoginPage() {
       } else {
         router.push("/feed");
       }
-      console.log(classes);
     }, (error) => {
       console.error('Error getting documents: ', error);
     });
