@@ -109,6 +109,7 @@ export default function NavBar() {
       );
     }
   };
+  
 
   return (
     <Fragment>
@@ -146,7 +147,7 @@ export default function NavBar() {
         </a>
 
         <SignOutButton>
-          <button className="fixed bottom-4 left-4 rounded-lg px-4 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+          <button className=" bottom-4 left-4 rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
             Logout
           </button>
         </SignOutButton>
