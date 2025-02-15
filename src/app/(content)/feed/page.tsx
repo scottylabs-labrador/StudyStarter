@@ -137,7 +137,7 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
+        className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
         onClick={() => handleCardClick(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -195,9 +195,9 @@ export default function FeedPage() {
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
       />
-      <div className={`pt-[60px] ${showDetails ? "w-[60%]" : "w-[100%]"}`}>
+      <div className={` pt-[60px] ${showDetails ? "md:w-[60%]" : " md:w-[100%]"}`}>
         <div
-          className={`${showDetails ? "grid grid-cols-2 gap-4" : "grid grid-cols-3 gap-5"}`}
+          className={`${showDetails ? "grid md:grid-cols-2 md:gap-4" : "justify-center grid sm:grid-col-1 sm:grid-cols-2 md:grid-cols-3 md:gap-5"}`}
         >
           {showNone ? (<p className="text-black dark:text-white">No groups found</p>) : displayScheduled}
         </div>
