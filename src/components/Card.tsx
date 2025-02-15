@@ -148,7 +148,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     currentDetails.startTime,
   );
   return (
-    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] bg-lightAccent dark:bg-darkAccent text-black dark:text-white p-[1rem]">
+    <div className="fixed bottom-[2rem] right-[1rem] mr-[4rem] h-[85%] w-[30%] rounded-[10px] light:bg-lightAccent bg-darkAccent light:text-black text-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
         <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
@@ -224,8 +224,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       <button
         className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px]  ${
           joinedState
-            ? " bg-lightSelected dark:bg-darkSelected text-white"
-            : "text-black dark:text-white border-2"
+            ? " light:bg-lightSelected bg-darkSelected text-white"
+            : "light:text-black text-white border-2"
         }`}
         onClick={joinGroup}
       >

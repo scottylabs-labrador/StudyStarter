@@ -146,16 +146,16 @@ export default function CreateGroupModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" id="createGroupPopUp">
-      <div className="w-96 rounded-lg p-8 bg-lightAccent dark:bg-darkAccent">
+      <div className="w-96 rounded-lg p-8 light:bg-lightAccent bg-darkAccent">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-black dark:text-white">Create New Study Group</h2>
-          <button onClick={handleClose} className="text-xl font-bold text-black dark:text-white">
+          <h2 className="text-xl font-bold light:text-black text-white">Create New Study Group</h2>
+          <button onClick={handleClose} className="text-xl font-bold light:text-black text-white">
             <big>&times;</big>
           </button>
         </div>
         <form onSubmit={handleSubmit}>
           <input
-            className="mb-2 w-full rounded border-b-4 border-b-lightbg dark:border-b-darkbg p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border-b-4 light:border-b-lightbg border-b-darkbg p-2 light:bg-lightInput bg-darkInput"
             type="text"
             placeholder="Title"
             value={title}
@@ -164,7 +164,7 @@ export default function CreateGroupModal() {
             maxLength={20} // Reasonable character limit
           />
           <select
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 light:bg-lightInput bg-darkInput"
             id="classSelect"
             value={course}
             onChange={(e) => setCourse(e.target.value)}
@@ -180,7 +180,7 @@ export default function CreateGroupModal() {
             ))}
           </select>
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 light:bg-lightInput bg-darkInput"
             type="text"
             placeholder="Purpose"
             value={purpose}
@@ -189,7 +189,7 @@ export default function CreateGroupModal() {
             maxLength={30} // Reasonable character limit
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 light:bg-lightInput bg-darkInput"
             type="date"
             placeholder="Date"
             value={date}
@@ -197,7 +197,7 @@ export default function CreateGroupModal() {
             required
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 light:bg-lightInput bg-darkInput"
             type="time"
             placeholder="Time"
             value={time}
@@ -205,7 +205,7 @@ export default function CreateGroupModal() {
             required
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 light:bg-lightInput bg-darkInput"
             type="text"
             placeholder="Location"
             value={location}
@@ -213,7 +213,7 @@ export default function CreateGroupModal() {
             required
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 light:bg-lightInput bg-darkInput"
             type="number"
             placeholder="Max Seats"
             value={seats}
@@ -223,7 +223,7 @@ export default function CreateGroupModal() {
             max="100"
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 light:bg-lightInput bg-darkInput"
             type="text"
             placeholder="Details"
             value={details}
@@ -231,7 +231,7 @@ export default function CreateGroupModal() {
           />
           <button
             type="submit"
-            className="bg-blue-500 w-full rounded bg-lightbg dark:bg-darkbg hover:bg-lightSelected dark:hover:bg-darkSelected px-4 py-2 font-bold text-black dark:text-white"
+            className="bg-blue-500 w-full rounded light:bg-lightbg bg-darkbg light:over:bg-lightSelected hover:bg-darkSelected px-4 py-2 font-bold light:text-black text-white"
           >
             Create Group
           </button>

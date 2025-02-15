@@ -100,7 +100,7 @@ const Courses: React.FC = () => {
 
   return (
     <div className="p-0">
-      <h1 className="text-black dark:text-white text-xl font-bold mb-2">Search Courses</h1>
+      <h1 className="light:text-black text-white text-xl font-bold mb-2">Search Courses</h1>
 
       {/* Search Bar */}
       <input
@@ -108,18 +108,18 @@ const Courses: React.FC = () => {
         placeholder="Search courses..."
         value={searchQuery}
         onChange={handleSearch}
-        className="text-black border border-gray-300 rounded p-2 w-1/3 mb-0 bg-lightInput dark:bg-darkInput"
+        className="text-black border border-gray-300 rounded p-2 w-1/3 mb-0 light:bg-lightInput bg-darkInput"
         id="searchBar"
       />
 
       {/* Course List */}
       {filteredCourses.length > 0 ? (
-        <ul className="text-black dark:text-white list-none pl-0">
+        <ul className="light:text-black text-white list-none pl-0">
           {filteredCourses.map((course) => (
             <li className="flex items-center my-2" key={course.id}>
               <button
                 onClick={async () => await addClass(course)}
-                className="text-black dark:text-white hover:text-lightSelected dark:hover:text-darkSelected text-l px-2 py-1 rounded focus:outline-none flex items-center w-full"
+                className="light:text-black text-white light:hover:text-lightSelected hover:text-darkSelected text-l px-2 py-1 rounded focus:outline-none flex items-center w-full"
               >
                 {/* '+' Symbol */}
                 <span className="mr-2 text-xl flex-shrink-0">+</span>
@@ -143,7 +143,7 @@ const Courses: React.FC = () => {
           ))}
         </ul>
       ) : (
-        searchQuery && <p className="text-black dark:text-white">No courses found.</p>
+        searchQuery && <p className="light:text-black text-white">No courses found.</p>
       )}
     </div>
     );
@@ -183,12 +183,12 @@ export function ClassList() {
     <div className="mt-8">
       <Courses />
       <br></br>
-      <h2 className="text-l font-bold mb-1 text-black dark:text-white">{(classes == undefined || classes == null || classes.length == 0) ? '' : "My Classes"}</h2>
+      <h2 className="text-l font-bold mb-1 light:text-black text-white">{(classes == undefined || classes == null || classes.length == 0) ? '' : "My Classes"}</h2>
       <ul className="mt-212 space-y-2">
         {classes.map((cls) => (
           <li
             key={cls.id}
-            className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-1/3 flex justify-between items-center">
+            className="light:text-black text-white light:bg-lightSidebar bg-darkSidebar p-2 rounded w-1/3 flex justify-between items-center">
             <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
               <strong>{cls.courseID}</strong> - {cls.name}
             </div>
