@@ -8,7 +8,7 @@ import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 
 function ContinueButton() {
   return (
-    <a href="/feed" className="px-4 py-2 border-2 text-black dark:text-white hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
+    <a href="/feed" className="px-4 py-2 border-2 light:text-black text-white light:hover:bg-lightAccent hover:bg-darkAccent light:hover:border-lightbg hover:border-darkbg font-bold rounded-lg margintop-100">
       Continue
     </a>
   )
@@ -119,23 +119,12 @@ export default function ProfilePage() {
           className="w-20 h-20 rounded-full"
         />
         <div className="ml-4">
-          <h1 className="text-2xl font-bold text-black dark:text-white">{displayName}</h1>
-          <p className="text-black dark:text-white">{user?.emailAddresses[0]?.emailAddress}</p>
+          <h1 className="text-2xl font-bold light:text-black text-white">{displayName}</h1>
+          <p className="light:text-black text-white">{user?.emailAddresses[0]?.emailAddress}</p>
         </div>
       </div>
-      {/* <div>
-        <select id="schoolSelect" name="schoolSelect" onChange={changeSchool} className= "px-4 py-2 mt-3 w-1/3 border-2 text-black bg-lightInput dark:bg-darkInput hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
-          <option disabled selected value={"default"}>Select School</option>
-          <option value={schools[0]}>{schools[0]}</option>
-          <option value={schools[1]}>{schools[1]}</option>
-          <option value={schools[2]}>{schools[2]}</option>
-          <option value={schools[3]}>{schools[3]}</option>
-          <option value={schools[4]}>{schools[4]}</option>
-          <option value={schools[5]}>{schools[5]}</option>
-        </select>
-      </div> */}
       <div>
-        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 mt-3 w-1/3 border-2 text-black bg-lightInput dark:bg-darkInput hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
+        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 mt-3 w-1/3 border-2 text-black light:bg-lightInput bg-darkInput light:hover:bg-lightAccent hover:bg-darkAccent light:hover:border-lightbg hover:border-darkbg font-bold rounded-lg margintop-100">
           <option disabled selected value={"default"}>Select Year</option>
           <option value={years[0]}>Class of {years[0]}</option>
           <option value={years[1]}>Class of {years[1]}</option>
@@ -146,12 +135,12 @@ export default function ProfilePage() {
         </select>
       </div>
       <br></br>
-      <hr className="text-darkbg dark:text-lightbg"/>
+      <hr className="light:text-darkbg text-lightbg"/>
       <br></br>
-      <h1 className="text-l font-bold mb-1 text-black dark:text-white">Majors:</h1>
+      <h1 className="text-l font-bold mb-1 light:text-black text-white">Majors:</h1>
       <input
         id="majorInput"
-        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-1/3 mb-0"
+        className="text-black border border-gray-300 light:bg-lightInput bg-darkInput rounded p-2 w-1/3 mb-0"
         type="text"
         onChange={changeMajors}
         placeholder="Add your major(s) here"
@@ -159,17 +148,17 @@ export default function ProfilePage() {
       />
       <br></br>
       <br></br>
-      <h1 className="text-l font-bold mb-1 text-black dark:text-white">Minors:</h1>
+      <h1 className="text-l font-bold mb-1 light:text-black text-white">Minors:</h1>
       <input
         id="minorInput"
-        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-1/3 mb-3"
+        className="text-black border border-gray-300 light:bg-lightInput bg-darkInput rounded p-2 w-1/3 mb-3"
         type="text"
         onChange={changeMinors}
         placeholder="Add any minors or concentrations here"
       />  
       <br></br>
       <br></br>
-      <hr className="text-darkbg dark:text-lightbg"/>
+      <hr className="light:text-darkbg text-lightbg"/>
       <ClassList />
       <br></br>
       <ContinueButton />

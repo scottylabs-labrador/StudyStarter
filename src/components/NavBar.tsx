@@ -28,7 +28,7 @@ export default function NavBar() {
     (state) => state.ui.isCreateGroupModalOpen,
   );
   // var [theme, setTheme] = useState("light")
-  var theme = "light";
+  var theme = "dark";
   
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
@@ -40,10 +40,10 @@ export default function NavBar() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         theme = docSnap.data().theme;
-        if(theme === 'dark'){
-          document.querySelector('html')?.classList.add('dark');
+        if(theme === 'light'){
+          document.querySelector('html')?.classList.add('light');
         }else{
-          document.querySelector('html')?.classList.remove('dark');
+          document.querySelector('html')?.classList.remove('light');
         }
         const modeButton = document.getElementById("mode");
         if (modeButton) {
@@ -73,11 +73,11 @@ export default function NavBar() {
 
   const toggleTheme = () => {
     theme = (theme == "light") ? "dark" : "light";
-    document.documentElement.classList.toggle("dark");
+    document.documentElement.classList.toggle("light");
     if(theme === 'dark'){
-      document.querySelector('html')?.classList.add('dark');
+      document.querySelector('html')?.classList.add('light');
     }else{
-      document.querySelector('html')?.classList.remove('dark');
+      document.querySelector('html')?.classList.remove('light');
     }
     const modeButton = document.getElementById("mode");
     if (modeButton) {
@@ -91,7 +91,7 @@ export default function NavBar() {
       return (
         <button
           onClick={toggleTheme}
-          className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
+          className="rounded-lg light:bg-darkbg bg-lightbg light:text-lightbg text-darkbg"
           id="mode"
         >
           Light Mode
@@ -101,7 +101,7 @@ export default function NavBar() {
       return (
         <button
           onClick={toggleTheme}
-          className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
+          className="rounded-lg light:bg-darkbg bg-lightbg light:text-lightbg text-darkbg"
           id="mode"
         >
           Dark Mode
@@ -113,23 +113,23 @@ export default function NavBar() {
 
   return (
     <Fragment>
-      <div className="grid grid-rows-3 gap-y-6 overflow-hidden bg-lightSidebar dark:bg-darkSidebar px-4 pt-[50px] text-black dark:text-white">
+      <div className="grid grid-rows-3 gap-y-6 overflow-hidden light:bg-lightSidebar bg-darkSidebar px-4 pt-[50px] light:text-black text-white">
         <div className="text-xl font-bold">CMU Meets</div>
         <a
           href="/feed"
-          className={page == "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}
+          className={page == "feed" ? "font-bold light:text-lightSelected text-darkSelected" : ""}
         >
           Group Finder
         </a>
         <a
           href="/myGroup"
-          className={page == "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}
+          className={page == "myGroup" ? "font-bold light:text-lightSelected text-darkSelected" : ""}
         >
           My Groups
         </a>
         <button
           onClick={handleCreateGroupClick}
-          className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton"
+          className="rounded-lg px-2 py-1 font-bold light:bg-lightButton bg-darkButton"
         >
           + Create
         </button>
@@ -138,7 +138,7 @@ export default function NavBar() {
 
         <a
           href="/profile"
-          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-lightButton dark:bg-darkButton font-bold shadow-lg"
+          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full light:bg-lightButton bg-darkButton font-bold shadow-lg"
           style={{ zIndex: 1000 }}
         >
           <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
@@ -147,7 +147,7 @@ export default function NavBar() {
         </a>
 
         <SignOutButton>
-          <button className=" bottom-4 left-4 rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+          <button className=" bottom-4 left-4 rounded-lg px-2 py-1 font-bold light:bg-lightButton bg-darkButton light:text-black text-white">
             Logout
           </button>
         </SignOutButton>

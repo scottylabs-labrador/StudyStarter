@@ -137,7 +137,7 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
+        className={`max-w-sm cursor-pointer overflow-hidden rounded-xl light:bg-${lightColor} bg-${darkColor} px-6 py-4 shadow-lg light:text-black text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
         onClick={() => handleCardClick(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -199,7 +199,7 @@ export default function FeedPage() {
         <div
           className={`${showDetails ? "grid grid-cols-2 gap-4" : "grid grid-cols-3 gap-5"}`}
         >
-          {showNone ? (<p className="text-black dark:text-white">No groups found</p>) : displayScheduled}
+          {showNone ? (<p className="light:text-black text-white">No groups found</p>) : displayScheduled}
         </div>
         <div>
           {
