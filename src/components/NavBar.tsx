@@ -110,7 +110,7 @@ export default function NavBar() {
   
 
   return (
-    <Fragment>
+        <Fragment>
       <div className="flex flex-col items-center justify-between bg-lightSidebar dark:bg-darkSidebar px-4 py-3 text-black dark:text-white">
         <div className="flex flex-row items-center w-full">
           <button onClick={() => setIsDrawerOpen(!isDrawerOpen)} className="md:hidden mr-auto">
