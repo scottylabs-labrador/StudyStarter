@@ -28,7 +28,7 @@ export default function NavBar() {
     (state) => state.ui.isCreateGroupModalOpen,
   );
   // var [theme, setTheme] = useState("light")
-  var theme = "dark";
+  var theme = "light";
   
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
@@ -72,13 +72,13 @@ export default function NavBar() {
   }
 
   const toggleTheme = () => {
-    theme = (theme == "light") ? "dark" : "light";
+    theme = (theme == "dark") ? "light" : "dark";
     document.documentElement.classList.toggle("light");
-    if(theme === 'dark'){
-      document.querySelector('html')?.classList.add('light');
-    }else{
-      document.querySelector('html')?.classList.remove('light');
-    }
+    // if(theme === 'light'){
+    //   document.querySelector('html')?.classList.add('light');
+    // }else{
+    //   document.querySelector('html')?.classList.remove('light');
+    // }
     const modeButton = document.getElementById("mode");
     if (modeButton) {
       modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";

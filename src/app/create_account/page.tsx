@@ -20,36 +20,36 @@ export default function ProfilePage() {
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();
   const years = [(startYear).toString(), (startYear+1).toString(), (startYear+2).toString(), (startYear+3).toString(), (startYear+4).toString(), (startYear+5).toString()];
-  var theme = "dark";
+  // var theme = "dark";
   var year = "default";
   var majors = "";
   var minors = "";
 
-  async function getThemeData() {
-    try {
-      const docRef = doc(db, "Users", userId? userId : "");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        theme = docSnap.data().theme;
-        if(theme === 'dark'){
-          document.querySelector('html')?.classList.add('dark');
-        }else{
-          document.querySelector('html')?.classList.remove('dark');
-        }
-        const modeButton = document.getElementById("mode");
-        if (modeButton) {
-          modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-        }
-        return theme;
-      } else {
-        console.log("No such document!");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // async function getThemeData() {
+  //   try {
+  //     const docRef = doc(db, "Users", userId? userId : "");
+  //     const docSnap = await getDoc(docRef);
+  //     if (docSnap.exists()) {
+  //       theme = docSnap.data().theme;
+  //       if(theme === 'dark'){
+  //         document.querySelector('html')?.classList.add('dark');
+  //       }else{
+  //         document.querySelector('html')?.classList.remove('dark');
+  //       }
+  //       const modeButton = document.getElementById("mode");
+  //       if (modeButton) {
+  //         modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
+  //       }
+  //       return theme;
+  //     } else {
+  //       console.log("No such document!");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
-  getThemeData();
+  // getThemeData();
 
   async function getYear() {
     try {
