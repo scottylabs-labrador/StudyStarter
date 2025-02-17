@@ -21,6 +21,8 @@ export default {
     colors: {
       'white': '#FFFFFF',
       'black': '#000000',
+      'lightText': '#000000', // black
+      'darkText': '#FFFFFF', // white
 
       //light mode
       'lightbg': '#f0f9fc',

@@ -1,21 +1,15 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
-import {
-  setIsModalOpen,
-  setIsCreateGroupModalOpen,
-} from "~/lib/features/uiSlice";
 import { usePathname } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
 import { useAppSelector } from "~/lib/hooks";
-import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
-
+import { db } from "~/lib/api/firebaseConfig";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 
 export default function NavBar() {
   const { user } = useUser();
@@ -25,88 +19,62 @@ export default function NavBar() {
   const page = pathname.split("/")[1];
   const isModalOpen = useAppSelector((state) => state.ui.isModalOpen);
   const isCreateGroupModalOpen = useAppSelector(
-    (state) => state.ui.isCreateGroupModalOpen,
+    (state) => state.ui.isCreateGroupModalOpen
   );
-  // var [theme, setTheme] = useState("light")
-  var theme = "light";
-  
-  const handleCreateGroupClick = () => {
-    dispatch(setIsCreateGroupModalOpen(true));
+
+  // Read theme from localStorage immediately to prevent flickering
+  const getInitialTheme = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || "light";
+    }
+    return "light"; // Default when rendering server-side
   };
 
-  async function getThemeData() {
-    try {
-      const docRef = doc(db, "Users", userId? userId : "");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        theme = docSnap.data().theme;
-        if(theme === 'dark'){
-          document.querySelector('html')?.classList.add('dark');
-        }else{
-          document.querySelector('html')?.classList.remove('dark');
-        }
-        const modeButton = document.getElementById("mode");
-        if (modeButton) {
-          modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-        }
-        return theme;
-      } else {
-        console.log("No such document!");
+  const [theme, setTheme] = useState(getInitialTheme);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      const modeButton = document.getElementById("mode");
+      if (modeButton) {
+        modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
       }
-    } catch (err) {
-      console.error(err);
+      localStorage.setItem("theme", theme);
     }
-  }
+  }, [theme]);
 
-  getThemeData();
-  
-  const updateTheme = async () => {
-    // theme = document.getElementById("yearSelect").value;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    try {
-      const usersDocRef = doc(db, "Users", userId? userId : "");
-      await setDoc(usersDocRef, { theme: theme }, { merge: true });
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  useEffect(() => {
+    async function fetchThemeFromDB() {
+      if (!userId) return;
 
-  const toggleTheme = () => {
-    theme = (theme == "light") ? "dark" : "light";
-    document.documentElement.classList.toggle("dark");
-    if(theme === 'dark'){
-      document.querySelector('html')?.classList.add('dark');
-    }else{
-      document.querySelector('html')?.classList.remove('dark');
+      try {
+        const docRef = doc(db, "Users", userId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const savedTheme = docSnap.data().theme;
+          if (savedTheme && savedTheme !== theme) {
+            setTheme(savedTheme);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching theme:", err);
+      }
     }
-    const modeButton = document.getElementById("mode");
-    if (modeButton) {
-      modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-    }
-    updateTheme();
-  };
 
-  const getTheme = () => {
-    if (theme == "dark") {
-      return (
-        <button
-          onClick={toggleTheme}
-          className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
-          id="mode"
-        >
-          Light Mode
-        </button>
-      );
-    } else {
-      return (
-        <button
-          onClick={toggleTheme}
-          className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
-          id="mode"
-        >
-          Dark Mode
-        </button>
-      );
+    fetchThemeFromDB();
+  }, [userId]);
+
+  const toggleTheme = async () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+
+    if (userId) {
+      try {
+        const usersDocRef = doc(db, "Users", userId);
+        await setDoc(usersDocRef, { theme: newTheme }, { merge: true });
+      } catch (err) {
+        console.error("Error saving theme to DB:", err);
+      }
     }
   };
 
@@ -127,13 +95,19 @@ export default function NavBar() {
           My Groups
         </a>
         <button
-          onClick={handleCreateGroupClick}
+          onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
           className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton"
         >
           + Create
         </button>
 
-        {getTheme()}
+        <button
+          onClick={toggleTheme}
+          className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
+          id="mode"
+        >
+          Light Mode
+        </button>
 
         <a
           href="/profile"
@@ -153,7 +127,7 @@ export default function NavBar() {
       </div>
 
       <UploadModal />
-      <CreateGroupModal/>
+      <CreateGroupModal />
     </Fragment>
   );
 }
