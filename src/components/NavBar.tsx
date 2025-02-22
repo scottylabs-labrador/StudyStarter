@@ -15,6 +15,7 @@ import { useUser } from "@clerk/nextjs";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 
 
 export default function NavBar() {
@@ -116,7 +117,22 @@ export default function NavBar() {
           <button onClick={() => setIsDrawerOpen(!isDrawerOpen)} className="md:hidden mr-auto">
             {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <div className="flex-1 text-center text-xl font-bold">CMU Study</div>
+          <div>
+          <Image
+            className="hidden dark:block"
+            src={'./image/Logo with Name_Light mode.png'}
+            alt="dark-mode-logo"
+            width={40}
+            height={40}
+          />
+          <Image
+            className="mb-4 block dark:hidden"
+            src={'./image/Logo with Name_Dark mode.png'}
+            alt="light-mode-logo"
+            width={40}
+            height={40}
+          />
+          </div>
         </div>
         
         <div className=" hidden md:grid md:grid-rows-3 md:gap-y-6 md:px-4 md:pt-[50px]">
@@ -134,7 +150,7 @@ export default function NavBar() {
           </button>
           <a
           href="/profile"
-          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
+          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
           style={{ zIndex: 1000 }}
           >
             <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
@@ -171,7 +187,7 @@ export default function NavBar() {
               </button>
               <a
               href="/profile"
-              className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
+              className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
               style={{ zIndex: 1000 }}
               >
                 <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
