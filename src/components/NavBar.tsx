@@ -1,6 +1,7 @@
 "use client";
-
-import { Fragment, useEffect, useState } from "react";
+import darkLogo from "~/image/darkLogo.png"
+import lightLogo from "~/image/lightLogo.png"
+import { Fragment, useState } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
@@ -15,6 +16,7 @@ import { useUser } from "@clerk/nextjs";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 
 
 export default function NavBar() {
@@ -177,7 +179,22 @@ export default function NavBar() {
           <button onClick={() => setIsDrawerOpen(!isDrawerOpen)} className="md:hidden mr-auto">
             {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <div className="flex-1 text-center text-xl font-bold">CMU Study</div>
+          <div className="pt-10">
+          <Image
+            className="hidden dark:block"
+            src={darkLogo}
+            alt="dark-mode-logo"
+            width={400}
+            height={200}
+          />
+          <Image
+            className="mb-4 block dark:hidden"
+            src={lightLogo}
+            alt="light-mode-logo"
+            width={400}
+            height={200}
+          />
+          </div>
         </div>
         <a
           href="/feed"
@@ -208,7 +225,7 @@ export default function NavBar() {
 
         <a
           href="/profile"
-          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
+          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
           style={{ zIndex: 1000 }}
           >
             <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
@@ -230,6 +247,22 @@ export default function NavBar() {
             <button onClick={() => setIsDrawerOpen(false)} className="mb-4">
               <X size={24} />
             </button>
+            <div>
+          <Image
+            className="hidden dark:block"
+            src={darkLogo}
+            alt="dark-mode-logo"
+            width={400}
+            height={200}
+          />
+          <Image
+            className="mb-4 block dark:hidden"
+            src={lightLogo}
+            alt="light-mode-logo"
+            width={400}
+            height={200}
+          />
+          </div>
             <nav className="flex flex-col space-y-4">
               <a href="/feed" className={page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}>
                 Group Finder
@@ -245,7 +278,7 @@ export default function NavBar() {
               </button>
               <a
               href="/profile"
-              className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
+              className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
               style={{ zIndex: 1000 }}
               >
                 <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
