@@ -1,7 +1,7 @@
 "use client";
 import darkLogo from "~/image/darkLogo.png"
 import lightLogo from "~/image/lightLogo.png"
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
@@ -179,7 +179,7 @@ export default function NavBar() {
           <button onClick={() => setIsDrawerOpen(!isDrawerOpen)} className="md:hidden mr-auto">
             {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <div className="pt-10">
+          <div>
           <Image
             className="hidden dark:block"
             src={darkLogo}
@@ -188,7 +188,7 @@ export default function NavBar() {
             height={200}
           />
           <Image
-            className="mb-4 block dark:hidden"
+            className="block dark:hidden"
             src={lightLogo}
             alt="light-mode-logo"
             width={400}
