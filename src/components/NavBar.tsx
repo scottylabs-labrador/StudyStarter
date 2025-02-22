@@ -1,7 +1,7 @@
 "use client";
 import darkLogo from "~/image/darkLogo.png"
 import lightLogo from "~/image/lightLogo.png"
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
