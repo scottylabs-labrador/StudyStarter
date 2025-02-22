@@ -8,7 +8,6 @@ import { useUser } from "@clerk/nextjs";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
-import { returnUserGroups } from "~/helpers/firebase_helper";
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -155,34 +154,58 @@ export default function FeedPage() {
     { value: "Hammerschlag", label: "Hammerschlag" },
   ];
 
+  
+  let showNone = true;
+  displayScheduled.forEach( (group) => {
+    if (group != undefined) showNone = false;
+  })
+
   return (
     <main className="container relative h-screen">
-      <TopFilterBar
-        courseOptions={classes}
-        locationOptions={locationOptions}
-        selectedCourses={selectedCourses}
-        setSelectedCourses={setSelectedCourses}
-        selectedLocations={selectedLocations}
-        setSelectedLocations={setSelectedLocations}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-      />
-      <div className={`pt-[60px] ${showDetails ? "w-[60%]" : "w-[100%]"}`}>
+  <TopFilterBar
+    courseOptions={classes}
+    locationOptions={locationOptions}
+    selectedCourses={selectedCourses}
+    setSelectedCourses={setSelectedCourses}
+    selectedLocations={selectedLocations}
+    setSelectedLocations={setSelectedLocations}
+    selectedDate={selectedDate}
+    setSelectedDate={setSelectedDate}
+  />
+
+  <div className="pt-[60px]">
+    <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
+      {/* Display Scheduled Section */}
+      <div
+        className={`${
+          showDetails ? "md:col-span-2" : "md:col-span-3"
+        }`}
+      >
         <div
-          className={`${showDetails ? "grid grid-cols-2 gap-4" : "grid grid-cols-3 gap-5"}`}
+          className={`grid gap-5 ${
+            showNone ? "justify-center" : "md:grid-cols-2 lg:grid-cols-3"
+          }`}
         >
-          {displayScheduled}
-        </div>
-        <div>
-          {
-            <Card
-              details={showDetails!}
-              onClick={() => setShowDetails(null)}
-              updateJoinedGroups={setJoinedGroups}
-            ></Card>
-          }
+          {showNone ? (
+            <p className="text-black dark:text-white">No groups found</p>
+          ) : (
+            displayScheduled
+          )}
         </div>
       </div>
-    </main>
+
+      {/* Card Section */}
+      {showDetails && (
+        <div className="md:block md:w+-full lg:w-[30%] xl:w-[25%]">
+          <Card
+            details={showDetails}
+            onClick={() => setShowDetails(null)}
+            updateJoinedGroups={setJoinedGroups}
+          />
+        </div>
+      )}
+    </div>
+  </div>
+</main>
   );
 }

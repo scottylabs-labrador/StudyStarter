@@ -18,7 +18,6 @@ import {
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 
-console.log("Blue Turkey!");
 
 interface CreateProfilePopUpProps {
   username: string;
@@ -28,14 +27,10 @@ interface CreateProfilePopUpProps {
 const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email }) => {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
-
-  console.log("Purple Turkey!");
   
   const handleClose = () => {
       dispatch(setIsViewProfileOpen(false));
   };
-
-  console.log("Green Turkey!");
 
   if (!isOpen) return null;
 

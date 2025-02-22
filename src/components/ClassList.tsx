@@ -65,16 +65,13 @@ const Courses: React.FC = () => {
     }
     } else {
       var query = document.getElementById("searchBar").value.toLowerCase();
-      console.log(query)
     }
 
     if (typeof classes[0] == "object") {
       for (let i = 0; i < classes.length; i++) {
-        console.log(typeof classes[i])
         classes[i] = classes[i].courseID;
       }
     }
-    console.log(classes);
     const filtered = courses
     .filter((course) =>
       (course.name.toLowerCase().includes(query) || 
@@ -199,7 +196,7 @@ export function ClassList() {
               onClick={async () => await deleteClass(cls.courseID)}
               className="text-lightgray-500 text-xl"
             >
-              x
+              <strong>&times;</strong>
             </button>
           </li>
         ))}

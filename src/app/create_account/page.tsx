@@ -40,7 +40,6 @@ export default function ProfilePage() {
         if (modeButton) {
           modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
         }
-        console.log(theme);
         return theme;
       } else {
         console.log("No such document!");
