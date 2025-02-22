@@ -4,6 +4,10 @@ import { Fragment, useEffect, useState } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
+import {
+  setIsModalOpen,
+  setIsCreateGroupModalOpen,
+} from "~/lib/features/uiSlice";
 import { usePathname } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
 import { useAppSelector } from "~/lib/hooks";
