@@ -196,7 +196,7 @@ export default function FeedPage() {
 
       {/* Card Section */}
       {showDetails && (
-        <div className="md:block md:w-full lg:w-[30%] xl:w-[25%]">
+        <div className="md:block md:w+-full lg:w-[30%] xl:w-[25%]">
           <Card
             details={showDetails}
             onClick={() => setShowDetails(null)}

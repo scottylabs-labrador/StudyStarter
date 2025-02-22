@@ -132,6 +132,15 @@ export default function NavBar() {
           <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg" id="mode">
             Dark Mode
           </button>
+          <a
+          href="/profile"
+          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
+          style={{ zIndex: 1000 }}
+          >
+            <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
+              <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
+            </svg>
+          </a>
           <SignOutButton>
             <button className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
               Logout
@@ -160,6 +169,15 @@ export default function NavBar() {
               <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg" id="mode">
                 Dark Mode
               </button>
+              <a
+              href="/profile"
+              className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightHighlight font-bold shadow-lg"
+              style={{ zIndex: 1000 }}
+              >
+                <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
+                  <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
+                </svg>
+              </a>
               <SignOutButton>
                 <button className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
                   Logout
