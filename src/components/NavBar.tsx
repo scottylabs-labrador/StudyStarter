@@ -122,15 +122,11 @@ export default function NavBar() {
             className="hidden dark:block"
             src={'/image/Logo with Name_Light mode.png'}
             alt="dark-mode-logo"
-            width={40}
-            height={40}
           />
           <Image
             className="mb-4 block dark:hidden"
             src={'/image/Logo with Name_Dark mode.png'}
             alt="light-mode-logo"
-            width={40}
-            height={40}
           />
           </div>
         </div>
