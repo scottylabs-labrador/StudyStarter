@@ -1,5 +1,6 @@
 "use client";
-
+import darkLogo from "~/image/darkLogo.png"
+import lightLogo from "~/image/lightLogo.png"
 import { Fragment, useState } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
@@ -117,16 +118,20 @@ export default function NavBar() {
           <button onClick={() => setIsDrawerOpen(!isDrawerOpen)} className="md:hidden mr-auto">
             {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <div>
+          <div className="pt-10">
           <Image
             className="hidden dark:block"
-            src={'/image/darkLogo.png'}
+            src={darkLogo}
             alt="dark-mode-logo"
+            width={400}
+            height={200}
           />
           <Image
             className="mb-4 block dark:hidden"
-            src={'/image/lightLogo.png'}
+            src={lightLogo}
             alt="light-mode-logo"
+            width={400}
+            height={200}
           />
           </div>
         </div>
@@ -168,6 +173,22 @@ export default function NavBar() {
             <button onClick={() => setIsDrawerOpen(false)} className="mb-4">
               <X size={24} />
             </button>
+            <div>
+          <Image
+            className="hidden dark:block"
+            src={darkLogo}
+            alt="dark-mode-logo"
+            width={400}
+            height={200}
+          />
+          <Image
+            className="mb-4 block dark:hidden"
+            src={lightLogo}
+            alt="light-mode-logo"
+            width={400}
+            height={200}
+          />
+          </div>
             <nav className="flex flex-col space-y-4">
               <a href="/feed" className={page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}>
                 Group Finder
