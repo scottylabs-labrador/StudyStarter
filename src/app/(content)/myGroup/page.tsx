@@ -116,7 +116,7 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className="max-w-sm cursor-pointer overflow-hidden rounded-xl px-6 py-4 shadow-lg bg-lightAccent dark:bg-darkAccent text-black dark:text-white"
+        className="my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl px-6 py-4 shadow-lg bg-lightAccent dark:bg-darkAccent text-black dark:text-white"
         onClick={() => setShowDetails(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -173,7 +173,7 @@ export default function FeedPage() {
     setSelectedDate={setSelectedDate}
   />
 
-  <div className="pt-[60px]">
+  <div className="">
     <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
       {/* Display Scheduled Section */}
       <div

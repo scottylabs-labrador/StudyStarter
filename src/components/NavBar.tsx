@@ -128,9 +128,12 @@ export default function NavBar() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       document.documentElement.classList.toggle("dark", theme === "dark");
-      const modeButton = document.getElementById("mode");
-      if (modeButton) {
-        modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
+      const modeButtons = document.getElementsByClassName("modeButton");
+      if (modeButtons[0]) {
+        modeButtons[0].innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
+        if (modeButtons[1]) {
+          modeButtons[1].innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
+        }
       }
       localStorage.setItem("theme", theme);
     }
@@ -174,125 +177,137 @@ export default function NavBar() {
 
   return (
     <Fragment>
-      <div className="grid grid-rows-3 gap-y-6 overflow-hidden bg-lightSidebar dark:bg-darkSidebar px-4 pt-[50px] text-black dark:text-white">
-      <div className="flex flex-row items-center w-full">
-          <button onClick={() => setIsDrawerOpen(!isDrawerOpen)} className="md:hidden mr-auto">
-            {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <div className="pt-10">
-          <Image
-            className="hidden dark:block"
-            src={darkLogo}
-            alt="dark-mode-logo"
-            width={400}
-            height={200}
-          />
-          <Image
-            className="mb-4 block dark:hidden"
-            src={lightLogo}
-            alt="light-mode-logo"
-            width={400}
-            height={200}
-          />
+      <div className="grid grid-rows-[auto,1fr,auto] h-screen gap-y-6 overflow-hidden bg-lightbg dark:bg-darkbg md:bg-lightSidebar md:dark:bg-darkSidebar px-4 pt-[50px] text-black dark:text-white">
+        {/* Top Section */}
+        <div>
+          <div className="flex flex-row items-center w-full">
+            <button onClick={() => setIsDrawerOpen(!isDrawerOpen)} className="md:hidden mr-auto">
+              {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            {/* Hide content after first button on small screens */}
+            <div className="hidden md:flex h-[50px] items-center">
+              <Image
+                className="hidden dark:block"
+                src={darkLogo}
+                alt="dark-mode-logo"
+                width={400}
+                height={200}
+              />
+              <Image
+                className="block dark:hidden"
+                src={lightLogo}
+                alt="light-mode-logo"
+                width={400}
+                height={200}
+              />
+            </div>
           </div>
         </div>
-        <a
-          href="/feed"
-          className={page == "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}
-        >
-          Group Finder
-        </a>
-        <a
-          href="/myGroup"
-          className={page == "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}
-        >
-          My Groups
-        </a>
-        <button
-          onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
-          className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton"
-        >
-          + Create
-        </button>
 
-        <button
-          onClick={toggleTheme}
-          className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
-          id="mode"
-        >
-          Light Mode
-        </button>
+        {/* Middle Section (Navigation Buttons) - Hidden on small screens */}
+        <div className="hidden md:flex flex-col gap-y-4">
+          <a href="/feed" className={`w-full text-center py-2 rounded-lg ${page == "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
+            Group Finder
+          </a>
+          <a href="/myGroup" className={`w-full text-center py-2 rounded-lg ${page == "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
+            My Groups
+          </a>
+          <button
+            onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
+            className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton"
+          >
+            + Create
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="w-full rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg py-2 modeButton"
+            id="mode"
+          >
+            Light Mode
+          </button>
+        </div>
 
+        {/* Profile Button - Hidden on small screens */}
         <a
           href="/profile"
-          className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
+          className="hidden md:fixed md:right-6 md:top-4 md:flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
           style={{ zIndex: 1000 }}
-          >
-            <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
-              <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
-            </svg>
+        >
+          <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
+            <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
+          </svg>
         </a>
-        <SignOutButton>
-          <button className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-            Logout
-          </button>
-        </SignOutButton>
+
+        {/* Bottom Section (Logout Button) - Hidden on small screens */}
+        <div className="hidden md:block pb-4">
+          <SignOutButton>
+            <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+              Logout
+            </button>
+          </SignOutButton>
+        </div>
       </div>
-      {/* </div> */}
 
       {/* Drawer Menu */}
       {isDrawerOpen && (
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsDrawerOpen(false)}>
-          <div className="fixed left-0 top-0 h-full w-64 bg-lightSidebar dark:bg-darkSidebar p-4 shadow-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed left-0 top-0 h-full w-44 bg-lightSidebar dark:bg-darkSidebar p-4 shadow-lg flex flex-col justify-between" onClick={(e) => e.stopPropagation()}>
+          <div>
             <button onClick={() => setIsDrawerOpen(false)} className="mb-4">
-              <X size={24} />
+              <X size={24}/>
             </button>
             <div>
-          <Image
-            className="hidden dark:block"
-            src={darkLogo}
-            alt="dark-mode-logo"
-            width={400}
-            height={200}
-          />
-          <Image
-            className="mb-4 block dark:hidden"
-            src={lightLogo}
-            alt="light-mode-logo"
-            width={400}
-            height={200}
-          />
-          </div>
-            <nav className="flex flex-col space-y-4">
-              <a href="/feed" className={page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}>
+              <Image
+                className="hidden dark:block"
+                src={darkLogo}
+                alt="dark-mode-logo"
+                width={150}
+                height={75}
+              />
+              <Image
+                className="block dark:hidden"
+                src={lightLogo}
+                alt="light-mode-logo"
+                width={150}
+                height={75}
+              />
+            </div>
+            <nav className="flex flex-col gap-y-4">
+              <a href="/feed" className={`py-2 ${page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                 Group Finder
               </a>
-              <a href="/myGroup" className={page === "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}>
+              <a href="/myGroup" className={page === "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}>
                 My Groups
               </a>
-              <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton">
+              <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
                 + Create
               </button>
-              <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg" id="mode">
+              <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
                 Dark Mode
               </button>
               <a
-              href="/profile"
-              className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
-              style={{ zIndex: 1000 }}
+                href="/profile"
+                className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
+                style={{ zIndex: 1000 }}
               >
                 <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
                   <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
                 </svg>
               </a>
-              <SignOutButton>
-                <button className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-                  Logout
-                </button>
-              </SignOutButton>
             </nav>
           </div>
+      
+          {/* Logout Button Moved to Bottom */}
+          <div className="pb-4">
+            <SignOutButton>
+              <button className="w-full rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+                Logout
+              </button>
+            </SignOutButton>
+          </div>
         </div>
+      </div>
+      
       )}
 
       <UploadModal />

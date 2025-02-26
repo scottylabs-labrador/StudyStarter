@@ -197,7 +197,7 @@ export default function FeedPage() {
     setSelectedDate={setSelectedDate}
   />
 
-  <div className="pt-[60px]">
+  <div className="">
     <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
       {/* Display Scheduled Section */}
       <div
