@@ -253,7 +253,7 @@ export default function NavBar() {
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsDrawerOpen(false)}>
         <div className="fixed left-0 top-0 h-full w-44 bg-lightSidebar dark:bg-darkSidebar p-4 shadow-lg flex flex-col justify-between" onClick={(e) => e.stopPropagation()}>
           <div>
-            <button onClick={() => setIsDrawerOpen(false)} className="mb-4">
+            <button onClick={() => setIsDrawerOpen(false)} className="mb-4 text-black dark:text-white">
               <X size={24}/>
             </button>
             <div>

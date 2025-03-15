@@ -1,7 +1,7 @@
 "use client";
 import Card from "~/components/Card";
 import groupDetails from "~/types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { db } from "~/lib/api/firebaseConfig";
 import { collection, query, onSnapshot, doc } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
@@ -19,7 +19,7 @@ export default function FeedPage() {
   const [selectedLocations, setSelectedLocations] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined);
   const [classes, setClasses] = useState<{ value: string; label: string }[]>(
     [],
   );
@@ -44,11 +44,19 @@ export default function FeedPage() {
     }
     if (isInThePast(group.startTime)) return true;
 
+    console.log(selectedDate);
+
     if (selectedDate) {
+      const [year, month, day] = selectedDate.split("-");
+      const filterDate = new Date(
+        parseInt(year!),
+        parseInt(month!) - 1,
+        parseInt(day!),
+      );
       if (
-        groupDate.getDate() !== selectedDate.getDate() ||
-        groupDate.getMonth() !== selectedDate.getMonth() ||
-        groupDate.getFullYear() !== selectedDate.getFullYear()
+        groupDate.getDate() !== filterDate.getDate() ||
+        groupDate.getMonth() !== filterDate.getMonth() ||
+        groupDate.getFullYear() !== filterDate.getFullYear()
       ) {
         return true;
       }
@@ -197,7 +205,7 @@ export default function FeedPage() {
     setSelectedDate={setSelectedDate}
   />
 
-  <div className="">
+  <div className="pt-[20px]">
     <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
       {/* Display Scheduled Section */}
       <div
