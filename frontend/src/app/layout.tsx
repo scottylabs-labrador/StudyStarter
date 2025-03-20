@@ -19,6 +19,25 @@ export default function RootLayout({
     <ClerkProvider>
       <ReduxProvider>
       <html lang="en">
+        <head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function () {
+                  try {
+                    let theme = localStorage.getItem("theme") || "light";
+                    if (theme === "dark") {
+                      document.documentElement.classList.add("dark");
+                    }
+                      console.log("idk");
+                  } catch (e) {
+                    //console.error("Theme loading error:", e);
+                  }
+                })();
+              `,
+            }}
+          />
+        </head>
         <body className="bg">
           <main>
             {children}
