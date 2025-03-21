@@ -38,26 +38,42 @@ export const isGroupFull = (group: groupDetails): boolean => {
 
 export const updateGroupMembership = async (
   db: Firestore,
+  isJoinEvent: boolean,
   email: string,
   user: Partial<userDetails>,
   groupId: string,
 ): Promise<void> => {
   const groupDocPath = `Study Groups/${groupId}`;
   const groupDocRef = db.doc(groupDocPath);
-  await groupDocRef.update({
-    participantDetails: FieldValue.arrayUnion({
-      name: user?.name ?? "Unknown",
-      url: user?.imageUrl ?? "",
-      email: email,
-    }),
-  });
+  const entryToUpdate = {
+    name: user?.name ?? "Unknown",
+    url: user?.imageUrl ?? "",
+    email: email,
+  };
+  if (isJoinEvent) {
+    await groupDocRef.update({
+      participantDetails: FieldValue.arrayUnion(entryToUpdate),
+    });
+  } else {
+    await groupDocRef.update({
+      participantDetails: FieldValue.arrayRemove(entryToUpdate),
+    });
+  }
   const userDocPath = `Users/${email}`;
   const userDocRef = db.doc(userDocPath);
-
-  await userDocRef.set(
-    {
-      joinedGroups: FieldValue.arrayUnion(groupId),
-    },
-    {merge: true},
-  );
+  if (isJoinEvent) {
+    await userDocRef.set(
+      {
+        joinedGroups: FieldValue.arrayUnion(groupId),
+      },
+      {merge: true},
+    );
+  } else {
+    await userDocRef.set(
+      {
+        joinedGroups: FieldValue.arrayRemove(groupId),
+      },
+      {merge: true},
+    );
+  }
 };

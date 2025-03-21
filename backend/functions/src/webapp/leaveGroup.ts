@@ -6,17 +6,16 @@ import {logJoinEvent} from "../bq/bqService";
 import {
   fetchGroup,
   fetchUser,
-  isGroupFull,
   isUserInGroup,
   updateGroupMembership,
 } from "../helpers";
 
-export const joinGroup = async (
+export const leaveGroup = async (
   db: Firestore,
   req: Request,
   res: Response,
 ) => {
-  logger.info("Received joinGroup request", {structuredData: true});
+  logger.info("Received leaveGroup request", {structuredData: true});
   if (req.method !== "POST") {
     res.status(405).send({
       success: false,
@@ -67,24 +66,19 @@ export const joinGroup = async (
       });
       return;
     }
-    if (isUserInGroup(user, group)) {
+    if (!isUserInGroup(user, group)) {
       res
         .status(404)
-        .send({success: false, message: "User already in group."});
+        .send({success: false, message: "User not in group."});
       return;
     }
-    if (isGroupFull(group)) {
-      res.status(404).send({success: false, message: "Group is full."});
-      return;
-    }
-
-    const isJoinEvent = true;
+    const isJoinEvent = false;
     await updateGroupMembership(db, isJoinEvent, email, user, group.id);
     await logJoinEvent(isJoinEvent, email, group.id);
-    res.status(200).send({success: true, message: "Added user to group."});
+    res.status(200).send({success: true, message: "Removed user from group."});
     return;
   } catch (error) {
-    console.error("Error joining group:", error);
+    console.error("Error leaving group:", error);
     res.status(500).send({
       success: false,
       message: "Internal Server Error",
