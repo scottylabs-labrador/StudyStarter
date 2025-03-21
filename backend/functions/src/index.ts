@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 import {onRequest} from "firebase-functions/v2/https";
+import { Request, Response } from "express";
 import * as logger from "firebase-functions/logger";
 import {groupDetails, userDetails} from "./types";
 
@@ -68,7 +69,7 @@ const updateGroupMembership = async (
   );
 };
 
-export const joinGroup = onRequest(async (request, response) => {
+export const joinGroup = onRequest(async (request: Request, response: Response) => {
   logger.info("Received add_group request", {structuredData: true});
   if (request.method !== "POST") {
     response.status(405).send({
