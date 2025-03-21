@@ -3,6 +3,7 @@ import {onRequest} from "firebase-functions/v2/https";
 import {Request, Response} from "express";
 import * as logger from "firebase-functions/logger";
 import {groupDetails, userDetails} from "./types";
+import {logJoinEvent} from "./bq/bqService";
 
 admin.initializeApp();
 
@@ -136,7 +137,7 @@ export const joinGroup = onRequest(
       }
 
       await updateGroupMembership(email, user, group.id);
-
+      await logJoinEvent(email, group.id);
       response
         .status(200)
         .send({success: true, message: "Added user to group."});
