@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import groupDetails from "~/types";
 import {
+  setIsEditGroupModalOpen,
   setIsProfileOpen,
   setIsViewProfileOpen,
 } from "~/lib/features/uiSlice";
@@ -23,6 +24,7 @@ import {
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
+import EditGroupModal from "./editGroupModal";
 interface Props {
   onClick: () => void;
   details: groupDetails;
@@ -231,7 +233,14 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       >
         {joinedState ? "Joined" : "Join"}
       </button>
+      <button
+                  onClick={() => {dispatch(setIsEditGroupModalOpen(true))}}
+                  className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton"
+                >
+                  Edit
+      </button>
       {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
+      <EditGroupModal/>
     </div>
   );
 };

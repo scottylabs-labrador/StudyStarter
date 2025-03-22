@@ -37,30 +37,30 @@ const customComponents = {
 };
 
 const customStyles = {
-  input: (provided) => ({
+  input: (provided: React.CSSProperties) => ({
     ...provided,
-    color: '#000', // Change text color in the input area to black
-  }),
-  control: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isFocused ? '#f0f5f7' : '#f0f5f7', // Background color for the select field
-    borderColor: state.isFocused ? 'black' : 'black', // Border color when focused/unfocused
-    boxShadow: state.isFocused ? '0 0 0 1px #1a73e8' : 'none', // Box shadow on focus
-    borderRadius: '4px', // Adjust border radius if needed
-    padding: '4px', // Adjust padding for a better look
-  }),
-  multiValue: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isFocused ? '#DDEAF0' : '#DDEAF0', // Background color for the selected option
+     // Change text color in the input area to black
+      }),
+      control: (provided: React.CSSProperties, state: { isFocused: boolean }) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#f0f5f7' : '#f0f5f7', // Background color for the select field
+        borderColor: state.isFocused ? 'black' : 'black', // Border color when focused/unfocused
+        boxShadow: state.isFocused ? '0 0 0 1px #1a73e8' : 'none', // Box shadow on focus
+        borderRadius: '4px', // Adjust border radius if needed
+        padding: '4px', // Adjust padding for a better look
+      }),
+      multiValue: (provided: React.CSSProperties, state: { isFocused: boolean }) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#DDEAF0' : '#DDEAF0', // Background color for the selected option
     // border: state.isFocused ? '1px solid #0f5132' : '1px solid #084298', // Border color for the selected option
     borderRadius: '5px', // Adjust border radius if needed
     padding: '2px', // Optional: Adjust padding for more spacing
   }),
-  multiValueLabel: (provided) => ({
+  multiValueLabel: (provided: React.CSSProperties) => ({
     ...provided,
     color: '#000', // Text color for the label
   }),
-  multiValueRemove: (provided, state) => ({
+  multiValueRemove: (provided: React.CSSProperties, state: { isFocused: boolean }) => ({
     ...provided,
     color: state.isFocused ? '#842029' : '#6c757d', // Icon color for remove button
     ':hover': {

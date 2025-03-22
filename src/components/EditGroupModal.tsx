@@ -1,7 +1,7 @@
 "use client";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
-import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
+import { setIsEditGroupModalOpen } from "~/lib/features/uiSlice";
 import { useEffect, useState } from "react";
 import { db, usersRef } from "~/lib/api/firebaseConfig";
 import {
@@ -12,13 +12,12 @@ import {
   collection,
   DocumentReference,
   Timestamp,
-  updateDoc,
   arrayUnion,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 
-export default function CreateGroupModal() {
+export default function EditGroupModal() {
   const { user } = useUser();
   const userId = user?.emailAddresses[0]?.emailAddress;
   const [title, setTitle] = useState("");
@@ -32,10 +31,10 @@ export default function CreateGroupModal() {
   const [classes, setClasses] = useState<string[]>([]); // Define classes state
 
   const dispatch = useDispatch();
-  const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
+  const isOpen = useAppSelector((state) => state.ui.isEditGroupModalOpen);
 
   const handleClose = () => {
-    dispatch(setIsCreateGroupModalOpen(false));
+    dispatch(setIsEditGroupModalOpen(false));
   };
 
   async function checkId(docRef: DocumentReference): Promise<boolean> {
@@ -118,7 +117,7 @@ export default function CreateGroupModal() {
     setDetails("");
     handleClose();
 
-    toast("Study group created successfully!", {
+    toast("Study group edited successfully!", {
       icon: "👏",
       style: {
         borderRadius: "10px",
@@ -142,68 +141,18 @@ export default function CreateGroupModal() {
     });
   }, [user]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="w-96 rounded-lg p-8 bg-lightAccent dark:bg-darkAccent">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-black dark:text-white">Create New Study Group</h2>
+          <h2 className="text-xl font-bold text-black dark:text-white">Edit Study Group</h2>
           <button onClick={handleClose} className="text-xl font-bold text-black dark:text-white">
             <big>&times;</big>
           </button>
         </div>
         <form onSubmit={handleSubmit}>
-          <input
-            className="mb-2 w-full rounded border-b-4 border-b-lightbg dark:border-b-darkbg p-2 bg-lightInput dark:bg-darkInput"
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            maxLength={20} // Reasonable character limit
-          />
-          <select
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
-            id="classSelect"
-            value={course}
-            onChange={(e) => setCourse(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              Select a class
-            </option>
-            {classes.map((cls) => (
-              <option key={cls} value={cls}>
-                {cls}
-              </option>
-            ))}
-          </select>
-          <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
-            type="text"
-            placeholder="Purpose"
-            value={purpose}
-            onChange={(e) => setPurpose(e.target.value)}
-            required
-            maxLength={30} // Reasonable character limit
-          />
-          <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
-            type="date"
-            placeholder="Date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-          <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
-            type="time"
-            placeholder="Time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            required
-          />
           <input
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
             type="text"
@@ -211,16 +160,6 @@ export default function CreateGroupModal() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             required
-          />
-          <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
-            type="number"
-            placeholder="Max Seats"
-            value={seats}
-            onChange={(e) => setSeats(e.target.value)}
-            required
-            min="2" // Minimum participants of 2
-            max="100"
           />
           <input
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
@@ -233,7 +172,7 @@ export default function CreateGroupModal() {
             type="submit"
             className="bg-blue-500 w-full rounded bg-lightbg dark:bg-darkbg hover:bg-lightSelected dark:hover:bg-darkSelected px-4 py-2 font-bold text-black dark:text-white"
           >
-            Create Group
+            Edit Group
           </button>
         </form>
       </div>
