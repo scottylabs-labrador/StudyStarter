@@ -68,7 +68,7 @@ export const logUpdateUserEvent = async (user: userDetails) => {
       email: filteredUpdates.email,
       first_name: user.firstName,
       last_name: user.lastName,
-      major: user.majors,
+      majors: user.majors,
       year: user.year,
       join_date: tstamp,
     };

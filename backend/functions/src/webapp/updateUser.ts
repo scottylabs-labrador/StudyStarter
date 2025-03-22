@@ -50,8 +50,8 @@ export const updateUser = async (
 
   try {
     await updateUserFields(db, user);
-    res.status(200).send({success: true, message: "Added/Updated user."});
     await logUpdateUserEvent(user);
+    res.status(200).send({success: true, message: "Added/Updated user."});
     return;
   } catch (error) {
     logger.error("Error adding/updating user:", {structuredData: true, error});
