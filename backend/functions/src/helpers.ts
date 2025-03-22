@@ -46,7 +46,7 @@ export const updateGroupMembership = async (
   const groupDocPath = `Study Groups/${groupId}`;
   const groupDocRef = db.doc(groupDocPath);
   const entryToUpdate = {
-    name: user?.name ?? "Unknown",
+    name: user?.fullName ?? "Unknown",
     url: user?.imageUrl ?? "",
     email: email,
   };
@@ -76,4 +76,14 @@ export const updateGroupMembership = async (
       {merge: true},
     );
   }
+};
+
+export const updateUserFields = async (db: Firestore,
+  user: Partial<userDetails>): Promise<void> => {
+  const filteredUpdates = Object.fromEntries(
+    Object.entries(user).filter(([, value]) => value !== null)
+  );
+  const userDocPath = `Users/${user.email}`;
+  const userDocRef = db.doc(userDocPath);
+  await userDocRef.set(filteredUpdates, {merge: true});
 };

@@ -16,10 +16,19 @@ export interface groupDetails {
   details: string;
 }
 
+// interface courseDetails {
+//   courseId: string;
+//   id: string;
+//   name: string;
+// }
+
 export interface userDetails {
-  name: string;
-  imageUrl: string;
-  joinedGroups: string[];
-  majors: string;
-  year: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  fullName: string | null;
+  imageUrl: string | null;
+  joinedGroups: string[] | null;
+  majors: string | null;
+  year: string | null;
 }

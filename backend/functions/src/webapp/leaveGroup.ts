@@ -36,14 +36,14 @@ export const leaveGroup = async (
     const groupDocSnapshot = await fetchGroup(db, id);
 
     if (!groupDocSnapshot.exists) {
-      res.status(404).send({success: false, message: "Group not found."});
+      res.status(400).send({success: false, message: "Group not found."});
       return;
     }
 
     const group = groupDocSnapshot.data() as groupDetails;
 
     if (!(group && group.participantDetails)) {
-      res.status(404).send({
+      res.status(400).send({
         success: false,
         message: "Group missing required field: participantDetails.",
       });
@@ -53,14 +53,14 @@ export const leaveGroup = async (
     const userDocSnapshot = await fetchUser(db, email);
 
     if (!userDocSnapshot.exists) {
-      res.status(404).send({success: false, message: "User not found."});
+      res.status(400).send({success: false, message: "User not found."});
       return;
     }
 
     const user = userDocSnapshot.data() as Partial<userDetails>;
 
     if (!(user && Array.isArray(user.joinedGroups))) {
-      res.status(404).send({
+      res.status(400).send({
         success: false,
         message: "User missing required field: joinedGroups.",
       });
@@ -68,17 +68,17 @@ export const leaveGroup = async (
     }
     if (!isUserInGroup(user, group)) {
       res
-        .status(404)
+        .status(400)
         .send({success: false, message: "User not in group."});
       return;
     }
     const isJoinEvent = false;
     await updateGroupMembership(db, isJoinEvent, email, user, group.id);
-    await logJoinEvent(isJoinEvent, email, group.id);
     res.status(200).send({success: true, message: "Removed user from group."});
+    await logJoinEvent(isJoinEvent, email, group.id);
     return;
   } catch (error) {
-    console.error("Error leaving group:", error);
+    logger.error("Error leaving group:", {structuredData: true, error});
     res.status(500).send({
       success: false,
       message: "Internal Server Error",
