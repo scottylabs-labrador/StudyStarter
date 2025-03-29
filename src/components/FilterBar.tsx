@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Select, { MultiValue } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -32,11 +32,11 @@ const CustomDateInput: React.FC<CustomInputProps> = ({ value, onClick, onClear }
   );
 };
 
-const customComponents = {
+const customSelectComponents = {
   ClearIndicator: () => null, // Do not render the remove icon ("x")
 };
 
-const customStyles = {
+const customSelectStyles = {
   input: (provided) => ({
     ...provided,
     color: '#000', // Change text color in the input area to black
@@ -81,8 +81,8 @@ interface TopFilterBarProps {
   setSelectedLocations: (
     selected: MultiValue<{ value: string; label: string }>,
   ) => void;
-  selectedDate: string | undefined;
-  setSelectedDate: (date: string | undefined) => void;
+  selectedDate: Date | null;
+  setSelectedDate: (date: Date | null) => void;
 }
 
 const TopFilterBar: React.FC<TopFilterBarProps> = ({
@@ -95,41 +95,61 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   selectedDate,
   setSelectedDate,
 }) => {
+  const [isFocused, setIsFocused] = useState(false); // State to track focus
+
+  // Handler for focus event
+  const handleFocus = () => {
+    console.log("DatePicker is focused!");
+    setIsFocused(true);
+  };
+
+  // Handle blur when calendar closes or input loses focus
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
   return (
     <div className="top-0 z-10 w-full border-b-darkbg dark:border-b-lightbg border-b bg-lightbg dark:bg-darkbg px-6 py-4">
-      <div className="flex space-x-4">
+      <div className="flex space-x-4 justify-between w-full">
         <Select
           isMulti
           options={courseOptions}
           value={selectedCourses}
           onChange={setSelectedCourses}
           classNamePrefix="react-select"
-          className="mb-2 w-full rounded"
+          className="mb-2 rounded flex-1"
           placeholder="Courses"
-          styles={customStyles}
-          components={customComponents} // remove x
+          styles={customSelectStyles}
+          components={customSelectComponents} // remove x
         />
         
-        {/* <DatePicker
+        <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
-          className="rounded-md border px-2 py-1.5 w-1000000"
-          type="date"
-          // placeholder="Date"
-          customInput={
-            <CustomDateInput
-              onClear={() => setSelectedDate(null)}
-            />
-          }
-        /> */}
-        <input
+          customInput={<input style={{ 
+            color: '#000', 
+            backgroundColor: isFocused ? '#f0f5f7' : '#f0f5f7', // Background color for the select field
+            borderColor: isFocused ? 'black' : 'black', // Border color when focused/unfocused
+            boxShadow: isFocused ? '0 0 0 1px #1a73e8' : 'none', // Box shadow on focus
+            borderRadius: '4px', // Adjust border radius if needed
+            padding: '11px' 
+          }} />} // Custom input styles
+          popperClassName="custom-popper" // Class for popper customization
+          placeholderText="Date"
+          onFocus={handleFocus} // Focus event handler
+          classNamePrefix="react-datepicker"
+          className="mb-2 rounded flex-1"
+          onCalendarClose={handleBlur} // Calendar closed (treat as blur)
+          onBlur={handleBlur} // Trigger blur when input loses focus
+        />
+        {/* <input
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           className="mb-2 w-full rounded border px-2 bg-lightInput"// top-0 z-10 w-full border-b-darkbg dark:border-b-lightbg border-b bg-lightbg dark:bg-darkbg px-6 py-4
           type="date"
           placeholder="Date"
           id="filterDate"
-        />
+        /> */}
       </div>
     </div>
   );

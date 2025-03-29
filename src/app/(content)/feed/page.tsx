@@ -19,7 +19,7 @@ export default function FeedPage() {
   const [selectedLocations, setSelectedLocations] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);
-  const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [classes, setClasses] = useState<{ value: string; label: string }[]>(
     [],
   );
@@ -47,16 +47,10 @@ export default function FeedPage() {
     console.log(selectedDate);
 
     if (selectedDate) {
-      const [year, month, day] = selectedDate.split("-");
-      const filterDate = new Date(
-        parseInt(year!),
-        parseInt(month!) - 1,
-        parseInt(day!),
-      );
       if (
-        groupDate.getDate() !== filterDate.getDate() ||
-        groupDate.getMonth() !== filterDate.getMonth() ||
-        groupDate.getFullYear() !== filterDate.getFullYear()
+        groupDate.getDate() !== selectedDate.getDate() ||
+        groupDate.getMonth() !== selectedDate.getMonth() ||
+        groupDate.getFullYear() !== selectedDate.getFullYear()
       ) {
         return true;
       }
