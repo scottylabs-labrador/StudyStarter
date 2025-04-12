@@ -2,7 +2,7 @@
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef } from "react";
 import { db, usersRef } from "~/lib/api/firebaseConfig";
 import {
   setDoc,
@@ -17,6 +17,8 @@ import {
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -24,7 +26,7 @@ export default function CreateGroupModal() {
   const [title, setTitle] = useState("");
   const [course, setCourse] = useState("");
   const [purpose, setPurpose] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<Date | null>();
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [seats, setSeats] = useState("");
@@ -56,19 +58,19 @@ export default function CreateGroupModal() {
     }
     let timestamp: Date;
     try {
-      const [year, month, day] = date.split("-");
-      const [hours, minutes] = time.split(":");
-      timestamp = new Date(
-        parseInt(year!),
-        parseInt(month!) - 1,
-        parseInt(day!),
-        parseInt(hours!),
-        parseInt(minutes!),
-      );
+      // const [year, month, day] = date.split("-");
+      // const [hours, minutes] = time.split(":");
+      // timestamp = new Date(
+      //   parseInt(year!),
+      //   parseInt(month!) - 1,
+      //   parseInt(day!),
+      //   parseInt(hours!),
+      //   parseInt(minutes!),
+      // );
     } catch (error) {
       return;
     }
-    if (!timestamp) {
+    if (!date) {
       toast.error("Invalid Date Input!");
       return;
     }
@@ -81,7 +83,7 @@ export default function CreateGroupModal() {
       }
       groupDocRef = doc(db, "Study Groups", id);
     }
-    const firestoreTimestamp = Timestamp.fromDate(timestamp);
+    const firestoreTimestamp = Timestamp.fromDate(date);
     await setDoc(groupDocRef, {
       id,
       title,
@@ -111,7 +113,7 @@ export default function CreateGroupModal() {
     setTitle("");
     setCourse("");
     setPurpose("");
-    setDate("");
+    setDate(null);
     setTime("");
     setLocation("");
     setSeats("");
@@ -143,6 +145,21 @@ export default function CreateGroupModal() {
   }, [user]);
 
   if (!isOpen) return null;
+
+  const CustomDateInput = forwardRef(
+    ({ value, onClick, placeholder, className, ...rest }, ref) => (
+      <input
+        onClick={onClick}
+        ref={ref}
+        value={value}
+        readOnly
+        placeholder={placeholder}
+        // Merge the existing className with your own
+        className={`w-full block mb-2 rounded border p-2 bg-lightInput dark:bg-darkInput ${className || ''}`}
+        {...rest}
+      />
+    )
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" id="createGroupPopUp">
@@ -188,21 +205,17 @@ export default function CreateGroupModal() {
             required
             maxLength={30} // Reasonable character limit
           />
-          <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
-            type="date"
-            placeholder="Date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-          <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
-            type="time"
-            placeholder="Time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            required
+          <DatePicker
+            selected={date}
+            onChange={(d) => setDate(d)}
+            showTimeSelect
+            dateFormat="Pp"
+            placeholderText="Date/Time"
+            popperClassName="custom-popper"
+            calendarClassName="bg-lightInput dark:bg-darkInput"
+            customInput={<CustomDateInput />}
+            wrapperClassName="w-full"
+            className="w-full"
           />
           <input
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
