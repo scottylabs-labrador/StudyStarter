@@ -216,6 +216,7 @@ export default function CreateGroupModal() {
             customInput={<CustomDateInput />}
             wrapperClassName="w-full"
             className="w-full"
+            required
           />
           <input
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
