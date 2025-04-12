@@ -2,9 +2,9 @@ import "~/styles/globals.css";
 import React from "react";
 
 export const metadata = {
-  title: "BoilerGram",
-  description: "Your new favorite social media platform.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: "CMU Study",
+  description: "Totally novel way to support your grade",
+  icons: [{ rel: "icon", url: "/CMUStudy.ico" }],
 };
 
 export default async function ContentLayout({

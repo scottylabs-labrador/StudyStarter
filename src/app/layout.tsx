@@ -5,9 +5,9 @@ import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "Study Group Finder",
+  title: "CMU Study",
   description:"Totally novel way to support your grade",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/CMUStudy.ico" }],
 };
 
 export default function RootLayout({
