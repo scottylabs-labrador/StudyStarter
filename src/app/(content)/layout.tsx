@@ -17,7 +17,7 @@ export default async function ContentLayout({
 }) {
   return (
     <div className="flex h-screen w-screen bg-lightbg dark:bg-darkbg">
-      <div className=" left-0 top-0 flex-none w-[10vw] h-full bg-lightSidebar dark:bg-darkSidebar">
+      <div className=" left-0 top-0 flex-none w-[15vw] h-full bg-lightSidebar dark:bg-darkSidebar">
         <NavBar />
       </div>
       <div className="flex-1 overflow-auto">
