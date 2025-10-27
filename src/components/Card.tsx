@@ -23,6 +23,7 @@ import {
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
+import { addAttendeeToEvent } from "~/helpers/calendar_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
@@ -33,6 +34,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
+  const [eventId, setEventId] = useState<string | undefined>(undefined);
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
@@ -65,6 +67,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
             participant.email === user.emailAddresses[0]?.emailAddress,
         );
         joinedSetState(isParticipant);
+        setEventId(docSnapshot.data()?.eventId);
+        console.log("event id", eventId);
       }
     });
 
@@ -84,7 +88,21 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         toast.error("Group is full");
         return;
       }
+      if (eventId && userId) {
+        addAttendeeToEvent(eventId, userId);
+      } else {
+        toast("Could not add to calendar", {
+          icon: "❌",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+      }
+
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion({
           name: user?.fullName,
@@ -229,7 +247,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         }`}
         onClick={joinGroup}
       >
-        {joinedState ? "Joined" : "Join"}
+        {joinedState ? "Leave" : "Join"}
       </button>
       {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
     </div>
