@@ -20,6 +20,7 @@ import { useUser } from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'
+import { addToCal, setupGoogleApi } from "../helpers/calendar_helper";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -59,19 +60,7 @@ export default function CreateGroupModal() {
       id += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     let timestamp: Date;
-    try {
-      // const [year, month, day] = date.split("-");
-      // const [hours, minutes] = time.split(":");
-      // timestamp = new Date(
-      //   parseInt(year!),
-      //   parseInt(month!) - 1,
-      //   parseInt(day!),
-      //   parseInt(hours!),
-      //   parseInt(minutes!),
-      // );
-    } catch (error) {
-      return;
-    }
+
     if (!date) {
       toast.error("Invalid Date Input!");
       return;
@@ -86,8 +75,34 @@ export default function CreateGroupModal() {
       groupDocRef = doc(db, "Study Groups", id);
     }
     const firestoreTimestamp = Timestamp.fromDate(date);
+    const userEmail = user?.emailAddresses[0]?.emailAddress;
+
+    if (!userEmail) {
+      toast("Error creating study group", {
+        icon: "❌",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+      return;
+    }
+    const eventId = await addToCal(id, title, course, purpose, firestoreTimestamp, location, details, userEmail);
+    if (eventId == undefined) {
+      toast("Error creating study group", {
+        icon: "❌",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+      return;
+    }
     await setDoc(groupDocRef, {
       id,
+      eventId,
       title,
       course,
       purpose,
@@ -98,7 +113,7 @@ export default function CreateGroupModal() {
         {
           name: user?.fullName,
           url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
+          email: userEmail,
         },
       ],
       details,
@@ -197,7 +212,7 @@ export default function CreateGroupModal() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            maxLength={30} // Reasonable character limit
+            maxLength={40} // Reasonable character limit
           />
           <select
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
@@ -244,6 +259,7 @@ export default function CreateGroupModal() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             required
+            maxLength={40}
           />
           <input
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"

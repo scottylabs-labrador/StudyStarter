@@ -49,6 +49,14 @@ export default function FeedPage() {
     const isFull = group.participantDetails.length >= group.totalSeats;
     const isParticipant = joinedGroups?.includes(group.id);
     const groupDate = group.startTime.toDate();
+
+    // Uncomment to filter out any groups for classes user is not in
+    // if (classes.length > 0) {
+    //   if (!classes.some((entry) => entry.value === group.course)) {
+    //     return true;
+    //   }
+    // }
+
     if (isFull && !showFullFilter && !isParticipant) {
       return true;
     }
