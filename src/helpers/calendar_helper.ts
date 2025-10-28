@@ -121,7 +121,6 @@ async function ensureAuthorized(): Promise<void> {
 
 /** Adds an event to the user's Google Calendar. */
 export async function addToCal(
-  id: string,
   title: string,
   course: string,
   purpose: string,
@@ -165,148 +164,27 @@ export async function addToCal(
 }
 
 /**
- * Adds an attendee to an existing event on the user’s primary Google Calendar.
- * @param eventId The ID of the event (as stored or returned when created).
- * @param newAttendeeEmail The email address to add as an attendee.
- */
-export async function addAttendeeToEvent(
-    eventId: string,
-    calId: string,
-    newAttendeeEmail: string
-  ): Promise<void> {
-    await ensureAuthorized();
-  
-    try {
-      // Step 1: Fetch current event
-      const getResponse = await gapi.client.calendar.events.get({
-        calendarId: calId,
-        eventId,
-      });
-      const event = getResponse.result;
-  
-      // Step 2: Prepare updated attendees list
-      const existingAttendees = (event.attendees as any[]) ?? [];
-      // Avoid duplicates
-      const alreadyExists = existingAttendees.some(
-        (a) => a.email === newAttendeeEmail
-      );
-      if (!alreadyExists) {
-        existingAttendees.push({ email: newAttendeeEmail });
-      }
-  
-      // Step 3: Patch the event with updated attendees
-      const patchResponse = await gapi.client.calendar.events.patch({
-        calendarId: "primary",
-        eventId,
-        resource: {
-          attendees: existingAttendees,
-        },
-        sendUpdates: "all", // optionally notify attendees of change
-      });
-  
-      console.log("Attendee added:", newAttendeeEmail, patchResponse.result.htmlLink);
-    } catch (err) {
-      console.error("Error adding attendee to event:", err);
-      throw err;
-    }
-  }
-  
-/**
  * Removes `attendeeEmail` from the event with `eventId`.  
  * - If the attendee is the organizer and there are other attendees, it picks another attendee as new owner (by moving the event).  
  * - If the attendee is not the organizer, it simply removes them.  
  * - If after removal there are no attendees left, it deletes the event.
  *
- * @param eventId ID of the event in the primary calendar.
+ * @param eventId ID of the event in the calendarId calendar.
+ * @param calendarId ID of the calendar
  * @param attendeeEmail Email of the attendee to remove.
  */
-export async function removeAttendeeFromGroup(
+export async function deleteFromCal(
   eventId: string,
-  calId: string,
   attendeeEmail: string
 ): Promise<void> {
   await ensureAuthorized();
 
-  const calendarId = "primary";
-
   try {
-    // Step 1: get current event
-    const getResp = await gapi.client.calendar.events.get({
-      calendarId,
+    await gapi.client.calendar.events.delete({
+      calendarId: "primary",
       eventId,
     });
-    const event = getResp.result;
-
-    const organizerEmail: string | undefined = event.organizer?.email;
-    const attendees: any[] = (event.attendees as any[]) ?? [];
-
-    // Remove the attendee from list
-    const newAttendees = attendees.filter(a => a.email !== attendeeEmail);
-
-    // Check if removed person was organizer
-    const removedWasOrganizer = (attendeeEmail === organizerEmail);
-
-    if (removedWasOrganizer) {
-      // If organizer removed
-      if (newAttendees.length === 0) {
-        // No one left → delete event
-        await gapi.client.calendar.events.delete({
-          calendarId,
-          eventId,
-          sendUpdates: "all",
-        });
-        console.log(`Event ${eventId} deleted because organizer removed and no other attendees.`);
-        return;
-      } else {
-        // Choose new owner (first attendee)
-        const newOwner = newAttendees[0].email;
-        // Move event to new owner's calendar (this changes organizer)  
-        // NOTE: move requires you have permission on destination calendar  
-        const moveResp = await gapi.client.calendar.events.move({
-          calendarId,
-          eventId,
-          destination: newOwner,
-          sendUpdates: "all",
-        });
-        console.log(`Event ${eventId} moved to new owner ${newOwner}.`);
-
-        // After move, patch attendees list (removing the old organizer)
-        await gapi.client.calendar.events.patch({
-          calendarId: newOwner,
-          eventId,
-          resource: {
-            attendees: newAttendees,
-          },
-          sendUpdates: "all",
-        });
-        console.log(`Removed old organizer ${attendeeEmail} from attendees of event ${eventId}.`);
-        return;
-      }
-    } else {
-      // If removed person was *not* organizer
-      if (newAttendees.length === 0) {
-        // After removal, no attendees left → optionally delete event
-        await gapi.client.calendar.events.delete({
-          calendarId,
-          eventId,
-          sendUpdates: "all",
-        });
-        console.log(`Event ${eventId} deleted because no attendees remain after removing ${attendeeEmail}.`);
-        return;
-      } else {
-        // Simply patch event with updated attendees
-        await gapi.client.calendar.events.patch({
-          calendarId,
-          eventId,
-          resource: {
-            attendees: newAttendees,
-          },
-          sendUpdates: "all",
-        });
-        console.log(`Removed attendee ${attendeeEmail} from event ${eventId}.`);
-        return;
-      }
-    }
+    console.log(`Event ${eventId} deleted.`);
   } catch (err) {
     console.error("Error in removeAttendeeFromGroup:", err);
     throw err;
