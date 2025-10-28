@@ -160,7 +160,7 @@ export async function addToCal(
     return response.result.id;
   } catch (err) {
     console.error("Error creating event:", err);
-    return undefined
+    return undefined;
   }
 }
 
@@ -171,6 +171,7 @@ export async function addToCal(
  */
 export async function addAttendeeToEvent(
     eventId: string,
+    calId: string,
     newAttendeeEmail: string
   ): Promise<void> {
     await ensureAuthorized();
@@ -178,7 +179,7 @@ export async function addAttendeeToEvent(
     try {
       // Step 1: Fetch current event
       const getResponse = await gapi.client.calendar.events.get({
-        calendarId: "primary",
+        calendarId: calId,
         eventId,
       });
       const event = getResponse.result;
@@ -221,6 +222,7 @@ export async function addAttendeeToEvent(
  */
 export async function removeAttendeeFromGroup(
   eventId: string,
+  calId: string,
   attendeeEmail: string
 ): Promise<void> {
   await ensureAuthorized();

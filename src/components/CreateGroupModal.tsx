@@ -103,6 +103,7 @@ export default function CreateGroupModal() {
     await setDoc(groupDocRef, {
       id,
       eventId,
+      calId: userEmail,
       title,
       course,
       purpose,
