@@ -23,7 +23,7 @@ import {
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
-import { addAttendeeToEvent } from "~/helpers/calendar_helper";
+import { addAttendeeToEvent, removeAttendeeFromGroup } from "~/helpers/calendar_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
@@ -35,7 +35,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
-  const [eventId, setEventId] = useState<string | undefined>(undefined);
+  const [eventIdState, setEventId] = useState<string | undefined>(undefined);
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
@@ -69,8 +69,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
             participant.email === user.emailAddresses[0]?.emailAddress,
         );
         joinedSetState(isParticipant);
-        setEventId(docSnapshot.data()?.eventId);
-        console.log("event id", eventId);
+        setEventId(docSnapshot.data().eventId);
       }
     });
 
@@ -90,8 +89,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         toast.error("Group is full");
         return;
       }
-      if (eventId && userId) {
-        addAttendeeToEvent(eventId, userId);
+      if (eventIdState && userId) {
+        addAttendeeToEvent(eventIdState, userId);
       } else {
         toast("Could not add to calendar", {
           icon: "❌",
@@ -154,13 +153,23 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       const updatedGroupSnap = await getDoc(groupDocRef);
       if (updatedGroupSnap.exists()) {
         const updatedData = updatedGroupSnap.data();
-        if (
-          !updatedData.participantDetails ||
-          updatedData.participantDetails.length === 0
-        ) {
+        const onlyMember = !updatedData.participantDetails || updatedData.participantDetails.length === 0
+        if (onlyMember) {
           await deleteDoc(groupDocRef);
           onClick();
           posthog.capture('group_emptied', { group: currentDetails })
+        }
+        if (eventIdState && userId) {
+          removeAttendeeFromGroup(eventIdState, userId);
+        } else {
+          toast("Could not add to calendar", {
+            icon: "❌",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
         }
       }
     }
