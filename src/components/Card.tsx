@@ -23,7 +23,7 @@ import {
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
-import { addAttendeeToEvent, removeAttendeeFromGroup } from "~/helpers/calendar_helper";
+import { addToCal, deleteFromCal } from "~/helpers/calendar_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
@@ -35,8 +35,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
-  const [eventIdState, setEventId] = useState<string | undefined>(undefined);
-  const [calIdState, setCalId] = useState<string | undefined>(undefined);
+  const [eventIdState, setEventIdState] = useState<string | undefined>(undefined)
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
@@ -69,9 +68,15 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           (participant: any) =>
             participant.email === user.emailAddresses[0]?.emailAddress,
         );
+        let eventId = undefined
+        if (isParticipant) {
+          eventId = participants.find(
+            (participant: any) =>
+              participant.email === user.emailAddresses[0]?.emailAddress,
+          )?.eventId;
+        }
         joinedSetState(isParticipant);
-        setEventId(docSnapshot.data().eventId);
-        setCalId(docSnapshot.data().calId);
+        setEventIdState(eventId);
       }
     });
 
@@ -84,6 +89,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const joinGroup = async () => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId ? userId : "");
+    let eventId:string | undefined = undefined;
     if (!joinedState) {
       if (
         currentDetails.participantDetails.length >= currentDetails.totalSeats
@@ -91,8 +97,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         toast.error("Group is full");
         return;
       }
-      if (eventIdState && calIdState && userId) {
-        addAttendeeToEvent(eventIdState, calIdState, userId);
+      if (userId) {
+        eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
       } else {
         toast("Could not add to calendar", {
           icon: "❌",
@@ -111,6 +117,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           name: user?.fullName,
           url: user?.imageUrl,
           email: user?.emailAddresses[0]?.emailAddress,
+          eventId
         }),
       });
       await setDoc(
@@ -161,8 +168,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           onClick();
           posthog.capture('group_emptied', { group: currentDetails })
         }
-        if (eventIdState && calIdState && userId) {
-          removeAttendeeFromGroup(eventIdState, calIdState, userId);
+        if (userId) {
+          deleteFromCal(eventIdState, userId);
         } else {
           toast("Could not add to calendar", {
             icon: "❌",

@@ -10,8 +10,9 @@ export default interface groupDetails {
     course: string,
     participantDetails: {
         name: string,
-        url: string
-        email: string
+        url: string,
+        email: string,
+        event: string
     }[],
     details: string
 }
