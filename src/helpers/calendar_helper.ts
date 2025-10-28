@@ -175,7 +175,6 @@ export async function addToCal(
  */
 export async function deleteFromCal(
   eventId: string,
-  attendeeEmail: string
 ): Promise<void> {
   await ensureAuthorized();
 
@@ -186,7 +185,7 @@ export async function deleteFromCal(
     });
     console.log(`Event ${eventId} deleted.`);
   } catch (err) {
-    console.error("Error in removeAttendeeFromGroup:", err);
+    console.error("Error in deleteFromCal:", err);
     throw err;
   }
 }

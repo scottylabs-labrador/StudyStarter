@@ -139,6 +139,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           name: user?.fullName,
           url: user?.imageUrl,
           email: user?.emailAddresses[0]?.emailAddress,
+          eventId: eventIdState,
         }),
       });
       await setDoc(
@@ -163,8 +164,8 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           await deleteDoc(groupDocRef);
           onClick();
         }
-        if (userId) {
-          deleteFromCal(eventIdState, userId);
+        if (eventIdState) {
+          deleteFromCal(eventIdState);
         } else {
           toast("Could not add to calendar", {
             icon: "❌",
