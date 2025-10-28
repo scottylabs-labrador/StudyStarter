@@ -88,7 +88,7 @@ export default function CreateGroupModal() {
     }
     const eventId = await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail);
     if (eventId == undefined) {
-      toast("Error creating study group", {
+      toast("Could not add to calendar", {
         icon: "❌",
         style: {
           borderRadius: "10px",
@@ -96,7 +96,6 @@ export default function CreateGroupModal() {
           color: "#fff",
         },
       });
-      return;
     }
     await setDoc(groupDocRef, {
       id,
