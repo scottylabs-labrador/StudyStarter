@@ -185,7 +185,6 @@ export async function deleteFromCal(
     });
     console.log(`Event ${eventId} deleted.`);
   } catch (err) {
-    console.error("Error in deleteFromCal:", err);
-    throw err;
+    console.log("Event does not exist");
   }
 }
