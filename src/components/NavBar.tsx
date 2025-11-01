@@ -185,7 +185,7 @@ export default function NavBar() {
               {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             {/* Hide content after first button on small screens */}
-            <div className="hidden md:flex h-[50px] items-center">
+            <a href="/feed" className="hidden md:flex h-[50px] items-center">
               <Image
                 className="hidden dark:block"
                 src={darkLogo}
@@ -200,7 +200,7 @@ export default function NavBar() {
                 width={400}
                 height={200}
               />
-            </div>
+            </a>
           </div>
         </div>
 
@@ -229,12 +229,15 @@ export default function NavBar() {
 
 
         {/* Bottom Section (Logout Button) - Hidden on small screens */}
-        <div className="hidden md:block pb-4">
+        <div className="hidden md:block">
           <SignOutButton>
             <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
               Logout
             </button>
           </SignOutButton>
+          <a href="/privacy" className={`w-full text-center pb-2 rounded-lg text-xs ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : " text-black dark:text-white"}`}>
+            Privacy Policy
+          </a>
         </div>
       </div>
 
@@ -246,7 +249,7 @@ export default function NavBar() {
             <button onClick={() => setIsDrawerOpen(false)} className="mb-4 text-black dark:text-white">
               <X size={24}/>
             </button>
-            <div>
+            <a href="/feed">
               <Image
                 className="hidden dark:block"
                 src={darkLogo}
@@ -261,7 +264,7 @@ export default function NavBar() {
                 width={150}
                 height={75}
               />
-            </div>
+            </a>
             <nav className="flex flex-col gap-y-4">
               <a href="/feed" className={`py-2 ${page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                 Group Finder
@@ -296,6 +299,9 @@ export default function NavBar() {
                 Logout
               </button>
             </SignOutButton>
+            <a href="/privacy" className={`w-full text-center pb-2 rounded-lg text-xs ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
+              Privacy Policy
+            </a>
           </div>
         </div>
       </div>
