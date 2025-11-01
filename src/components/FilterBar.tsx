@@ -142,6 +142,17 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           onCalendarClose={handleBlur} // Calendar closed (treat as blur)
           onBlur={handleBlur} // Trigger blur when input loses focus
         />
+
+        {/* Profile Button - Hidden on small screens */}
+        <a
+          href="/profile"
+          className="hidden md:flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
+          style={{ zIndex: 1000 }}
+        >
+          <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
+            <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
+          </svg>
+        </a>
         {/* <input
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
