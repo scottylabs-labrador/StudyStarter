@@ -1,6 +1,6 @@
 "use client";
-import darkLogo from "~/image/darkLogo.png"
-import lightLogo from "~/image/lightLogo.png"
+import darkLogo from "~/image/darkLogo2.png"
+import lightLogo from "~/image/lightLogo2.png"
 import { Fragment, useState, useEffect } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
