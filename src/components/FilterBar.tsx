@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import Select, { MultiValue } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -96,7 +97,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   setSelectedDate,
 }) => {
   const [isFocused, setIsFocused] = useState(false); // State to track focus
-
+  const { user } = useUser();
   // Handler for focus event
   const handleFocus = () => {
     console.log("DatePicker is focused!");
@@ -142,6 +143,19 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           onCalendarClose={handleBlur} // Calendar closed (treat as blur)
           onBlur={handleBlur} // Trigger blur when input loses focus
         />
+
+        {/* Profile Button - Hidden on small screens */}
+        <a
+          href="/profile"
+          className="hidden md:flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
+          style={{ zIndex: 1000 }}
+        >
+          <img
+            src={user?.imageUrl || "https://via.placeholder.com/80"}
+            alt="Profile"
+            className=" rounded-full"
+          />
+        </a>
         {/* <input
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}

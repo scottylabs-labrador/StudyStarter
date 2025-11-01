@@ -68,6 +68,15 @@ export default function FeedPage() {
     return false;
   };
 
+  /*
+  Stops showing study group details and resets the selected group to null, removing the 
+  border on selected cards.
+  */
+  const closeDetailsPopUp = () => {
+    setShowDetails(null);
+    setSelectedGroup(null);
+  };
+
   useEffect(() => {
     if (!user) return;
     
@@ -225,7 +234,7 @@ export default function FeedPage() {
         <div className="md:block md:w-full lg:w-[30%] xl:w-[25%]">
           <Card
             details={showDetails}
-            onClick={() => setShowDetails(null)}
+            onClick={() => closeDetailsPopUp()}
             updateJoinedGroups={setJoinedGroups}
           />
         </div>
