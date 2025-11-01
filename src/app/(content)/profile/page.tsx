@@ -135,7 +135,7 @@ export default function ProfilePage() {
         </select>
       </div> */}
       <div>
-        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 mt-3 w-1/3 border-2 text-black bg-lightInput dark:bg-darkInput hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
+        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 mt-3 w-full max-w-[450px] border-2 text-black bg-lightInput dark:bg-darkInput hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
           <option disabled selected value={"default"}>Select Year</option>
           <option value={years[0]}>Class of {years[0]}</option>
           <option value={years[1]}>Class of {years[1]}</option>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-1 text-black dark:text-white">Majors:</h1>
       <input
         id="majorInput"
-        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-1/3 mb-0"
+        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 mb-0 w-full max-w-[450px]"
         type="text"
         onChange={changeMajors}
         placeholder="Add your major(s) here"
@@ -164,7 +164,7 @@ export default function ProfilePage() {
       <h1 className="text-l font-bold mb-1 text-black dark:text-white">Minors:</h1>
       <input
         id="minorInput"
-        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-1/3 mb-3"
+        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-full max-w-[450px] mb-3"
         type="text"
         onChange={changeMinors}
         placeholder="Add any minors or concentrations here"
