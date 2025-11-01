@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import Select, { MultiValue } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -96,7 +97,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   setSelectedDate,
 }) => {
   const [isFocused, setIsFocused] = useState(false); // State to track focus
-
+  const { user } = useUser();
   // Handler for focus event
   const handleFocus = () => {
     console.log("DatePicker is focused!");
@@ -149,9 +150,11 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           className="hidden md:flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
           style={{ zIndex: 1000 }}
         >
-          <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6">
-            <path d="M12 12.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v1.5h16v-1.5c0-2.66-5.33-4-8-4z" />
-          </svg>
+          <img
+            src={user?.imageUrl || "https://via.placeholder.com/80"}
+            alt="Profile"
+            className=" rounded-full"
+          />
         </a>
         {/* <input
           value={selectedDate}
