@@ -236,7 +236,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
               <button
                 onClick={handleViewProfileClick}
                 className = "flex items-center p-[5px]"
-                data-username={participantDetail.name}
+                data-username={participantDetail.name.split(" ")[0]}
                 data-email={participantDetail.email}
                 >
                 <img
