@@ -236,7 +236,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
               <button
                 onClick={handleViewProfileClick}
                 className = "flex items-center p-[5px]"
-                data-username={participantDetail.name.split(" ")[0]}
+                data-username={participantDetail.name}
                 data-email={participantDetail.email}
                 >
                 <img
@@ -248,7 +248,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
                 </strong>{" "}
                 {" "+participantDetail.name}</p> */}
                 <p className="indent-[0.5rem] font-['Verdana'] text-[16px]">
-                  {participantDetail.name}
+                  {participantDetail.name.split(" ")[0]}
                 </p>
               </button>
             </div>
