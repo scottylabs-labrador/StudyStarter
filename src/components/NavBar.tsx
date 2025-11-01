@@ -185,7 +185,7 @@ export default function NavBar() {
               {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             {/* Hide content after first button on small screens */}
-            <div className="hidden md:flex h-[50px] items-center">
+            <a href="/feed" className="hidden md:flex h-[50px] items-center">
               <Image
                 className="hidden dark:block"
                 src={darkLogo}
@@ -200,7 +200,7 @@ export default function NavBar() {
                 width={400}
                 height={200}
               />
-            </div>
+            </a>
           </div>
         </div>
 
@@ -256,7 +256,7 @@ export default function NavBar() {
             <button onClick={() => setIsDrawerOpen(false)} className="mb-4 text-black dark:text-white">
               <X size={24}/>
             </button>
-            <div>
+            <a href="/feed">
               <Image
                 className="hidden dark:block"
                 src={darkLogo}
@@ -271,7 +271,7 @@ export default function NavBar() {
                 width={150}
                 height={75}
               />
-            </div>
+            </a>
             <nav className="flex flex-col gap-y-4">
               <a href="/feed" className={`py-2 ${page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                 Group Finder
