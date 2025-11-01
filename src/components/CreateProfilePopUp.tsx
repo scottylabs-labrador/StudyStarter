@@ -48,6 +48,8 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
         majors = majors ? `<p class=""><strong>Majors: </strong>`+majors+`</p>` : ''
         let minors = data.minors;
         minors = (minors && minors != '') ? `<p class=""><strong>Minors: </strong>`+minors+`</p>` : ''
+        const first = username.split(" ")[0];
+        if (first) username = first;
         if (elem)
           elem.innerHTML = `
             <div>
