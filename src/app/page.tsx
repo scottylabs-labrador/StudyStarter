@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion, collection, query, onSnapshot } from 'firebase/firestore';
 
-
 export default function HomePage() {
   const { user } = useUser();
   const router = useRouter();
