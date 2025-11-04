@@ -80,12 +80,11 @@ export default function HomePage() {
                   Create Account
                 </button>
               </SignInButton>
-              <a
-                href="/login"
-                className="px-8 py-4 text-lg font-bold rounded-lg border-2 border-lightButton dark:border-darkButton text-black dark:text-white hover:bg-lightAccent dark:hover:bg-darkAccent transition-colors text-center"
-              >
-                Sign In
-              </a>
+              <SignInButton mode="modal" forceRedirectUrl="/login">
+                <button className="px-8 py-4 text-lg font-bold rounded-lg bg-lightButton dark:bg-darkButton text-black dark:text-white hover:bg-lightSelected dark:hover:bg-darkSelected transition-colors shadow-lg hover:shadow-xl">
+                  Sign in
+                </button>
+              </SignInButton>
             </div>
           </div>
 
