@@ -169,7 +169,17 @@ export default function HomePage() {
             </div>
           </div>
 
-          
+          {/* Privacy Policy Link */}
+          <div className="mt-8 mb-4">
+            <a 
+              href="/privacy" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-black dark:text-white hover:text-lightSelected dark:hover:text-darkSelected transition-colors underline"
+            >
+              Privacy Policy
+            </a>
+          </div>
         </div>
       </SignedOut>
 

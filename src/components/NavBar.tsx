@@ -235,7 +235,12 @@ export default function NavBar() {
               Logout
             </button>
           </SignOutButton>
-          <a href="/privacy" className={`w-full text-center pb-2 rounded-lg text-xs ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : " text-black dark:text-white"}`}>
+          <a 
+            href="/privacy" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`w-full text-center pb-2 rounded-lg text-xs underline ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : " text-black dark:text-white"}`}
+          >
             Privacy Policy
           </a>
         </div>
@@ -299,7 +304,12 @@ export default function NavBar() {
                 Logout
               </button>
             </SignOutButton>
-            <a href="/privacy" className={`w-full text-center pb-2 rounded-lg text-xs ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
+            <a 
+              href="/privacy" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`w-full text-center pb-2 rounded-lg text-xs underline ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}
+            >
               Privacy Policy
             </a>
           </div>
