@@ -168,6 +168,8 @@ export default function ProfilePage() {
           <option value={years[3]}>Class of {years[3]}</option>
           <option value={years[4]}>Class of {years[4]}</option>
           <option value={years[5]}>Class of {years[5]}</option>
+          <option value="Masters">Masters Student</option>
+          <option value="PhD Student">PhD Student</option>
         </select>
       </div>
       <br></br>
