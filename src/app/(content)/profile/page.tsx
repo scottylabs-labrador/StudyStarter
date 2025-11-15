@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { useState } from "react";
 import { ClassList } from "~/components/ClassList";
+import { BlockList } from "~/components/BlockList";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 
@@ -173,6 +174,7 @@ export default function ProfilePage() {
       <br></br>
       <hr className="text-darkbg dark:text-lightbg"/>
       <ClassList />
+      <BlockList />
       <br></br>
       <ContinueButton />
       <br></br>
