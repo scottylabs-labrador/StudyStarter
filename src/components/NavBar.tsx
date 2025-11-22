@@ -212,12 +212,12 @@ export default function NavBar() {
           <a href="/myGroup" className={`w-full text-center py-2 rounded-lg ${page == "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
             My Groups
           </a>
-          <button
+          {/* <button
             onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
             className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton"
           >
             + Create
-          </button>
+          </button> */}
           <button
             onClick={toggleTheme}
             className="w-full rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg py-2 modeButton"
@@ -277,9 +277,9 @@ export default function NavBar() {
               <a href="/myGroup" className={page === "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}>
                 My Groups
               </a>
-              <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+              {/* <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
                 + Create
-              </button>
+              </button> */}
               <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
                 Dark Mode
               </button>
