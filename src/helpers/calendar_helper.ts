@@ -7,7 +7,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID!;
 const API_KEY = process.env.NEXT_PUBLIC_CALENDAR_API_KEY!;
 
 const DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
-const SCOPES = "https://www.googleapis.com/auth/calendar.events.ownednp";
+const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned";
 
 let tokenClient: any;
 let gapiInited = false;
