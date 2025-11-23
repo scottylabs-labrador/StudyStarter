@@ -188,7 +188,8 @@ export default function FeedPage() {
   });
   displayScheduled.unshift(
     <div
-      className="text-center my-3 max-w-sm cursor-pointer text-lightAccent dark:text-darkAccent hover:text-black hover:dark:text-white overflow-hidden border-4 shadow-lg border-dashed rounded-xl border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg px-6 py-4 hover:bg-lightSidebar hover:dark:bg-darkSidebar flex items-center justify-center"
+      className="text-center my-3 max-w-sm cursor-pointer text-lightAccent dark:text-darkAccent hover:border-lightSidebar hover:dark:border-darkSidebar hover:text-black hover:dark:text-white overflow-hidden border-4 shadow-lg border-dashed rounded-xl border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg px-6 py-4 hover:bg-lightSidebar hover:dark:bg-darkSidebar flex items-center justify-center"
+      
       onClick={handleCreateGroup}
     >
       <p className="text-6xl leading-none">+</p>
