@@ -178,7 +178,7 @@ export default function ProfilePage() {
       <ClassList />
       <BlockList />
       <br></br>
-      <ContinueButton />
+      {/* <ContinueButton /> */}
       </ConfirmProvider>
     </div>
   );
