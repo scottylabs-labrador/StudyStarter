@@ -3,14 +3,14 @@ import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
 
-interface BlockedUser {
-  email: string;
-  blockedByMe: boolean;
+export interface BlockedUsers {
+  blockedByMe: string[]
+  blockedByThem: string[]
 }
 
 export function BlockList() {
   const { user } = useUser();
-  const [blocked, setBlocked] = useState<BlockedUser[]>([]);
+  const [blocked, setBlocked] = useState<BlockedUsers>({blockedByMe: [], blockedByThem:[]});
   const [inputValue, setInputValue] = useState<string>('');
 
   async function getBlocked() {
@@ -21,18 +21,18 @@ export function BlockList() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const blockedData = docSnap.data().blocked;
-        if (Array.isArray(blockedData)) {
-          setBlocked(blockedData as BlockedUser[]);
+        if (blockedData) {
+          setBlocked(blockedData as BlockedUsers);
         } else {
-          setBlocked([]);
+          setBlocked({blockedByMe: [], blockedByThem:[]});
         }
       } else {
         console.log("No such document!");
-        setBlocked([]);
+        setBlocked({blockedByMe: [], blockedByThem:[]});
       }
     } catch (err) {
       console.error(err);
-      setBlocked([]);
+      setBlocked({blockedByMe: [], blockedByThem:[]});
     }
   }
 
@@ -51,6 +51,7 @@ export function BlockList() {
   const handleBlockSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const userToBlock = inputValue.toLowerCase().trim();
+    console.log("hi");
 
     if (userToBlock === "" || !user) {
       return;
@@ -59,8 +60,8 @@ export function BlockList() {
     const userId = user?.emailAddresses[0]?.emailAddress;
     if (!userId) return;
 
-    // Check if user is already in the list with blockedByMe: true
-    const alreadyBlockedByMe = blocked.some((b) => b.email === userToBlock && b.blockedByMe);
+    // Check if user is already in the blockedByMe list
+    const alreadyBlockedByMe = blocked.blockedByMe.some((b) => b === userToBlock);
     if (alreadyBlockedByMe) {
       setInputValue('');
       return;
@@ -70,30 +71,22 @@ export function BlockList() {
       // Check if the other user already has current user blocked
       const blockedUserDocRef = doc(db, "Users", userToBlock);
       const blockedUserDoc = await getDoc(blockedUserDocRef);
-      let theirBlocked: BlockedUser[] = [];
-      let theyBlockedMe = false;
+      let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
 
       if (blockedUserDoc.exists()) {
         const theirBlockedData = blockedUserDoc.data().blocked;
-        if (Array.isArray(theirBlockedData)) {
-          theirBlocked = theirBlockedData as BlockedUser[];
-          theyBlockedMe = theirBlocked.some((b) => b.email === userId);
+        if (theirBlockedData) {
+          theirBlocked = theirBlockedData as BlockedUsers;
+        } else {
+          theirBlocked = {blockedByMe: [], blockedByThem: []}
         }
       }
 
-      // Update current user's list
-      const existingEntry = blocked.find((b) => b.email === userToBlock);
-      let newBlocked: BlockedUser[];
-      
-      if (existingEntry) {
-        // User already in list (with blockedByMe: false), update to true
-        newBlocked = blocked.map((b) => 
-          b.email === userToBlock ? { ...b, blockedByMe: true } : b
-        );
-      } else {
-        // Add new entry with blockedByMe: true
-        newBlocked = [...blocked, { email: userToBlock, blockedByMe: true }];
-      }
+      let newBlockedByMe = blocked.blockedByMe.concat([userToBlock])
+      let newTheirBlockedByThem = theirBlocked.blockedByThem.concat([userId])
+
+      let newBlocked: BlockedUsers = {blockedByMe: newBlockedByMe, blockedByThem: blocked.blockedByThem};
+      let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
       
       setBlocked(newBlocked);
       setInputValue('');
@@ -102,17 +95,7 @@ export function BlockList() {
       await setDoc(usersDocRef, { blocked: newBlocked }, { merge: true });
 
       // Update the blocked user's document
-      if (theyBlockedMe) {
-        // They already have us blocked, update their entry to blockedByMe: true
-        const theirNewBlocked = theirBlocked.map((b) =>
-          b.email === userId ? { ...b, blockedByMe: true } : b
-        );
-        await setDoc(blockedUserDocRef, { blocked: theirNewBlocked }, { merge: true });
-      } else {
-        // They don't have us blocked yet, add with blockedByMe: false
-        const theirNewBlocked: BlockedUser[] = [...theirBlocked, { email: userId, blockedByMe: false }];
-        await setDoc(blockedUserDocRef, { blocked: theirNewBlocked }, { merge: true });
-      }
+      await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
     } catch (err) {
       console.error(err);
       // Revert state on error
@@ -126,14 +109,35 @@ export function BlockList() {
     if (!userId) return;
 
     try {
-      // Change blockedByMe from true to false instead of removing
-      const newBlocked = blocked.map((usr) =>
-        usr.email === userToUnblock ? { ...usr, blockedByMe: false } : usr
-      );
+      // Check if the other user already has current user blocked
+      const blockedUserDocRef = doc(db, "Users", userToUnblock);
+      const blockedUserDoc = await getDoc(blockedUserDocRef);
+      let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
+
+      if (blockedUserDoc.exists()) {
+        const theirBlockedData = blockedUserDoc.data().blocked;
+        if (theirBlockedData) {
+          theirBlocked = theirBlockedData as BlockedUsers;
+        } else {
+          theirBlocked = {blockedByMe: [], blockedByThem: []}
+        }
+      }
+
+      let newBlockedByMe = blocked.blockedByMe.filter((u) => u != userToUnblock)
+      let newTheirBlockedByThem = theirBlocked.blockedByThem.filter((u) => u != userId)
+
+      let newBlocked: BlockedUsers = {blockedByMe: newBlockedByMe, blockedByThem: blocked.blockedByThem};
+      let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
+      
       setBlocked(newBlocked);
+      setInputValue('');
+      
       const usersDocRef = doc(db, "Users", userId);
       await setDoc(usersDocRef, { blocked: newBlocked }, { merge: true });
-      // Note: We don't update the other user's list - it stays the same
+
+      // Update the blocked user's document
+      await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
+      
     } catch (err) {
       console.error(err);
       // Revert state on error
@@ -159,22 +163,20 @@ export function BlockList() {
       </div>
       <br></br>
       <h2 className="text-l font-bold mb-1 text-black dark:text-white">
-        {blocked && blocked.filter((b) => b.blockedByMe).length > 0 ? "Blocked Students" : ''}
+        {blocked.blockedByMe.length > 0 ? "Blocked Students" : ''}
       </h2>
       <ul className="mt-212 space-y-2">
-        {blocked && Array.isArray(blocked) && blocked
-          .filter((blockedUser) => blockedUser.blockedByMe)
-          .map((blockedUser) => (
+        {blocked.blockedByMe.map((blockedUser) => (
             <li
-              key={blockedUser.email}
+              key={blockedUser}
               className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-1/3 flex justify-between items-center">
               <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
-                {blockedUser.email}
+                {blockedUser}
               </div>
               <button
-                onClick={() => handleUnblock(blockedUser.email)}
+                onClick={() => handleUnblock(blockedUser)}
                 className="text-lightgray-500 text-xl hover:text-red-500"
-                aria-label={`Unblock ${blockedUser.email}`}
+                aria-label={`Unblock ${blockedUser}`}
               >
                 <strong>&times;</strong>
               </button>
