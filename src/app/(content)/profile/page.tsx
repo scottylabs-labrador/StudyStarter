@@ -6,6 +6,7 @@ import { ClassList } from "~/components/ClassList";
 import { BlockList } from "~/components/BlockList";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
+import { ConfirmProvider } from "~/components/ConfirmContext";
 
 function ContinueButton() {
   return (
@@ -113,6 +114,7 @@ export default function ProfilePage() {
 
   return (
     <div className="p-4 font-sans ">
+      <ConfirmProvider>
       <div className="flex items-center mb-4">
         <img
           src={user?.imageUrl || "https://via.placeholder.com/80"}
@@ -184,6 +186,7 @@ export default function ProfilePage() {
           Logout
         </button>
       </SignOutButton>
+      </ConfirmProvider>
     </div>
   );
 }
