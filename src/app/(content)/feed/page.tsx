@@ -9,6 +9,8 @@ import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
 import { returnUserGroups } from "~/helpers/firebase_helper";
+import { BlockedUsers } from "~/components/BlockList";
+
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -146,11 +148,9 @@ export default function FeedPage() {
         setJoinedGroups(data.joinedGroups || []);
         
         // Get blocked users (where blockedByMe is true)
-        const blocked = data.blocked || [];
-        const blockedEmails = blocked
-          .filter((b: any) => b.blockedByMe === true)
-          .map((b: any) => b.email?.toLowerCase() || "");
-        setBlockedUsers(blockedEmails);
+        const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
+        const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
+        setBlockedUsers(combinedBlocked);
       }
     });
   
