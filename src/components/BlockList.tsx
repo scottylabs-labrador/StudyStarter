@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
+import { useConfirm } from './ConfirmContext';
 
 export interface BlockedUsers {
   blockedByMe: string[]
@@ -11,7 +12,9 @@ export interface BlockedUsers {
 export function BlockList() {
   const { user } = useUser();
   const [blocked, setBlocked] = useState<BlockedUsers>({blockedByMe: [], blockedByThem:[]});
+  const [groups, setGroups] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
+  const confirm = useConfirm();
 
   async function getBlocked() {
     if (!user) return;
@@ -20,11 +23,18 @@ export function BlockList() {
       const docRef = doc(db, "Users", userId ? userId : "");
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        const blockedData = docSnap.data().blocked;
+        const data = docSnap.data()
+        const blockedData = data.blocked;
         if (blockedData) {
           setBlocked(blockedData as BlockedUsers);
         } else {
           setBlocked({blockedByMe: [], blockedByThem:[]});
+        }
+        const userGroups = data.joinedGroups;
+        if (userGroups) {
+          setGroups(userGroups);
+        } else {
+          setGroups([])
         }
       } else {
         console.log("No such document!");
@@ -72,9 +82,22 @@ export function BlockList() {
       const blockedUserDocRef = doc(db, "Users", userToBlock);
       const blockedUserDoc = await getDoc(blockedUserDocRef);
       let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
+      let newGroups = groups;
 
       if (blockedUserDoc.exists()) {
-        const theirBlockedData = blockedUserDoc.data().blocked;
+        const data = blockedUserDoc.data();
+        const theirBlockedData = data.blocked;
+        const theirGroups: string[] = data.joinedGroups;
+        const sharedGroups = groups.filter(g => theirGroups.includes(g));
+        const numShared = sharedGroups.length;
+        if (numShared > 0) {
+          const ok = await confirm(`You are currently in ${numShared} group${numShared == 1 ? "" : "s"} with ${userToBlock}. You will be removed from ${numShared == 1 ? "this group" : "these groups"} if you continue.`);
+          if (!ok) {
+            return;   // <- simply stop the function
+          }
+          newGroups = groups.filter(g => !theirGroups.includes(g));
+        }
+
         if (theirBlockedData) {
           theirBlocked = theirBlockedData as BlockedUsers;
         } else {
@@ -89,10 +112,11 @@ export function BlockList() {
       let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
       
       setBlocked(newBlocked);
+      setGroups(newGroups);
       setInputValue('');
       
       const usersDocRef = doc(db, "Users", userId);
-      await setDoc(usersDocRef, { blocked: newBlocked }, { merge: true });
+      await setDoc(usersDocRef, { blocked: newBlocked, joinedGroups: newGroups }, { merge: true });
 
       // Update the blocked user's document
       await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
