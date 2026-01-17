@@ -185,7 +185,7 @@ export default function NavBar() {
               {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             {/* Hide content after first button on small screens */}
-            <div className="hidden md:flex h-[50px] items-center">
+            <a href="/feed" className="hidden md:flex h-[50px] items-center">
               <Image
                 className="hidden dark:block"
                 src={darkLogo}
@@ -200,7 +200,7 @@ export default function NavBar() {
                 width={400}
                 height={200}
               />
-            </div>
+            </a>
           </div>
         </div>
 
@@ -212,12 +212,12 @@ export default function NavBar() {
           <a href="/myGroup" className={`w-full text-center py-2 rounded-lg ${page == "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
             My Groups
           </a>
-          <button
+          {/* <button
             onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
             className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton"
           >
             + Create
-          </button>
+          </button> */}
           <button
             onClick={toggleTheme}
             className="w-full rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg py-2 modeButton"
@@ -230,11 +230,19 @@ export default function NavBar() {
 
         {/* Bottom Section (Feedback Button) - Hidden on small screens */}
         <div className="hidden md:block pb-4">
-            <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-              <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
-                Feedback
-              </a>
-            </button>
+          <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+            <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
+              Feedback
+            </a>
+          </button>
+          <a 
+            href="/privacy" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`w-full text-center pb-2 rounded-lg text-xs underline ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : " text-black dark:text-white"}`}
+          >
+            Privacy Policy
+          </a>
         </div>
       </div>
 
@@ -246,7 +254,7 @@ export default function NavBar() {
             <button onClick={() => setIsDrawerOpen(false)} className="mb-4 text-black dark:text-white">
               <X size={24}/>
             </button>
-            <div>
+            <a href="/feed">
               <Image
                 className="hidden dark:block"
                 src={darkLogo}
@@ -261,7 +269,7 @@ export default function NavBar() {
                 width={150}
                 height={75}
               />
-            </div>
+            </a>
             <nav className="flex flex-col gap-y-4">
               <a href="/feed" className={`py-2 ${page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                 Group Finder
@@ -269,9 +277,9 @@ export default function NavBar() {
               <a href="/myGroup" className={page === "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}>
                 My Groups
               </a>
-              <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+              {/* <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
                 + Create
-              </button>
+              </button> */}
               <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
                 Dark Mode
               </button>
@@ -291,9 +299,19 @@ export default function NavBar() {
       
           {/* Feedback Button */}
           <div className="pb-4">
-            <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
-                Feedback
-              </a>
+              <button className="w-full rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+                <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
+                  Feedback
+                </a>
+              </button>
+            <a 
+              href="/privacy" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`w-full text-center pb-2 rounded-lg text-xs underline ${page == "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}
+            >
+              Privacy Policy
+            </a>
           </div>
         </div>
       </div>

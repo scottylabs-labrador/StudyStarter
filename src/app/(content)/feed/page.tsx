@@ -9,6 +9,11 @@ import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
 import { returnUserGroups } from "~/helpers/firebase_helper";
+import { useDispatch } from "react-redux";
+import {
+  setIsCreateGroupModalOpen,
+} from "~/lib/features/uiSlice";
+
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -31,6 +36,7 @@ export default function FeedPage() {
     [true, ['lightAccent', "darkAccent"]],
     [false, ["lightSidebar", "darkSidebar"]],
   ]);
+  const dispatch = useDispatch();
   const handleCardClick = (group: any) => {
     setSelectedGroup(group.id);
     setShowDetails(group);
@@ -75,6 +81,10 @@ export default function FeedPage() {
   const closeDetailsPopUp = () => {
     setShowDetails(null);
     setSelectedGroup(null);
+  };
+
+  const handleCreateGroup = () => {
+    dispatch(setIsCreateGroupModalOpen(true));
   };
 
   useEffect(() => {
@@ -148,7 +158,7 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
+        className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white`}
         onClick={() => handleCardClick(group)}
       >
         <div className="mb-2 text-xl font-bold">{group.title}</div>
@@ -176,6 +186,15 @@ export default function FeedPage() {
       </div>
     );
   });
+  displayScheduled.unshift(
+    <div
+      className="text-center my-3 max-w-sm cursor-pointer text-lightAccent dark:text-darkAccent hover:border-lightSidebar hover:dark:border-darkSidebar hover:text-black hover:dark:text-white overflow-hidden border-4 shadow-lg border-dashed rounded-xl border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg px-6 py-4 hover:bg-lightSidebar hover:dark:bg-darkSidebar flex items-center justify-center"
+      
+      onClick={handleCreateGroup}
+    >
+      <p className="text-6xl leading-none">+</p>
+    </div>
+  )
 
   const locationOptions = [
     { value: "Gates", label: "Gates" },

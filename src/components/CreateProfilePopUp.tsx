@@ -43,7 +43,7 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
         const data = docSnap.data();
         const elem = document.getElementById("profileData")
         let year = data.year;
-        year = year ? `<p class="font-bold">Class of `+year+`</p>` : ''
+        year = year ? `<p class="font-bold">${year[0] == "2" ? `Class of ${year}` : year}</p>` : ''
         let majors = data.majors;
         majors = majors ? `<p class=""><strong>Majors: </strong>`+majors+`</p>` : ''
         let minors = data.minors;

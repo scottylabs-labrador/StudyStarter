@@ -229,7 +229,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         }`}
         onClick={joinGroup}
       >
-        {joinedState ? "Joined" : "Join"}
+        {joinedState ? "Leave" : "Join"}
       </button>
       {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
     </div>
