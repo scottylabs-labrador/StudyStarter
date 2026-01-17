@@ -228,13 +228,13 @@ export default function NavBar() {
         </div>
 
 
-        {/* Bottom Section (Logout Button) - Hidden on small screens */}
-        <div className="hidden md:block">
-          <SignOutButton>
-            <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-              Logout
-            </button>
-          </SignOutButton>
+        {/* Bottom Section (Feedback Button) - Hidden on small screens */}
+        <div className="hidden md:block pb-4">
+          <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+            <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
+              Feedback
+            </a>
+          </button>
           <a 
             href="/privacy" 
             target="_blank"
@@ -297,13 +297,13 @@ export default function NavBar() {
             </nav>
           </div>
       
-          {/* Logout Button Moved to Bottom */}
+          {/* Feedback Button */}
           <div className="pb-4">
-            <SignOutButton>
               <button className="w-full rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-                Logout
+                <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
+                  Feedback
+                </a>
               </button>
-            </SignOutButton>
             <a 
               href="/privacy" 
               target="_blank"
