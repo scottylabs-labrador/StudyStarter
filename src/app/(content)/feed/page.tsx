@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import {
   setIsCreateGroupModalOpen,
 } from "~/lib/features/uiSlice";
+import { usePostHog } from 'posthog-js/react'
 
 
 export default function FeedPage() {
@@ -37,9 +38,12 @@ export default function FeedPage() {
     [false, ["lightSidebar", "darkSidebar"]],
   ]);
   const dispatch = useDispatch();
+  const posthog = usePostHog()
+
   const handleCardClick = (group: any) => {
     setSelectedGroup(group.id);
     setShowDetails(group);
+    posthog.capture('group_clicked', { group: group })
   }
   const shouldFilter = (group: groupDetails) => {
     const isFull = group.participantDetails.length >= group.totalSeats;
