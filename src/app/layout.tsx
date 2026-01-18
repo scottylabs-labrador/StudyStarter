@@ -3,6 +3,8 @@ import "~/styles/globals.css";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
+import { PostHogProvider } from './providers'
+
 
 export const metadata = {
   title: "CMU Study",
@@ -18,33 +20,35 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <ReduxProvider>
-      <html lang="en">
-        <head>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function () {
-                  try {
-                    let theme = localStorage.getItem("theme") || "light";
-                    if (theme === "dark") {
-                      document.documentElement.classList.add("dark");
-                    }
-                      console.log("idk");
-                  } catch (e) {
-                    //console.error("Theme loading error:", e);
-                  }
-                })();
-              `,
-            }}
-          />
-        </head>
-        <body className="bg">
-          <main>
-            {children}
-            <Toaster />
-          </main>
-        </body>
-      </html>
+        <PostHogProvider>
+          <html lang="en">
+            <head>
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    (function () {
+                      try {
+                        let theme = localStorage.getItem("theme") || "light";
+                        if (theme === "dark") {
+                          document.documentElement.classList.add("dark");
+                        }
+                          console.log("idk");
+                      } catch (e) {
+                        //console.error("Theme loading error:", e);
+                      }
+                    })();
+                  `,
+                }}
+              />
+            </head>
+            <body className="bg">
+              <main>
+                {children}
+                <Toaster />
+              </main>
+            </body>
+          </html>
+        </PostHogProvider>
       </ReduxProvider>
     </ClerkProvider>
   );
