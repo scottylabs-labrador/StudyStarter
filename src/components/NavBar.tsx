@@ -230,11 +230,9 @@ export default function NavBar() {
 
         {/* Bottom Section (Feedback Button) - Hidden on small screens */}
         <div className="hidden md:block pb-4">
-          <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-            <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
+          <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="block w-full rounded-lg px-2 py-2 font-bold text-center bg-lightButton dark:bg-darkButton text-black dark:text-white">
               Feedback
-            </a>
-          </button>
+          </a>
           <a 
             href="/privacy" 
             target="_blank"
@@ -299,11 +297,9 @@ export default function NavBar() {
       
           {/* Feedback Button */}
           <div className="pb-4">
-              <button className="w-full rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-                <a href='https://forms.gle/MEQ7miCZCrC48P6y8'>
-                  Feedback
-                </a>
-              </button>
+            <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="block w-full rounded-lg px-2 py-2 font-bold text-center bg-lightButton dark:bg-darkButton text-black dark:text-white">
+              Feedback
+            </a>
             <a 
               href="/privacy" 
               target="_blank"
