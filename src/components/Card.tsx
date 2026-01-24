@@ -157,25 +157,25 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       </div>
 
       {/* Title */}
-      <div className="font-['Verdana'] text-[35px]">{currentDetails.title}</div>
+      <div className="font-['Verdana'] text-[35px] whitespace-normal break-words">{currentDetails.title}</div>
 
       {/* Card Body */}
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Course:</strong> {currentDetails.course}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Purpose</strong>: {currentDetails.purpose}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Time</strong>: {formattedTime}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Date</strong>: {formattedDate}
       </p>
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Location:</strong> {currentDetails.location}
       </p>
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Participants:</strong>{" "}
         {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
         <button
