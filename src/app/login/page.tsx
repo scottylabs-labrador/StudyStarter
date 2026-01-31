@@ -10,10 +10,18 @@ import { setDoc, doc, getDoc, arrayUnion, collection, query, onSnapshot } from '
 export default function LoginPage() {
   const { user } = useUser();
   const router = useRouter();
+  
 
   useEffect(() => {
     if (!user) {
       console.log("bad turkey");
+      return;
+    }
+    // const role = user?.publicMetadata?.role;
+    const faculty = true
+
+    if (faculty) {
+      router.push("/faculty-restricted");
       return;
     }
     const userId = user?.emailAddresses[0]?.emailAddress;
