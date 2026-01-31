@@ -1,7 +1,7 @@
 "use client";
 import darkLogo from "~/image/darkLogo2.png"
 import lightLogo from "~/image/lightLogo2.png"
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import UploadModal from "./UploadModal";
 import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch } from "react-redux";
@@ -26,6 +26,23 @@ export default function NavBar() {
   const pathname = usePathname();
   const page = pathname.split("/")[1];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isProfileMenuOpen &&
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isProfileMenuOpen]);
 
   // var [theme, setTheme] = useState("light")
   // var theme = "light";
@@ -281,17 +298,44 @@ export default function NavBar() {
               <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
                 Dark Mode
               </button>
-              <a
-                href="/profile"
-                className="fixed right-6 top-4 flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shadow-lg"
+              <div
+                ref={profileMenuRef}
+                className="fixed right-6 top-4 flex items-center"
                 style={{ zIndex: 1000 }}
               >
-                <img
-                  src={user?.imageUrl || "https://via.placeholder.com/80"}
-                  alt="Profile"
-                  className=" rounded-full"
-                />
-              </a>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+                  aria-haspopup="menu"
+                  aria-expanded={isProfileMenuOpen}
+                >
+                  <img
+                    src={user?.imageUrl || "https://via.placeholder.com/80"}
+                    alt="Profile"
+                    className="rounded-full"
+                  />
+                </button>
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 top-12 w-40 overflow-hidden rounded-lg border border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg shadow-lg">
+                    <a
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-black dark:text-white hover:bg-lightButton dark:hover:bg-darkButton transition"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      Profile
+                    </a>
+                    <SignOutButton>
+                      <button
+                        type="button"
+                        className="block w-full px-4 py-2 text-left text-sm text-black dark:text-white hover:bg-lightButton dark:hover:bg-darkButton transition"
+                      >
+                        Logout
+                      </button>
+                    </SignOutButton>
+                  </div>
+                )}
+              </div>
             </nav>
           </div>
       
