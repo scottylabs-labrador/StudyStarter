@@ -103,13 +103,15 @@ export function BlockList() {
         } else {
           theirBlocked = {blockedByMe: [], blockedByThem: []}
         }
+        let newTheirBlockedByThem = theirBlocked.blockedByThem.concat([userId])
+        let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
+        // Update the blocked user's document
+        await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
       }
 
       let newBlockedByMe = blocked.blockedByMe.concat([userToBlock])
-      let newTheirBlockedByThem = theirBlocked.blockedByThem.concat([userId])
 
       let newBlocked: BlockedUsers = {blockedByMe: newBlockedByMe, blockedByThem: blocked.blockedByThem};
-      let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
       
       setBlocked(newBlocked);
       setGroups(newGroups);
@@ -117,9 +119,6 @@ export function BlockList() {
       
       const usersDocRef = doc(db, "Users", userId);
       await setDoc(usersDocRef, { blocked: newBlocked, joinedGroups: newGroups }, { merge: true });
-
-      // Update the blocked user's document
-      await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
     } catch (err) {
       console.error(err);
       // Revert state on error
