@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { usePostHog } from 'posthog-js/react'
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -35,6 +36,7 @@ export default function CreateGroupModal() {
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
+  const posthog = usePostHog()
 
   const handleClose = () => {
     dispatch(setIsCreateGroupModalOpen(false));
@@ -128,6 +130,23 @@ export default function CreateGroupModal() {
         color: "#fff",
       },
     });
+    posthog.capture('group_created', { group: {
+      id,
+      title,
+      course,
+      purpose,
+      startTime: firestoreTimestamp,
+      location,
+      totalSeats: Number(seats),
+      participantDetails: [
+        {
+          name: user?.fullName,
+          url: user?.imageUrl,
+          email: user?.emailAddresses[0]?.emailAddress,
+        },
+      ],
+      details,
+    }})
   };
 
   useEffect(() => {
