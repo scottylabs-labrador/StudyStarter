@@ -83,6 +83,7 @@ export function BlockList() {
       const blockedUserDoc = await getDoc(blockedUserDocRef);
       let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
       let newGroups = groups;
+      let toRemove;
 
       if (blockedUserDoc.exists()) {
         const data = blockedUserDoc.data();
@@ -95,7 +96,22 @@ export function BlockList() {
           if (!ok) {
             return;   // <- simply stop the function
           }
-          newGroups = groups.filter(g => !theirGroups.includes(g));
+          for (const g of groups) {
+            if (theirGroups.includes(g)) {
+              const toRemoveDocRef = doc(db, "Study Groups", g);
+              const toRemoveDoc = await getDoc(toRemoveDocRef);
+              if (toRemoveDoc.exists()) {
+                const groupData = toRemoveDoc.data();
+                const groupParticipants = groupData.participantDetails;
+                let newParticipants = groupParticipants.filter((p) => p.email != userId);
+                await setDoc(toRemoveDocRef, { participantDetails: newParticipants }, { merge: true });
+              } else {
+                console.log("broken");
+              }
+            } else {
+              newGroups.push(g);
+            }
+          }
         }
 
         if (theirBlockedData) {
@@ -144,23 +160,21 @@ export function BlockList() {
         } else {
           theirBlocked = {blockedByMe: [], blockedByThem: []}
         }
+        let newTheirBlockedByThem = theirBlocked.blockedByThem.filter((u) => u != userId)
+        let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
+        // Update the blocked user's document
+        await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
       }
 
       let newBlockedByMe = blocked.blockedByMe.filter((u) => u != userToUnblock)
-      let newTheirBlockedByThem = theirBlocked.blockedByThem.filter((u) => u != userId)
 
       let newBlocked: BlockedUsers = {blockedByMe: newBlockedByMe, blockedByThem: blocked.blockedByThem};
-      let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
       
       setBlocked(newBlocked);
       setInputValue('');
       
       const usersDocRef = doc(db, "Users", userId);
       await setDoc(usersDocRef, { blocked: newBlocked }, { merge: true });
-
-      // Update the blocked user's document
-      await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
-      
     } catch (err) {
       console.error(err);
       // Revert state on error

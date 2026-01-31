@@ -1,6 +1,6 @@
 "use client";
 import "~/styles/globals.css";
-import { useUser, SignOutButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { ClassList } from "~/components/ClassList";
 import { BlockList } from "~/components/BlockList";
@@ -179,13 +179,6 @@ export default function ProfilePage() {
       <BlockList />
       <br></br>
       {/* <ContinueButton /> */}
-      <br></br>
-      <br></br>
-      <SignOutButton>
-        <button className="rounded-lg px-4 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-          Logout
-        </button>
-      </SignOutButton>
       </ConfirmProvider>
     </div>
   );
