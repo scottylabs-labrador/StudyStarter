@@ -21,7 +21,7 @@ export default async function ContentLayout({
         <NavBar />
       </div>
       <div className="flex-1 overflow-auto">
-        <main className="container mx-auto px-4 py-8 bg-lightbg dark:bg-darkbg">
+        <main className="container mx-auto px-4 bg-lightbg dark:bg-darkbg">
           {children}
         </main>
       </div> 

@@ -110,7 +110,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   };
 
   return (
-    <div className="top-0 z-10 w-full border-b-darkbg dark:border-b-lightbg border-b bg-lightbg dark:bg-darkbg px-6 py-4">
+    <div className="sticky top-0 z-10 w-full border-b-darkbg dark:border-b-lightbg border-b bg-lightbg dark:bg-darkbg px-6 pt-12 pb-4">
       <div className="flex space-x-4 justify-between w-full">
         <Select
           isMulti
