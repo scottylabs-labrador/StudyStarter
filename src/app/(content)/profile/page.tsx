@@ -179,6 +179,13 @@ export default function ProfilePage() {
       <BlockList />
       <br></br>
       {/* <ContinueButton /> */}
+      <br></br>
+      <br></br>
+      <SignOutButton>
+        <button className="rounded-lg px-4 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+          Logout
+        </button>
+      </SignOutButton>
       </ConfirmProvider>
     </div>
   );

@@ -212,12 +212,12 @@ export default function NavBar() {
           <a href="/myGroup" className={`w-full text-center py-2 rounded-lg ${page == "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
             My Groups
           </a>
-          <button
+          {/* <button
             onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
             className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton"
           >
             + Create
-          </button>
+          </button> */}
           <button
             onClick={toggleTheme}
             className="w-full rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg py-2 modeButton"
@@ -228,13 +228,11 @@ export default function NavBar() {
         </div>
 
 
-        {/* Bottom Section (Logout Button) - Hidden on small screens */}
-        <div className="hidden md:block">
-          <SignOutButton>
-            <button className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-              Logout
-            </button>
-          </SignOutButton>
+        {/* Bottom Section (Feedback Button) - Hidden on small screens */}
+        <div className="hidden md:block pb-4">
+          <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="block w-full rounded-lg px-2 py-2 font-bold text-center bg-lightButton dark:bg-darkButton text-black dark:text-white">
+              Feedback
+          </a>
           <a 
             href="/privacy" 
             target="_blank"
@@ -277,9 +275,9 @@ export default function NavBar() {
               <a href="/myGroup" className={page === "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}>
                 My Groups
               </a>
-              <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
+              {/* <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
                 + Create
-              </button>
+              </button> */}
               <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
                 Dark Mode
               </button>
@@ -297,13 +295,11 @@ export default function NavBar() {
             </nav>
           </div>
       
-          {/* Logout Button Moved to Bottom */}
+          {/* Feedback Button */}
           <div className="pb-4">
-            <SignOutButton>
-              <button className="w-full rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-                Logout
-              </button>
-            </SignOutButton>
+            <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="block w-full rounded-lg px-2 py-2 font-bold text-center bg-lightButton dark:bg-darkButton text-black dark:text-white">
+              Feedback
+            </a>
             <a 
               href="/privacy" 
               target="_blank"

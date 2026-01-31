@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { usePostHog } from 'posthog-js/react'
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -35,6 +36,7 @@ export default function CreateGroupModal() {
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
+  const posthog = usePostHog()
 
   const handleClose = () => {
     dispatch(setIsCreateGroupModalOpen(false));
@@ -128,6 +130,23 @@ export default function CreateGroupModal() {
         color: "#fff",
       },
     });
+    posthog.capture('group_created', { group: {
+      id,
+      title,
+      course,
+      purpose,
+      startTime: firestoreTimestamp,
+      location,
+      totalSeats: Number(seats),
+      participantDetails: [
+        {
+          name: user?.fullName,
+          url: user?.imageUrl,
+          email: user?.emailAddresses[0]?.emailAddress,
+        },
+      ],
+      details,
+    }})
   };
 
   useEffect(() => {
@@ -178,7 +197,7 @@ export default function CreateGroupModal() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            maxLength={20} // Reasonable character limit
+            maxLength={30} // Reasonable character limit
           />
           <select
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
@@ -203,7 +222,7 @@ export default function CreateGroupModal() {
             value={purpose}
             onChange={(e) => setPurpose(e.target.value)}
             required
-            maxLength={30} // Reasonable character limit
+            maxLength={50} // Reasonable character limit
           />
           <DatePicker
             selected={date}
@@ -224,6 +243,7 @@ export default function CreateGroupModal() {
             placeholder="Location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            maxLength={100} // Reasonable character limit
             required
           />
           <input
@@ -241,6 +261,7 @@ export default function CreateGroupModal() {
             type="text"
             placeholder="Details"
             value={details}
+            maxLength={200} // Reasonable character limit
             onChange={(e) => setDetails(e.target.value)}
           />
           <button

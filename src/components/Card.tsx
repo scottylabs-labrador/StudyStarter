@@ -28,6 +28,7 @@ interface Props {
   details: groupDetails;
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
+import { usePostHog } from 'posthog-js/react'
 
 const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
@@ -42,6 +43,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const isViewProfileOpen = useAppSelector(
     (state) => state.ui.isViewProfileOpen,
   );
+  const posthog = usePostHog()
 
   // var viewUser = null;
 
@@ -105,6 +107,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         if (!prev) return null;
         return prev.concat(currentDetails.id);
       });
+      posthog.capture('group_joined', { group: currentDetails })
     }
     if (joinedState) {
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
@@ -128,6 +131,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         if (!prev) return null;
         return prev.filter((item) => item !== currentDetails.id);
       });
+      posthog.capture('group_left', { group: currentDetails })
 
       const updatedGroupSnap = await getDoc(groupDocRef);
       if (updatedGroupSnap.exists()) {
@@ -138,6 +142,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         ) {
           await deleteDoc(groupDocRef);
           onClick();
+          posthog.capture('group_emptied', { group: currentDetails })
         }
       }
     }
@@ -157,25 +162,25 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       </div>
 
       {/* Title */}
-      <div className="font-['Verdana'] text-[35px]">{currentDetails.title}</div>
+      <div className="font-['Verdana'] text-[35px] whitespace-normal break-words">{currentDetails.title}</div>
 
       {/* Card Body */}
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Course:</strong> {currentDetails.course}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Purpose</strong>: {currentDetails.purpose}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Time</strong>: {formattedTime}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Date</strong>: {formattedDate}
       </p>
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Location:</strong> {currentDetails.location}
       </p>
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Participants:</strong>{" "}
         {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
         <button

@@ -9,6 +9,12 @@ import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
 import { returnUserGroups } from "~/helpers/firebase_helper";
+import { useDispatch } from "react-redux";
+import {
+  setIsCreateGroupModalOpen,
+} from "~/lib/features/uiSlice";
+import { usePostHog } from 'posthog-js/react'
+
 import { BlockedUsers } from "~/components/BlockList";
 
 
@@ -34,9 +40,13 @@ export default function FeedPage() {
     [true, ['lightAccent', "darkAccent"]],
     [false, ["lightSidebar", "darkSidebar"]],
   ]);
+  const dispatch = useDispatch();
+  const posthog = usePostHog()
+
   const handleCardClick = (group: any) => {
     setSelectedGroup(group.id);
     setShowDetails(group);
+    posthog.capture('group_clicked', { group: group })
   }
   const shouldFilter = (group: groupDetails) => {
     const isFull = group.participantDetails.length >= group.totalSeats;
@@ -89,6 +99,10 @@ export default function FeedPage() {
   const closeDetailsPopUp = () => {
     setShowDetails(null);
     setSelectedGroup(null);
+  };
+
+  const handleCreateGroup = () => {
+    dispatch(setIsCreateGroupModalOpen(true));
   };
 
   useEffect(() => {
@@ -167,27 +181,27 @@ export default function FeedPage() {
     if (shouldFilter(group)) return;
     return (
       <div
-        className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white ${(group.id == selectedGroup) ? 'border-2' : ''}`}
+        className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white`}
         onClick={() => handleCardClick(group)}
       >
-        <div className="mb-2 text-xl font-bold">{group.title}</div>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Course: &nbsp; </li>{" "}
-          <li>{group.course}</li>
+        <div className="mb-2 text-xl font-bold truncate">{group.title}</div>
+        <ul className="flex flex-row min-w-0">
+          <li className="font-bold flex-shrink-0"> Course: &nbsp; </li>
+          <li className="truncate flex-1">{group.course}</li>
+        </ul>
+        <ul className="flex flex-row min-w-0">
+          <li className="font-bold flex-shrink-0"> Purpose: &nbsp; </li>
+          <li className="truncate flex-1">{group.purpose}</li>
         </ul>
         <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Purpose: &nbsp; </li>{" "}
-          <li>{group.purpose}</li>
+          <li className="font-bold truncate"> Time: &nbsp; </li> <li>{formattedTime}</li>
         </ul>
         <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Time: &nbsp; </li> <li>{formattedTime}</li>
+          <li className="font-bold truncate"> Date: &nbsp; </li> <li>{formattedDate}</li>
         </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Date: &nbsp; </li> <li>{formattedDate}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Location: &nbsp; </li>{" "}
-          <li>{group.location}</li>
+        <ul className="flex flex-row min-w-0">
+          <li className="font-bold flex-shrink-0"> Location: &nbsp; </li>
+          <li className="truncate flex-1">{group.location}</li>
         </ul>
         {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
           <li className="bg-joined text-joinedText px-3 py-1 rounded-md -mt-8">Joined</li>
@@ -195,6 +209,15 @@ export default function FeedPage() {
       </div>
     );
   });
+  displayScheduled.unshift(
+    <div
+      className="text-center min-h-48 my-3 max-w-sm cursor-pointer text-lightAccent dark:text-darkAccent hover:border-lightSidebar hover:dark:border-darkSidebar hover:text-black hover:dark:text-white overflow-hidden border-4 shadow-lg border-dashed rounded-xl border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg px-6 py-4 hover:bg-lightSidebar hover:dark:bg-darkSidebar flex items-center justify-center"
+      
+      onClick={handleCreateGroup}
+    >
+      <p className="text-6xl leading-none">+</p>
+    </div>
+  )
 
   const locationOptions = [
     { value: "Gates", label: "Gates" },
