@@ -243,6 +243,7 @@ export default function CreateGroupModal() {
             placeholder="Location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            maxLength={100} // Reasonable character limit
             required
           />
           <input
@@ -260,6 +261,7 @@ export default function CreateGroupModal() {
             type="text"
             placeholder="Details"
             value={details}
+            maxLength={200} // Reasonable character limit
             onChange={(e) => setDetails(e.target.value)}
           />
           <button
