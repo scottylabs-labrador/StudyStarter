@@ -82,10 +82,10 @@ export function BlockList() {
       const blockedUserDocRef = doc(db, "Users", userToBlock);
       const blockedUserDoc = await getDoc(blockedUserDocRef);
       let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
-      let newGroups = groups;
-      let toRemove;
+      let newGroups = [];
 
       if (blockedUserDoc.exists()) {
+        // if blocked user already a user, update blocked and check shared groups
         const data = blockedUserDoc.data();
         const theirBlockedData = data.blocked;
         const theirGroups: string[] = data.joinedGroups;
@@ -119,9 +119,13 @@ export function BlockList() {
         } else {
           theirBlocked = {blockedByMe: [], blockedByThem: []}
         }
-        let newTheirBlockedByThem = theirBlocked.blockedByThem.concat([userId])
+        let newTheirBlockedByThem = theirBlocked.blockedByThem.push(userId)
         let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
         // Update the blocked user's document
+        await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
+      } else {
+        // not a user yet, create a user to add blocking
+        let newTheirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: [userId]};
         await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
       }
 
