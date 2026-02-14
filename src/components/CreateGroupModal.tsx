@@ -197,7 +197,7 @@ export default function CreateGroupModal() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            maxLength={30} // Reasonable character limit
+            maxLength={27} // Reasonable character limit
           />
           <select
             className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
