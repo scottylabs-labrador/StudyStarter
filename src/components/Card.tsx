@@ -86,6 +86,11 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         return;
       }
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+      const groupDocSnap = await getDoc(groupDocRef);
+      if (!groupDocSnap.exists()) {
+        toast.error("Group no longer exists");
+        return;
+      }
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion({
           name: user?.fullName,
