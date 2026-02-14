@@ -4,6 +4,7 @@ import { setUserId } from "firebase/analytics";
 interface UIState {
   isModalOpen: boolean;
   isCreateGroupModalOpen: boolean;
+  isEditGroupModalOpen: boolean;
   isProfileOpen: boolean;
   isViewProfileOpen: boolean;
 
@@ -12,6 +13,7 @@ interface UIState {
 const initialState: UIState = {
   isModalOpen: false,
   isCreateGroupModalOpen: false,
+  isEditGroupModalOpen: false,
   isProfileOpen: false,
   isViewProfileOpen: false,
 };
@@ -26,6 +28,9 @@ const uiSlice = createSlice({
     setIsCreateGroupModalOpen(state, action: PayloadAction<boolean>) {
       state.isCreateGroupModalOpen = action.payload;
     },
+    setIsEditGroupModalOpen(state, action: PayloadAction<boolean>) {
+      state.isEditGroupModalOpen = action.payload;
+    },
     setIsProfileOpen(state, action: PayloadAction<boolean>) {
       state.isProfileOpen = action.payload;
     },
@@ -35,5 +40,5 @@ const uiSlice = createSlice({
   },
 });
 
-export const { setIsModalOpen, setIsCreateGroupModalOpen, setIsProfileOpen, setIsViewProfileOpen} = uiSlice.actions;
+export const { setIsModalOpen, setIsCreateGroupModalOpen, setIsEditGroupModalOpen, setIsProfileOpen, setIsViewProfileOpen} = uiSlice.actions;
 export default uiSlice.reducer;
