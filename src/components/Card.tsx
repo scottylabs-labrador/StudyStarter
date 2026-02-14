@@ -177,15 +177,15 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     <div ref={cardRef} style={{ maxHeight }}className="my-3 max-w-sm overflow-auto rounded-xl bg-lightAccent dark:bg-darkAccent px-6 shadow-lg text-black dark:text-white">
       
       {/* Title */}
-      <div className="py-4 font-['Verdana'] text-[35px] whitespace-normal break-words sticky columns-auto flex items-start justify-between sticky top-0 bg-lightAccent dark:bg-darkAccent">
-        <p>{currentDetails.title}</p>
+      <div className="py-4 font-['Verdana'] text-[35px] sticky top-0 bg-lightAccent dark:bg-darkAccent flex items-start justify-between">
+        <p className="whitespace-normal break-words flex-1 min-w-0">{currentDetails.title}</p>
         {/* Close Button */}
-        <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
+        <button className="mb-[-12px] me-5 mt-3 text-xl font-bold shrink-0" onClick={onClick}>
           <big>&times;</big>
         </button>
       </div>
 
-      <div className="">
+      <div id="group_info_popup_body" className="pb-20">
         {/* Card Body */}
         <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
           <strong>Course:</strong> {currentDetails.course}
@@ -247,9 +247,12 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
         </div>
 
+        {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
+        </div>
+
         {/* Join Button */}
-        <button
-          className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px]  ${
+        <button id="card_info_join_btn"
+          className={`sticky bottom-4 float-end mt-3 w-[100px] rounded-[26px] p-[10px]  ${
             joinedState
               ? " bg-lightSelected dark:bg-darkSelected text-white"
               : "text-black dark:text-white border-2"
@@ -258,8 +261,6 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         >
           {joinedState ? "Leave" : "Join"}
         </button>
-        {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
-        </div>
     </div>
   );
 };
