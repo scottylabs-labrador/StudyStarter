@@ -20,7 +20,7 @@ export default function LoginPage() {
     // const role = user?.publicMetadata?.role;
     const faculty = true
 
-    if (faculty) {
+    if (faculty === true) {
       router.push("/faculty-restricted");
       return;
     }
