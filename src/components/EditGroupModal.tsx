@@ -142,7 +142,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center" id="editGroupPopUp">
       <div className="w-96 rounded-lg p-8 bg-lightAccent dark:bg-darkAccent">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-black dark:text-white">Edit New Study Group</h2>
+          <h2 className="text-xl font-bold text-black dark:text-white">Edit Study Group</h2>
           <button onClick={handleClose} className="text-xl font-bold text-black dark:text-white">
             <big>&times;</big>
           </button>
