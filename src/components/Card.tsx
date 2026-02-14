@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import groupDetails from "~/types";
 import {
   setIsProfileOpen,
@@ -75,6 +75,27 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   useEffect(() => {
     setCurrentDetails(details);
   }, [details]);
+  
+  /* Dynamic size for the info popup */
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const [maxHeight, setMaxHeight] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    const updateHeight = () => {
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      const top = rect.top; // distance from top of viewport
+      const available = window.innerHeight - top - 20; // 20px from bottom
+      setMaxHeight(`${available}px`);
+    };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    window.addEventListener("scroll", updateHeight, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("scroll", updateHeight);
+    };
+  });
 
   const joinGroup = async () => {
     const userId = user?.emailAddresses[0]?.emailAddress;
@@ -153,7 +174,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     currentDetails.startTime,
   );
   return (
-    <div className="overflow-y-scroll fixed md:bottom-[2rem] top-[5rem] md:right-[1rem] mr-[4rem] w-[93%] h-[85%] md:h-[85%] md:w-[30%] rounded-[10px] bg-lightAccent dark:bg-darkAccent text-black dark:text-white p-[1rem]">
+    <div ref={cardRef} style={{ maxHeight }}className="my-3 max-w-sm overflow-auto rounded-xl bg-lightAccent dark:bg-darkAccent px-6 py-4 shadow-lg text-black dark:text-white">
       {/* Close Button */}
       <div className="flex justify-end">
         <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
