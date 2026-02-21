@@ -119,8 +119,8 @@ export function BlockList() {
         } else {
           theirBlocked = {blockedByMe: [], blockedByThem: []}
         }
-        let newTheirBlockedByThem = theirBlocked.blockedByThem.push(userId)
-        let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
+        theirBlocked.blockedByThem.push(userId)
+        let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: theirBlocked.blockedByThem};
         // Update the blocked user's document
         await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
       } else {
@@ -195,11 +195,19 @@ export function BlockList() {
             id="blockInput"
             className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-1/3 mb-0"
             type="text"
+            pattern='[A-Za-z]*@andrew.cmu.edu'
+            title='"<id>@andrew.cmu.edu"'
             value={inputValue}
             onChange={handleBlock}
             placeholder="Emails added here will not see groups you're in"
             required
           />
+          <button
+            type="submit"
+            className="bg-blue-500 w-1/3 rounded bg-lightbg dark:bg-darkbg hover:bg-lightSelected dark:hover:bg-darkSelected px-4 py-2 font-bold text-black dark:text-white"
+          >
+            Block User
+          </button>
         </form>
       </div>
       <br></br>
