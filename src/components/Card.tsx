@@ -95,10 +95,10 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         const data = userDoc.data();
         const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
         const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
-        setBlockedUsers(combinedBlocked);
-        if (blockedUsers.length > 0) {
+        // setBlockedUsers(combinedBlocked);
+        if (combinedBlocked.length > 0) {
           const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
-            blockedUsers.includes(participant.email?.toLowerCase() || "")
+            combinedBlocked.includes(participant.email?.toLowerCase() || "")
           );
           if (hasBlockedUser) {
             toast.error("Group unavailable");
