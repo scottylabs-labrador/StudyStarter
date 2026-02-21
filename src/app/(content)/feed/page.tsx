@@ -254,7 +254,7 @@ export default function FeedPage() {
 
       {/* Card Section */}
       {showDetails && (
-        <div className="md:block md:w-full lg:w-[30%] xl:w-[25%]">
+        <div className="md:block md:w-full lg:w-[100%] xl:w-[100%]">
           <Card
             details={showDetails}
             onClick={() => closeDetailsPopUp()}
