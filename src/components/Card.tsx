@@ -1,10 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import groupDetails from "~/types";
-import {
-  setIsProfileOpen,
-  setIsViewProfileOpen,
-} from "~/lib/features/uiSlice";
+import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/uiSlice";
 import { useUser } from "@clerk/nextjs";
 import CreateProfilePopUp from "./CreateProfilePopUp";
 import { useDispatch } from "react-redux";
@@ -23,12 +20,14 @@ import {
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
+import EditGroupModal from "./EditGroupModal";
 interface Props {
   onClick: () => void;
   details: groupDetails;
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 import { usePostHog } from 'posthog-js/react'
+import { Pencil } from "lucide-react";
 import { BlockedUsers } from "~/components/BlockList";
 
 
@@ -107,6 +106,11 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         }
       }
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+      const groupDocSnap = await getDoc(groupDocRef);
+      if (!groupDocSnap.exists()) {
+        toast.error("Group no longer exists");
+        return;
+      }
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion({
           name: user?.fullName,
@@ -176,9 +180,21 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     <div className="overflow-y-scroll fixed md:bottom-[2rem] top-[5rem] md:right-[1rem] mr-[4rem] w-[93%] h-[85%] md:h-[85%] md:w-[30%] rounded-[10px] bg-lightAccent dark:bg-darkAccent text-black dark:text-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
+        {joinedState && currentDetails.participantDetails.length === 1 ? (
+          <button
+            className="mb-[-12px] me-5 mt-3 text-xl font-bold"
+            onClick={() => dispatch(setIsEditGroupModalOpen(true))}
+            aria-label="Edit group"
+          >
+            <Pencil size={20} />
+          </button>
+        ) : (
+          <div></div>
+        )}
         <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
           <big>&times;</big>
         </button>
+        
       </div>
 
       {/* Title */}
@@ -257,6 +273,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         {joinedState ? "Leave" : "Join"}
       </button>
       {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
+      <EditGroupModal group={currentDetails} />
     </div>
   );
 };
