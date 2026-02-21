@@ -193,7 +193,7 @@ export function BlockList() {
         <form onSubmit={handleBlockSubmit}>
           <input
             id="blockInput"
-            className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-1/3 mb-0"
+            className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-full mb-0"
             type="text"
             pattern='[A-Za-z]*@andrew.cmu.edu'
             title='"<id>@andrew.cmu.edu"'
@@ -204,7 +204,7 @@ export function BlockList() {
           />
           <button
             type="submit"
-            className="bg-blue-500 w-1/3 rounded bg-lightbg dark:bg-darkbg hover:bg-lightSelected dark:hover:bg-darkSelected px-4 py-2 font-bold text-black dark:text-white"
+            className="bg-blue-500 w-full rounded bg-lightButton dark:bg-darkButton hover:bg-lightSelected dark:hover:bg-darkSelected px-4 py-2 font-bold text-black dark:text-white mt-2"
           >
             Block User
           </button>
@@ -218,7 +218,7 @@ export function BlockList() {
         {blocked.blockedByMe.map((blockedUser) => (
             <li
               key={blockedUser}
-              className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-1/3 flex justify-between items-center">
+              className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-full flex justify-between items-center">
               <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
                 {blockedUser}
               </div>
