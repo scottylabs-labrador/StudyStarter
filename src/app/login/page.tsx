@@ -1,53 +1,73 @@
-"use client"
-import { useUser, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import { redirect, useRouter } from "next/navigation";
-import "~/styles/globals.css";
-import { useEffect, useState } from "react";
-import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, getDoc, arrayUnion, collection, query, onSnapshot } from 'firebase/firestore';
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { db } from "~/lib/api/firebaseConfig";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 
+export default async function LoginPage() {
+  console.log("LOGIN PAGE HIT");
+  /* ===============================
+     1. CHECK AUTH
+  =============================== */
 
-export default function LoginPage() {
-  const { user } = useUser();
-  const router = useRouter();
-  
+  const { userId } = await auth();
 
-  useEffect(() => {
-    if (!user) {
-      console.log("bad turkey");
-      return;
-    }
-    // const role = user?.publicMetadata?.role;
-    const faculty = true
-
-    if (faculty === true) {
-      router.push("/faculty-restricted");
-      return;
-    }
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId? userId : "");
-    const classesRef = collection(usersDocRef, "Classes");
-    const q = query(classesRef);
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const classes = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-      }));
-      if (classes == undefined || classes == null || classes.length == 0) {
-        router.push("/create_account");
-      } else {
-        router.push("/feed");
-      }
-    }, (error) => {
-      console.error('Error getting documents: ', error);
-    });
-
-    return () => unsubscribe();
-  }, [user]);
-    return (
-      <main className="flex h-[95vh] flex-col items-center justify-center">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        </div>
-      </main>
-    );
+  if (!userId) {
+    redirect("/");
   }
+
+  const user = await currentUser();
+
+  const email = user?.emailAddresses[0]?.emailAddress;
+  // const email = "jmackey@andrew.cmu.edu"
+  console.log("Email:", email);
+
+  if (!email) {
+    redirect("/");
+  }
+
+  /* ===============================
+     2. CHECK FACULTY VIA PYTHON API
+  =============================== */
+
+  const response = await fetch(
+    "https://updateuser-jmpi7y54bq-uc.a.run.app",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        firstName: "Test",
+      }),
+      cache: "no-store", // always re-check
+    }
+  );
+
+  const result = await response.json();
+
+  console.log("Faculty result:", result);
+
+  if (result?.success === true) {
+    redirect("/faculty-restricted");
+  }
+
+  /* ===============================
+     3. NORMAL USER FLOW
+  =============================== */
+
+  const userRef = doc(db, "Users", email);
+  const classesRef = collection(userRef, "Classes");
+  const classesSnap = await getDocs(classesRef);
+
+  if (classesSnap.empty) {
+    redirect("/create_account");
+  }
+
+  redirect("/feed");
+}
