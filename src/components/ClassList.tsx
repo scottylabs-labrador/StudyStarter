@@ -96,6 +96,13 @@ const Courses: React.FC = () => {
       handleSearch(null);
   }
 
+  const handleSearchKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && filteredCourses.length > 0) {
+      event.preventDefault();
+      await addClass(filteredCourses[0]);
+    }
+  };
+
   if (loading) return <p className='text-white'>Loading...</p>;
 
   return (
@@ -108,6 +115,7 @@ const Courses: React.FC = () => {
         placeholder="Search courses..."
         value={searchQuery}
         onChange={handleSearch}
+        onKeyDown={handleSearchKeyDown}
         className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightInput dark:bg-darkInput"
         id="searchBar"
       />
