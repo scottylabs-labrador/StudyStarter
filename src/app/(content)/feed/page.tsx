@@ -15,6 +15,8 @@ import {
 } from "~/lib/features/uiSlice";
 import { usePostHog } from 'posthog-js/react'
 
+import { BlockedUsers } from "~/components/BlockList";
+
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -33,6 +35,7 @@ export default function FeedPage() {
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const cardColorMapping = new Map<boolean, [string, string]>([
     [true, ['lightAccent', "darkAccent"]],
     [false, ["lightSidebar", "darkSidebar"]],
@@ -49,6 +52,17 @@ export default function FeedPage() {
     const isFull = group.participantDetails.length >= group.totalSeats;
     const isParticipant = joinedGroups?.includes(group.id);
     const groupDate = group.startTime.toDate();
+    
+    // Filter out groups with blocked users
+    if (blockedUsers.length > 0) {
+      const hasBlockedUser = group.participantDetails.some((participant) =>
+        blockedUsers.includes(participant.email?.toLowerCase() || "")
+      );
+      if (hasBlockedUser) {
+        return true;
+      }
+    }
+    
     if (isFull && !showFullFilter && !isParticipant) {
       return true;
     }
@@ -146,6 +160,11 @@ export default function FeedPage() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setJoinedGroups(data.joinedGroups || []);
+        
+        // Get blocked users (where blockedByMe is true)
+        const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
+        const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
+        setBlockedUsers(combinedBlocked);
       }
     });
   

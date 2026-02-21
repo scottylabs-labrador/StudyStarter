@@ -28,6 +28,8 @@ interface Props {
 }
 import { usePostHog } from 'posthog-js/react'
 import { Pencil } from "lucide-react";
+import { BlockedUsers } from "~/components/BlockList";
+
 
 const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
@@ -36,6 +38,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
@@ -82,8 +85,25 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       if (
         currentDetails.participantDetails.length >= currentDetails.totalSeats
       ) {
-        toast.error("Group is full");
+        toast.error("Group unavailable");
         return;
+      }
+      // Get blocked users (where blockedByMe is true)
+      const userDoc = await getDoc(usersDocRef);
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
+        const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
+        // setBlockedUsers(combinedBlocked);
+        if (combinedBlocked.length > 0) {
+          const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
+            combinedBlocked.includes(participant.email?.toLowerCase() || "")
+          );
+          if (hasBlockedUser) {
+            toast.error("Group unavailable");
+            return;
+          }
+        }
       }
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
       const groupDocSnap = await getDoc(groupDocRef);

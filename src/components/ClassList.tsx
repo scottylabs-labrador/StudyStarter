@@ -108,7 +108,7 @@ const Courses: React.FC = () => {
         placeholder="Search courses..."
         value={searchQuery}
         onChange={handleSearch}
-        className="text-black border border-gray-300 rounded p-2 w-1/3 mb-0 bg-lightInput dark:bg-darkInput"
+        className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightInput dark:bg-darkInput"
         id="searchBar"
       />
 
@@ -188,7 +188,7 @@ export function ClassList() {
         {classes.map((cls) => (
           <li
             key={cls.id}
-            className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-1/3 flex justify-between items-center">
+            className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-full flex justify-between items-center">
             <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
               <strong>{cls.courseID}</strong> - {cls.name}
             </div>
