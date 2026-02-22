@@ -1,5 +1,6 @@
 "use client";
 import "~/styles/globals.css";
+import { redirect } from "next/navigation";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { useState } from "react";
 import { ClassList } from "~/components/ClassList";
@@ -16,6 +17,9 @@ function ContinueButton() {
 
 export default function ProfilePage() {
   const { user } = useUser();
+  if (user?.publicMetadata?.faculty === true) {
+    redirect("/faculty-restricted"); // block faculty
+  }
   const userId = user?.emailAddresses[0]?.emailAddress;
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();

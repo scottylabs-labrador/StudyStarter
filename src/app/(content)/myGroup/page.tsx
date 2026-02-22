@@ -8,10 +8,14 @@ import { useUser } from "@clerk/nextjs";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
+import { redirect } from "next/navigation";
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
+  if (user?.publicMetadata?.faculty === true) {
+    redirect("/faculty-restricted"); // block faculty
+  }
   const [selectedCourses, setSelectedCourses] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);

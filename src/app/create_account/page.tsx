@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ClassList } from "~/components/ClassList";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
+import { redirect } from "next/navigation";
 
 function ContinueButton() {
   return (
@@ -16,6 +17,9 @@ function ContinueButton() {
 
 export default function ProfilePage() {
   const { user } = useUser();
+  if (user?.publicMetadata?.faculty === true) {
+    redirect("/faculty-restricted"); // block faculty
+  }
   const userId = user?.emailAddresses[0]?.emailAddress;
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();

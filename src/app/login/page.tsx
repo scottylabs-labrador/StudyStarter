@@ -7,6 +7,7 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export default async function LoginPage() {
   console.log("LOGIN PAGE HIT");
@@ -22,8 +23,8 @@ export default async function LoginPage() {
 
   const user = await currentUser();
 
-  const email = user?.emailAddresses[0]?.emailAddress;
-  // const email = "jmackey@andrew.cmu.edu"
+  // const email = user?.emailAddresses[0]?.emailAddress;
+  const email = "copetas@cs.cmu.edu"
   console.log("Email:", email);
 
   if (!email) {
@@ -54,13 +55,15 @@ export default async function LoginPage() {
   console.log("Faculty result:", result);
 
   if (result?.success === true) {
+    await clerkClient.users.updateUser(userId, {
+      publicMetadata: { faculty: true },
+    });
     redirect("/faculty-restricted");
   }
 
   /* ===============================
      3. NORMAL USER FLOW
   =============================== */
-
   const userRef = doc(db, "Users", email);
   const classesRef = collection(userRef, "Classes");
   const classesSnap = await getDocs(classesRef);
