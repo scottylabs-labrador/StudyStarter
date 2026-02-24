@@ -15,6 +15,8 @@ import {
 } from "~/lib/features/uiSlice";
 import { usePostHog } from 'posthog-js/react'
 
+import { BlockedUsers } from "~/components/BlockList";
+
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -33,6 +35,7 @@ export default function FeedPage() {
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const cardColorMapping = new Map<boolean, [string, string]>([
     [true, ['lightAccent', "darkAccent"]],
     [false, ["lightSidebar", "darkSidebar"]],
@@ -57,6 +60,17 @@ export default function FeedPage() {
     //   }
     // }
 
+    
+    // Filter out groups with blocked users
+    if (blockedUsers.length > 0) {
+      const hasBlockedUser = group.participantDetails.some((participant) =>
+        blockedUsers.includes(participant.email?.toLowerCase() || "")
+      );
+      if (hasBlockedUser) {
+        return true;
+      }
+    }
+    
     if (isFull && !showFullFilter && !isParticipant) {
       return true;
     }
@@ -154,6 +168,11 @@ export default function FeedPage() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setJoinedGroups(data.joinedGroups || []);
+        
+        // Get blocked users (where blockedByMe is true)
+        const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
+        const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
+        setBlockedUsers(combinedBlocked);
       }
     });
   
@@ -173,24 +192,24 @@ export default function FeedPage() {
         className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white`}
         onClick={() => handleCardClick(group)}
       >
-        <div className="mb-2 text-xl font-bold">{group.title}</div>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Course: &nbsp; </li>{" "}
-          <li>{group.course}</li>
+        <div className="mb-2 text-xl font-bold truncate">{group.title}</div>
+        <ul className="flex flex-row min-w-0">
+          <li className="font-bold flex-shrink-0"> Course: &nbsp; </li>
+          <li className="truncate flex-1">{group.course}</li>
+        </ul>
+        <ul className="flex flex-row min-w-0">
+          <li className="font-bold flex-shrink-0"> Purpose: &nbsp; </li>
+          <li className="truncate flex-1">{group.purpose}</li>
         </ul>
         <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Purpose: &nbsp; </li>{" "}
-          <li>{group.purpose}</li>
+          <li className="font-bold truncate"> Time: &nbsp; </li> <li>{formattedTime}</li>
         </ul>
         <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Time: &nbsp; </li> <li>{formattedTime}</li>
+          <li className="font-bold truncate"> Date: &nbsp; </li> <li>{formattedDate}</li>
         </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Date: &nbsp; </li> <li>{formattedDate}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Location: &nbsp; </li>{" "}
-          <li>{group.location}</li>
+        <ul className="flex flex-row min-w-0">
+          <li className="font-bold flex-shrink-0"> Location: &nbsp; </li>
+          <li className="truncate flex-1">{group.location}</li>
         </ul>
         {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
           <li className="bg-joined text-joinedText px-3 py-1 rounded-md -mt-8">Joined</li>
@@ -200,7 +219,7 @@ export default function FeedPage() {
   });
   displayScheduled.unshift(
     <div
-      className="text-center my-3 max-w-sm cursor-pointer text-lightAccent dark:text-darkAccent hover:border-lightSidebar hover:dark:border-darkSidebar hover:text-black hover:dark:text-white overflow-hidden border-4 shadow-lg border-dashed rounded-xl border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg px-6 py-4 hover:bg-lightSidebar hover:dark:bg-darkSidebar flex items-center justify-center"
+      className="text-center min-h-48 my-3 max-w-sm cursor-pointer text-lightAccent dark:text-darkAccent hover:border-lightSidebar hover:dark:border-darkSidebar hover:text-black hover:dark:text-white overflow-hidden border-4 shadow-lg border-dashed rounded-xl border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg px-6 py-4 hover:bg-lightSidebar hover:dark:bg-darkSidebar flex items-center justify-center"
       
       onClick={handleCreateGroup}
     >

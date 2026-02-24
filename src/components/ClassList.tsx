@@ -96,6 +96,13 @@ const Courses: React.FC = () => {
       handleSearch(null);
   }
 
+  const handleSearchKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && filteredCourses.length > 0) {
+      event.preventDefault();
+      await addClass(filteredCourses[0]);
+    }
+  };
+
   if (loading) return <p className='text-white'>Loading...</p>;
 
   return (
@@ -108,7 +115,8 @@ const Courses: React.FC = () => {
         placeholder="Search courses..."
         value={searchQuery}
         onChange={handleSearch}
-        className="text-black border border-gray-300 rounded p-2 w-full max-w-[450px] mb-0 bg-lightInput dark:bg-darkInput"
+        onKeyDown={handleSearchKeyDown}
+        className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightInput dark:bg-darkInput"
         id="searchBar"
       />
 
@@ -188,7 +196,7 @@ export function ClassList() {
         {classes.map((cls) => (
           <li
             key={cls.id}
-            className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-full max-w-[450px] flex justify-between items-center">
+            className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-full flex justify-between items-center">
             <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
               <strong>{cls.courseID}</strong> - {cls.name}
             </div>

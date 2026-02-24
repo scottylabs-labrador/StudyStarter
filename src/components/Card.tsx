@@ -1,10 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import groupDetails from "~/types";
-import {
-  setIsProfileOpen,
-  setIsViewProfileOpen,
-} from "~/lib/features/uiSlice";
+import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/uiSlice";
 import { useUser } from "@clerk/nextjs";
 import CreateProfilePopUp from "./CreateProfilePopUp";
 import { useDispatch } from "react-redux";
@@ -23,6 +20,7 @@ import {
 import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
+import EditGroupModal from "./EditGroupModal";
 import { addToCal, deleteFromCal } from "~/helpers/calendar_helper";
 interface Props {
   onClick: () => void;
@@ -30,6 +28,9 @@ interface Props {
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 import { usePostHog } from 'posthog-js/react'
+import { Pencil } from "lucide-react";
+import { BlockedUsers } from "~/components/BlockList";
+
 
 const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
@@ -39,6 +40,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
@@ -94,7 +96,29 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       if (
         currentDetails.participantDetails.length >= currentDetails.totalSeats
       ) {
-        toast.error("Group is full");
+        toast.error("Group unavailable");
+        return;
+      }
+      // Get blocked users (where blockedByMe is true)
+      const userDoc = await getDoc(usersDocRef);
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
+        const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
+        // setBlockedUsers(combinedBlocked);
+        if (combinedBlocked.length > 0) {
+          const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
+            combinedBlocked.includes(participant.email?.toLowerCase() || "")
+          );
+          if (hasBlockedUser) {
+            toast.error("Group unavailable");
+            return;
+          }
+        }
+      }
+      const groupDocSnap = await getDoc(groupDocRef);
+      if (!groupDocSnap.exists()) {
+        toast.error("Group no longer exists");
         return;
       }
       if (userId) {
@@ -111,7 +135,6 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       }
 
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
-
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion({
           name: user?.fullName,
@@ -193,31 +216,43 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     <div className="overflow-y-scroll fixed md:bottom-[2rem] top-[5rem] md:right-[1rem] mr-[4rem] w-[93%] h-[85%] md:h-[85%] md:w-[30%] rounded-[10px] bg-lightAccent dark:bg-darkAccent text-black dark:text-white p-[1rem]">
       {/* Close Button */}
       <div className="flex justify-end">
+        {joinedState && currentDetails.participantDetails.length === 1 ? (
+          <button
+            className="mb-[-12px] me-5 mt-3 text-xl font-bold"
+            onClick={() => dispatch(setIsEditGroupModalOpen(true))}
+            aria-label="Edit group"
+          >
+            <Pencil size={20} />
+          </button>
+        ) : (
+          <div></div>
+        )}
         <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
           <big>&times;</big>
         </button>
+        
       </div>
 
       {/* Title */}
-      <div className="font-['Verdana'] text-[35px]">{currentDetails.title}</div>
+      <div className="font-['Verdana'] text-[35px] whitespace-normal break-words">{currentDetails.title}</div>
 
       {/* Card Body */}
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Course:</strong> {currentDetails.course}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Purpose</strong>: {currentDetails.purpose}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Time</strong>: {formattedTime}
       </p>
-      <p className="card-text font-['Verdana'] text-[20px]">
+      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Date</strong>: {formattedDate}
       </p>
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Location:</strong> {currentDetails.location}
       </p>
-      <p className="font-['Verdana'] text-[20px]">
+      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
         <strong>Participants:</strong>{" "}
         {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
         <button
@@ -274,6 +309,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         {joinedState ? "Leave" : "Join"}
       </button>
       {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
+      <EditGroupModal group={currentDetails} />
     </div>
   );
 };

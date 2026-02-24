@@ -1,30 +1,29 @@
 "use client";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
-import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
+import { setIsEditGroupModalOpen } from "~/lib/features/uiSlice";
 import React, { useEffect, useState, forwardRef } from "react";
-import { db, usersRef } from "~/lib/api/firebaseConfig";
+import { db } from "~/lib/api/firebaseConfig";
 import {
-  setDoc,
   doc,
-  getDoc,
   getDocs,
   collection,
-  DocumentReference,
   Timestamp,
   updateDoc,
-  arrayUnion,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'
-import { addToCal, setupGoogleApi } from "../helpers/calendar_helper";
+import groupDetails from "~/types";
 
-export default function CreateGroupModal() {
+interface EditGroupModalProps {
+  group: groupDetails | null;
+}
+
+export default function EditGroupModal({ group }: EditGroupModalProps) {
   const { user } = useUser();
-  const userId = user?.emailAddresses[0]?.emailAddress;
   const [title, setTitle] = useState("");
   const [course, setCourse] = useState("");
   const [purpose, setPurpose] = useState("");
@@ -36,95 +35,35 @@ export default function CreateGroupModal() {
   const [classes, setClasses] = useState<string[]>([]); // Define classes state
 
   const dispatch = useDispatch();
-  const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
+  const isOpen = useAppSelector((state) => state.ui.isEditGroupModalOpen);
   const posthog = usePostHog()
 
   const handleClose = () => {
-    dispatch(setIsCreateGroupModalOpen(false));
+    dispatch(setIsEditGroupModalOpen(false));
   };
-
-  async function checkId(docRef: DocumentReference): Promise<boolean> {
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists();
-  }
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     e.preventDefault();
-
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let id = "";
-    for (let i = 0; i < 20; i++) {
-      id += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    let timestamp: Date;
-
+    if (!group) return;
     if (!date) {
       toast.error("Invalid Date Input!");
       return;
     }
 
-    let groupDocRef = doc(db, "Study Groups", id);
-    while (await checkId(groupDocRef)) {
-      id = "";
-      for (let i = 0; i < 20; i++) {
-        id += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      groupDocRef = doc(db, "Study Groups", id);
-    }
     const firestoreTimestamp = Timestamp.fromDate(date);
-    const userEmail = user?.emailAddresses[0]?.emailAddress;
-
-    if (!userEmail) {
-      toast("Error creating study group", {
-        icon: "❌",
-        style: {
-          borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
-        },
-      });
-      return;
-    }
-    const eventId = await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail);
-    if (eventId == undefined) {
-      toast("Could not add to calendar", {
-        icon: "❌",
-        style: {
-          borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
-        },
-      });
-    }
-    await setDoc(groupDocRef, {
-      id,
+    const groupDocRef = doc(db, "Study Groups", group.id);
+    await updateDoc(groupDocRef, {
       title,
       course,
       purpose,
       startTime: firestoreTimestamp,
       location,
       totalSeats: Number(seats),
-      participantDetails: [
-        {
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: userEmail,
-          eventId: eventId
-        },
-      ],
+      participantDetails: group.participantDetails,
       details,
     });
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
-    await setDoc(
-      usersDocRef,
-      {
-        joinedGroups: arrayUnion(id),
-      },
-      { merge: true },
-    );
 
     setTitle("");
     setCourse("");
@@ -136,7 +75,7 @@ export default function CreateGroupModal() {
     setDetails("");
     handleClose();
 
-    toast("Study group created successfully!", {
+    toast("Study group edited successfully!", {
       icon: "👏",
       style: {
         borderRadius: "10px",
@@ -144,21 +83,15 @@ export default function CreateGroupModal() {
         color: "#fff",
       },
     });
-    posthog.capture('group_created', { group: {
-      id,
+    posthog.capture('group_edited', { group: {
+      id: group.id,
       title,
       course,
       purpose,
       startTime: firestoreTimestamp,
       location,
       totalSeats: Number(seats),
-      participantDetails: [
-        {
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
-        },
-      ],
+      participantDetails: group.participantDetails,
       details,
     }})
   };
@@ -177,6 +110,17 @@ export default function CreateGroupModal() {
     });
   }, [user]);
 
+  useEffect(() => {
+    if (!isOpen || !group) return;
+    setTitle(group.title || "");
+    setCourse(group.course || "");
+    setPurpose(group.purpose || "");
+    setDate(group.startTime?.toDate ? group.startTime.toDate() : null);
+    setLocation(group.location || "");
+    setSeats(group.totalSeats ? String(group.totalSeats) : "");
+    setDetails(group.details || "");
+  }, [isOpen, group]);
+
   if (!isOpen) return null;
 
   const CustomDateInput = forwardRef(
@@ -188,33 +132,33 @@ export default function CreateGroupModal() {
         readOnly
         placeholder={placeholder}
         // Merge the existing className with your own
-        className={`w-full block mb-2 rounded border p-2 bg-lightInput dark:bg-darkInput ${className || ''}`}
+        className={`w-full block mb-2 rounded border p-2 bg-lightInput dark:bg-darkInput text-black ${className || ''}`}
         {...rest}
       />
     )
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" id="createGroupPopUp">
+    <div className="fixed inset-0 z-50 flex items-center justify-center" id="editGroupPopUp">
       <div className="w-96 rounded-lg p-8 bg-lightAccent dark:bg-darkAccent">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-black dark:text-white">Create New Study Group</h2>
+          <h2 className="text-xl font-bold text-black dark:text-white">Edit Study Group</h2>
           <button onClick={handleClose} className="text-xl font-bold text-black dark:text-white">
             <big>&times;</big>
           </button>
         </div>
         <form onSubmit={handleSubmit}>
           <input
-            className="mb-2 w-full rounded border-b-4 border-b-lightbg dark:border-b-darkbg p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border-b-4 border-b-lightbg dark:border-b-darkbg p-2 bg-lightInput dark:bg-darkInput text-black"
             type="text"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            maxLength={40} // Reasonable character limit
+            maxLength={30} // Reasonable character limit
           />
           <select
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput text-black"
             id="classSelect"
             value={course}
             onChange={(e) => setCourse(e.target.value)}
@@ -230,7 +174,7 @@ export default function CreateGroupModal() {
             ))}
           </select>
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput text-black"
             type="text"
             placeholder="Purpose"
             value={purpose}
@@ -252,17 +196,16 @@ export default function CreateGroupModal() {
             required
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput text-black"
             type="text"
             placeholder="Location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             maxLength={100} // Reasonable character limit
             required
-            maxLength={40}
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput text-black"
             type="number"
             placeholder="Max Seats"
             value={seats}
@@ -272,7 +215,7 @@ export default function CreateGroupModal() {
             max="100"
           />
           <input
-            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput"
+            className="mb-2 w-full rounded border p-2 bg-lightInput dark:bg-darkInput text-black"
             type="text"
             placeholder="Details"
             value={details}
@@ -283,7 +226,7 @@ export default function CreateGroupModal() {
             type="submit"
             className="bg-blue-500 w-full rounded bg-lightbg dark:bg-darkbg hover:bg-lightSelected dark:hover:bg-darkSelected px-4 py-2 font-bold text-black dark:text-white"
           >
-            Create Group
+            Edit Group
           </button>
         </form>
       </div>
