@@ -124,27 +124,6 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         return;
       }
 
-      // update group with new participant
-      await updateDoc(groupDocRef, {
-        participantDetails: arrayUnion({
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
-          eventId
-        }),
-      });
-
-      // update user with new group
-      await setDoc(
-        usersDocRef,
-        {
-          joinedGroups: arrayUnion(currentDetails.id),
-        },
-        { merge: true },
-      );
-      toast.success("Joined group");
-      posthog.capture('group_joined', { group: currentDetails })
-
       // add group to calendar
       if (userId) {
         eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
@@ -158,6 +137,30 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           },
         });
       }
+
+      // update group with new participant
+      const newParticipant = {
+        name: user?.fullName,
+        url: user?.imageUrl,
+        email: user?.emailAddresses[0]?.emailAddress,
+        eventId
+      }
+      console.log(newParticipant);
+      await updateDoc(groupDocRef, {
+        participantDetails: arrayUnion(newParticipant),
+      });
+
+      // update user with new group
+      await setDoc(
+        usersDocRef,
+        {
+          joinedGroups: arrayUnion(currentDetails.id),
+        },
+        { merge: true },
+      );
+      toast.success("Joined group");
+      posthog.capture('group_joined', { group: currentDetails })
+      
       joinedSetState(!joinedState);
       updateJoinedGroups((prev) => {
         if (!prev) return null;
