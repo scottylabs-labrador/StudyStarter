@@ -21,6 +21,7 @@ import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
 import EditGroupModal from "./EditGroupModal";
+import { addToCal, deleteFromCal } from "~/helpers/calendar_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
@@ -35,6 +36,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
+  const [eventIdState, setEventIdState] = useState<string | undefined>(undefined)
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
@@ -68,7 +70,15 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           (participant: any) =>
             participant.email === user.emailAddresses[0]?.emailAddress,
         );
+        let eventId = undefined
+        if (isParticipant) {
+          eventId = participants.find(
+            (participant: any) =>
+              participant.email === user.emailAddresses[0]?.emailAddress,
+          )?.eventId;
+        }
         joinedSetState(isParticipant);
+        setEventIdState(eventId);
       }
     });
 
@@ -81,6 +91,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const joinGroup = async () => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId ? userId : "");
+    let eventId:string | undefined = undefined;
     if (!joinedState) {
       if (
         currentDetails.participantDetails.length >= currentDetails.totalSeats
@@ -88,13 +99,12 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         toast.error("Group unavailable");
         return;
       }
-      // Get blocked users (where blockedByMe is true)
+      // check that no participants blocked
       const userDoc = await getDoc(usersDocRef);
       if (userDoc.exists()) {
         const data = userDoc.data();
         const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
         const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
-        // setBlockedUsers(combinedBlocked);
         if (combinedBlocked.length > 0) {
           const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
             combinedBlocked.includes(participant.email?.toLowerCase() || "")
@@ -105,19 +115,42 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           }
         }
       }
+
+      // check that group still exists
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
       const groupDocSnap = await getDoc(groupDocRef);
       if (!groupDocSnap.exists()) {
-        toast.error("Group no longer exists");
+        toast.error("Group unavailable");
         return;
       }
+
+      // add group to calendar
+      if (userId) {
+        eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
+      } else {
+        toast("Could not add to calendar", {
+          icon: "❌",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+      }
+
+      // update group with new participant
+      const newParticipant = {
+        name: user?.fullName,
+        url: user?.imageUrl,
+        email: user?.emailAddresses[0]?.emailAddress,
+        eventId
+      }
+      console.log(newParticipant);
       await updateDoc(groupDocRef, {
-        participantDetails: arrayUnion({
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
-        }),
+        participantDetails: arrayUnion(newParticipant),
       });
+
+      // update user with new group
       await setDoc(
         usersDocRef,
         {
@@ -126,12 +159,13 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         { merge: true },
       );
       toast.success("Joined group");
+      posthog.capture('group_joined', { group: currentDetails })
+      
       joinedSetState(!joinedState);
       updateJoinedGroups((prev) => {
         if (!prev) return null;
         return prev.concat(currentDetails.id);
       });
-      posthog.capture('group_joined', { group: currentDetails })
     }
     if (joinedState) {
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
@@ -140,6 +174,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           name: user?.fullName,
           url: user?.imageUrl,
           email: user?.emailAddresses[0]?.emailAddress,
+          eventId: eventIdState,
         }),
       });
       await setDoc(
@@ -160,13 +195,23 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       const updatedGroupSnap = await getDoc(groupDocRef);
       if (updatedGroupSnap.exists()) {
         const updatedData = updatedGroupSnap.data();
-        if (
-          !updatedData.participantDetails ||
-          updatedData.participantDetails.length === 0
-        ) {
+        const onlyMember = !updatedData.participantDetails || updatedData.participantDetails.length === 0
+        if (onlyMember) {
           await deleteDoc(groupDocRef);
           onClick();
           posthog.capture('group_emptied', { group: currentDetails })
+        }
+        if (eventIdState) {
+          deleteFromCal(eventIdState);
+        } else {
+          toast("Could not add to calendar", {
+            icon: "❌",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
         }
       }
     }
@@ -247,7 +292,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
                 </strong>{" "}
                 {" "+participantDetail.name}</p> */}
                 <p className="indent-[0.5rem] font-['Verdana'] text-[16px]">
-                  {participantDetail.name}
+                  {participantDetail.name.split(" ")[0]}
                 </p>
               </button>
             </div>
