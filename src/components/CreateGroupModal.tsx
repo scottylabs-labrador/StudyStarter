@@ -88,17 +88,17 @@ export default function CreateGroupModal() {
       });
       return;
     }
-    const eventId = await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail);
-    if (eventId == undefined) {
-      toast("Could not add to calendar", {
-        icon: "❌",
-        style: {
-          borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
-        },
-      });
-    }
+    const eventId = "None"; //await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail);
+    // if (eventId == "None") {
+    //   toast("Could not add to calendar", {
+    //     icon: "❌",
+    //     style: {
+    //       borderRadius: "10px",
+    //       background: "#333",
+    //       color: "#fff",
+    //     },
+    //   });
+    // }
     await setDoc(groupDocRef, {
       id,
       title,
