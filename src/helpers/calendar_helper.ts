@@ -159,7 +159,7 @@ export async function addToCal(
     return response.result.id;
   } catch (err) {
     console.error("Error creating event:", err);
-    return undefined;
+    return "None";
   }
 }
 

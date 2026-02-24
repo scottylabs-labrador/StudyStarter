@@ -136,6 +136,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
             color: "#fff",
           },
         });
+        eventId = "None"
       }
 
       // update group with new participant
