@@ -99,13 +99,12 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         toast.error("Group unavailable");
         return;
       }
-      // Get blocked users (where blockedByMe is true)
+      // check that no participants blocked
       const userDoc = await getDoc(usersDocRef);
       if (userDoc.exists()) {
         const data = userDoc.data();
         const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
         const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
-        // setBlockedUsers(combinedBlocked);
         if (combinedBlocked.length > 0) {
           const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
             combinedBlocked.includes(participant.email?.toLowerCase() || "")
@@ -116,11 +115,37 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           }
         }
       }
+
+      // check that group still exists
+      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
       const groupDocSnap = await getDoc(groupDocRef);
       if (!groupDocSnap.exists()) {
-        toast.error("Group no longer exists");
+        toast.error("Group unavailable");
         return;
       }
+
+      // update group with new participant
+      await updateDoc(groupDocRef, {
+        participantDetails: arrayUnion({
+          name: user?.fullName,
+          url: user?.imageUrl,
+          email: user?.emailAddresses[0]?.emailAddress,
+          eventId
+        }),
+      });
+
+      // update user with new group
+      await setDoc(
+        usersDocRef,
+        {
+          joinedGroups: arrayUnion(currentDetails.id),
+        },
+        { merge: true },
+      );
+      toast.success("Joined group");
+      posthog.capture('group_joined', { group: currentDetails })
+
+      // add group to calendar
       if (userId) {
         eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
       } else {
@@ -133,30 +158,11 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           },
         });
       }
-
-      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
-      await updateDoc(groupDocRef, {
-        participantDetails: arrayUnion({
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
-          eventId
-        }),
-      });
-      await setDoc(
-        usersDocRef,
-        {
-          joinedGroups: arrayUnion(currentDetails.id),
-        },
-        { merge: true },
-      );
-      toast.success("Joined group");
       joinedSetState(!joinedState);
       updateJoinedGroups((prev) => {
         if (!prev) return null;
         return prev.concat(currentDetails.id);
       });
-      posthog.capture('group_joined', { group: currentDetails })
     }
     if (joinedState) {
       const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
