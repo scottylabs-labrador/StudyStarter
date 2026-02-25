@@ -125,20 +125,19 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       }
 
       // add group to calendar
-      // if (userId) {
-      //   eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
-      // } else {
-      //   toast("Could not add to calendar", {
-      //     icon: "❌",
-      //     style: {
-      //       borderRadius: "10px",
-      //       background: "#333",
-      //       color: "#fff",
-      //     },
-      //   });
-      //   eventId = "None"
-      // }
-      eventId = "None"
+      if (userId) {
+        eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
+      } else {
+        toast("Could not add to calendar", {
+          icon: "❌",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+        eventId = "None"
+      }
 
       // update group with new participant
       const newParticipant = {
@@ -203,18 +202,18 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           onClick();
           posthog.capture('group_emptied', { group: currentDetails })
         }
-        // if (eventIdState && eventIdState != "None") {
-        //   deleteFromCal(eventIdState);
-        // } else {
-        //   toast("Could not add to calendar", {
-        //     icon: "❌",
-        //     style: {
-        //       borderRadius: "10px",
-        //       background: "#333",
-        //       color: "#fff",
-        //     },
-        //   });
-        // }
+        if (eventIdState && eventIdState != "None") {
+          deleteFromCal(eventIdState);
+        } else {
+          toast("Could not delete from calendar", {
+            icon: "❌",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
+        }
       }
     }
   };
