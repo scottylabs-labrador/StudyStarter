@@ -177,6 +177,7 @@ export default function NavBar() {
 
   return (
     <Fragment>
+      <div className="hidden md:block left-0 top-0 flex-none w-[12vw] h-full bg-lightSidebar dark:bg-darkSidebar">
       <div className="grid grid-rows-[auto,1fr,auto] h-screen gap-y-6 overflow-hidden bg-lightbg dark:bg-darkbg md:bg-lightSidebar md:dark:bg-darkSidebar px-4 pt-[50px] text-black dark:text-white">
         {/* Top Section */}
         <div>
@@ -242,6 +243,7 @@ export default function NavBar() {
             Privacy Policy
           </a>
         </div>
+      </div>
       </div>
 
       {/* Drawer Menu */}
