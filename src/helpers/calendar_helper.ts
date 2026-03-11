@@ -14,6 +14,14 @@ let gapiInited = false;
 let gisInited = false;
 let accessToken: string | null = null;
 
+export function isCalendarApiReady(): boolean {
+  return gapiInited && gisInited;
+}
+
+export function hasCalendarAccess(): boolean {
+  return !!accessToken;
+}
+
 /** Load an external script dynamically. */
 async function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -103,20 +111,72 @@ export async function requestCalendarAccess(): Promise<void> {
         resolve();
       };
 
-      // Try silent first (no popup if the user already granted access)
+      // Default behavior (may show consent if needed)
       tokenClient.requestAccessToken({ prompt: "" });
     });
   }
 }
 
 /**
+ * Interactive OAuth request that must be triggered by a user gesture (click/tap).
+ * Assumes scripts are already loaded to avoid popup blockers on mobile.
+ */
+export function requestCalendarAccessInteractive(): Promise<void> {
+  if (!isCalendarApiReady()) {
+    return Promise.reject(new Error("Google API not ready"));
+  }
+  if (accessToken) return Promise.resolve();
+
+  return new Promise((resolve, reject) => {
+    tokenClient.callback = (tokenResponse: any) => {
+      if (tokenResponse.error) {
+        console.error("Authorization error:", tokenResponse.error);
+        reject(tokenResponse.error);
+        return;
+      }
+      accessToken = tokenResponse.access_token;
+      gapi.client.setToken({ access_token: accessToken });
+      console.log("Calendar access granted.");
+      resolve();
+    };
+
+    // Explicit user consent popup (better compatibility on mobile)
+    tokenClient.requestAccessToken({ prompt: "consent" });
+  });
+}
+
+/**
+ * Silent OAuth request that will not show UI.
+ * Returns false if interaction is required or authorization fails.
+ */
+async function requestCalendarAccessSilent(): Promise<boolean> {
+  if (!isCalendarApiReady()) return false;
+  if (accessToken) return true;
+
+  return new Promise((resolve) => {
+    tokenClient.callback = (tokenResponse: any) => {
+      if (tokenResponse.error) {
+        console.warn("Silent auth failed:", tokenResponse.error);
+        resolve(false);
+        return;
+      }
+      accessToken = tokenResponse.access_token;
+      gapi.client.setToken({ access_token: accessToken });
+      resolve(true);
+    };
+
+    // Attempt without UI
+    tokenClient.requestAccessToken({ prompt: "none" });
+  });
+}
+
+/**
  * Ensures the user is authorized before making a Calendar API call.
  * If token expired or missing, will try to refresh silently.
  */
-async function ensureAuthorized(): Promise<void> {
-  if (!accessToken) {
-    await requestCalendarAccess();
-  }
+async function ensureAuthorized(): Promise<boolean> {
+  if (accessToken) return true;
+  return requestCalendarAccessSilent();
 }
 
 /** Adds an event to the user's Google Calendar. */
@@ -129,7 +189,8 @@ export async function addToCal(
   details: string,
   email: string
 ) {
-  await ensureAuthorized();
+  const authorized = await ensureAuthorized();
+  if (!authorized) return "None";
 
   const start = date.toDate().toISOString();
   const end = new Date(date.toMillis() + 3600000).toISOString();

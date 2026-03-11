@@ -20,7 +20,7 @@ import { useUser } from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'
-import { addToCal, setupGoogleApi } from "../helpers/calendar_helper";
+import { addToCal, setupGoogleApi, isCalendarApiReady, requestCalendarAccessInteractive } from "../helpers/calendar_helper";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -52,6 +52,13 @@ export default function CreateGroupModal() {
     e: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     e.preventDefault();
+
+    let calendarAuthPromise: Promise<void> | null = null;
+    if (isCalendarApiReady()) {
+      calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
+        console.warn("Calendar auth failed:", err);
+      });
+    }
 
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -88,17 +95,10 @@ export default function CreateGroupModal() {
       });
       return;
     }
-    const eventId = await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail);
-    if (eventId == "None") {
-      toast("Could not add to calendar", {
-        icon: "❌",
-        style: {
-          borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
-        },
-      });
+    if (calendarAuthPromise) {
+      await calendarAuthPromise;
     }
+    const eventId = await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail);
     await setDoc(groupDocRef, {
       id,
       title,
@@ -176,6 +176,21 @@ export default function CreateGroupModal() {
       setClasses(classList);
     });
   }, [user]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    setupGoogleApi()
+      .then(() => {
+        if (cancelled) return;
+      })
+      .catch((err) => {
+        console.error("Failed to initialize Google API:", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

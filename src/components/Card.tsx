@@ -21,7 +21,7 @@ import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
 import EditGroupModal from "./EditGroupModal";
-import { addToCal, deleteFromCal } from "~/helpers/calendar_helper";
+import { addToCal, deleteFromCal, isCalendarApiReady, requestCalendarAccessInteractive, setupGoogleApi } from "~/helpers/calendar_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
@@ -88,7 +88,19 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     setCurrentDetails(details);
   }, [details]);
 
+  useEffect(() => {
+    setupGoogleApi().catch((err) => {
+      console.warn("Failed to initialize Google API:", err);
+    });
+  }, []);
+
   const joinGroup = async () => {
+    let calendarAuthPromise: Promise<void> | null = null;
+    if (isCalendarApiReady()) {
+      calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
+        console.warn("Calendar auth failed:", err);
+      });
+    }
     const userId = user?.emailAddresses[0]?.emailAddress;
     const usersDocRef = doc(db, "Users", userId ? userId : "");
     let eventId:string | undefined = undefined;
@@ -125,18 +137,13 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
       }
 
       // add group to calendar
+      if (calendarAuthPromise) {
+        await calendarAuthPromise;
+      }
       if (userId) {
         eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
       } else {
-        toast("Could not add to calendar", {
-          icon: "❌",
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-          },
-        });
-        eventId = "None"
+        eventId = "None";
       }
 
       // update group with new participant
