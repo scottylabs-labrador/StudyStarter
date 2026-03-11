@@ -287,7 +287,11 @@ export async function addToCal(
 export async function deleteFromCal(
   eventId: string,
 ): Promise<void> {
-  await ensureAuthorized();
+  const authorized = await ensureAuthorized();
+  if (!authorized) {
+    console.warn("Calendar authorization required to delete event.");
+    return;
+  }
 
   try {
     await gapi.client.calendar.events.delete({
@@ -296,6 +300,6 @@ export async function deleteFromCal(
     });
     console.log(`Event ${eventId} deleted.`);
   } catch (err) {
-    console.log("Event does not exist");
+    console.warn("Failed to delete calendar event:", err);
   }
 }

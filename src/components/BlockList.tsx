@@ -3,6 +3,7 @@ import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
 import { useConfirm } from './ConfirmContext';
+import { deleteFromCal, setupGoogleApi, isCalendarApiReady, hasCalendarAccess, requestCalendarAccessInteractive } from '~/helpers/calendar_helper';
 
 export interface BlockedUsers {
   blockedByMe: string[]
@@ -53,6 +54,12 @@ export function BlockList() {
     getBlocked();
   }, [user]);
 
+  useEffect(() => {
+    setupGoogleApi().catch((err) => {
+      console.warn("Failed to initialize Google API:", err);
+    });
+  }, []);
+
   const handleBlock = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const userToBlock = event.target.value.toLowerCase().trim();
     setInputValue(userToBlock);
@@ -82,7 +89,13 @@ export function BlockList() {
       const blockedUserDocRef = doc(db, "Users", userToBlock);
       const blockedUserDoc = await getDoc(blockedUserDocRef);
       let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
-      let newGroups = [];
+      let newGroups: string[] = [];
+      let calendarAuthPromise: Promise<void> | null = null;
+      if (isCalendarApiReady() && !hasCalendarAccess()) {
+        calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
+          console.warn("Calendar auth failed:", err);
+        });
+      }
 
       if (blockedUserDoc.exists()) {
         // if blocked user already a user, update blocked and check shared groups
@@ -96,6 +109,9 @@ export function BlockList() {
           if (!ok) {
             return;   // <- simply stop the function
           }
+          if (calendarAuthPromise) {
+            await calendarAuthPromise;
+          }
           for (const g of groups) {
             if (theirGroups.includes(g)) {
               const toRemoveDocRef = doc(db, "Study Groups", g);
@@ -103,6 +119,12 @@ export function BlockList() {
               if (toRemoveDoc.exists()) {
                 const groupData = toRemoveDoc.data();
                 const groupParticipants = groupData.participantDetails;
+                const eventId = groupParticipants.find((p) => p.email === userId)?.eventId;
+                if (eventId && eventId !== "None") {
+                  deleteFromCal(eventId);
+                } else {
+                  console.warn("No calendar event found to delete for group", g);
+                }
                 let newParticipants = groupParticipants.filter((p) => p.email != userId);
                 await setDoc(toRemoveDocRef, { participantDetails: newParticipants }, { merge: true });
               } else {
