@@ -113,7 +113,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="p-4 font-sans w-1/3">
+    <div className="p-4 font-sans w-full lg:w-1/3">
       <ConfirmProvider>
       <div className="flex items-center mb-4">
         <img
