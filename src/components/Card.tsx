@@ -21,7 +21,7 @@ import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
 import EditGroupModal from "./EditGroupModal";
-import { addToCal, deleteFromCal, isCalendarApiReady, requestCalendarAccessInteractive, setupGoogleApi } from "~/helpers/calendar_helper";
+import { addToCal, deleteFromCal, isCalendarApiReady, requestCalendarAccessInteractive, setupGoogleApi, hasCalendarAccess } from "~/helpers/calendar_helper";
 interface Props {
   onClick: () => void;
   details: groupDetails;
@@ -96,7 +96,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
 
   const joinGroup = async () => {
     let calendarAuthPromise: Promise<void> | null = null;
-    if (isCalendarApiReady()) {
+    if (isCalendarApiReady() && !hasCalendarAccess()) {
       calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
         console.warn("Calendar auth failed:", err);
       });

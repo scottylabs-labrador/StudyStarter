@@ -8,11 +8,13 @@ const API_KEY = process.env.NEXT_PUBLIC_CALENDAR_API_KEY!;
 
 const DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
 const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned";
+const TOKEN_STORAGE_KEY = "google_calendar_token_v1";
 
 let tokenClient: any;
 let gapiInited = false;
 let gisInited = false;
 let accessToken: string | null = null;
+let accessTokenExpiresAt: number | null = null;
 
 export function isCalendarApiReady(): boolean {
   return gapiInited && gisInited;
@@ -20,6 +22,54 @@ export function isCalendarApiReady(): boolean {
 
 export function hasCalendarAccess(): boolean {
   return !!accessToken;
+}
+
+function persistToken(access_token: string, expires_in?: number) {
+  accessToken = access_token;
+  accessTokenExpiresAt =
+    typeof expires_in === "number"
+      ? Date.now() + expires_in * 1000
+      : null;
+  gapi.client.setToken({ access_token: accessToken });
+  if (typeof window === "undefined") return;
+  try {
+    if (accessTokenExpiresAt) {
+      const payload = JSON.stringify({
+        accessToken,
+        expiresAt: accessTokenExpiresAt,
+      });
+      sessionStorage.setItem(TOKEN_STORAGE_KEY, payload);
+    }
+  } catch {
+    // ignore storage failures (e.g. private mode)
+  }
+}
+
+function restoreTokenFromStorage(): boolean {
+  if (accessToken) return true;
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw) as {
+      accessToken?: string;
+      expiresAt?: number;
+    };
+    if (!parsed?.accessToken || !parsed?.expiresAt) {
+      sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+      return false;
+    }
+    if (parsed.expiresAt <= Date.now()) {
+      sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+      return false;
+    }
+    accessToken = parsed.accessToken;
+    accessTokenExpiresAt = parsed.expiresAt;
+    gapi.client.setToken({ access_token: accessToken });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Load an external script dynamically. */
@@ -89,6 +139,9 @@ export async function setupGoogleApi(): Promise<void> {
     await initGapiClient();
     initTokenClient();
   }
+  if (gapiInited && !accessToken) {
+    restoreTokenFromStorage();
+  }
 }
 
 /**
@@ -105,8 +158,7 @@ export async function requestCalendarAccess(): Promise<void> {
           console.error("Authorization error:", tokenResponse.error);
           return;
         }
-        accessToken = tokenResponse.access_token;
-        gapi.client.setToken({ access_token: accessToken });
+        persistToken(tokenResponse.access_token, tokenResponse.expires_in);
         console.log("Calendar access granted.");
         resolve();
       };
@@ -134,14 +186,13 @@ export function requestCalendarAccessInteractive(): Promise<void> {
         reject(tokenResponse.error);
         return;
       }
-      accessToken = tokenResponse.access_token;
-      gapi.client.setToken({ access_token: accessToken });
+      persistToken(tokenResponse.access_token, tokenResponse.expires_in);
       console.log("Calendar access granted.");
       resolve();
     };
 
-    // Explicit user consent popup (better compatibility on mobile)
-    tokenClient.requestAccessToken({ prompt: "consent" });
+    // Avoid forcing consent if already granted
+    tokenClient.requestAccessToken({ prompt: "" });
   });
 }
 
@@ -160,8 +211,7 @@ async function requestCalendarAccessSilent(): Promise<boolean> {
         resolve(false);
         return;
       }
-      accessToken = tokenResponse.access_token;
-      gapi.client.setToken({ access_token: accessToken });
+      persistToken(tokenResponse.access_token, tokenResponse.expires_in);
       resolve(true);
     };
 
