@@ -1,6 +1,5 @@
 "use client";
 import Card from "~/components/Card";
-import { redirect } from "next/navigation";
 import groupDetails from "~/types";
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { db } from "~/lib/api/firebaseConfig";
@@ -20,10 +19,6 @@ import { usePostHog } from 'posthog-js/react'
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
-  if (!user) return;
-  // if (user?.publicMetadata?.faculty === true) {
-  //   redirect("/faculty-restricted"); // block faculty
-  // }
   const [selectedCourses, setSelectedCourses] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);
@@ -221,7 +216,7 @@ export default function FeedPage() {
   displayScheduled.forEach( (group) => {
     if (group != undefined) showNone = false;
   })
-  if (!user || user?.publicMetadata?.faculty === true) return;
+
   return (
     
     <main className="container relative h-screen">
