@@ -17,9 +17,9 @@ function ContinueButton() {
 
 export default function ProfilePage() {
   const { user } = useUser();
-  if (user?.publicMetadata?.faculty === true) {
-    redirect("/faculty-restricted"); // block faculty
-  }
+  // if (user?.publicMetadata?.faculty === true) {
+  //   redirect("/faculty-restricted"); // block faculty
+  // }
   const userId = user?.emailAddresses[0]?.emailAddress;
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();

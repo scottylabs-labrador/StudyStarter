@@ -13,9 +13,9 @@ import { redirect } from "next/navigation";
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
-  if (user?.publicMetadata?.faculty === true) {
-    redirect("/faculty-restricted"); // block faculty
-  }
+  // if (user?.publicMetadata?.faculty === true) {
+  //   redirect("/faculty-restricted"); // block faculty
+  // }
   const [selectedCourses, setSelectedCourses] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);
