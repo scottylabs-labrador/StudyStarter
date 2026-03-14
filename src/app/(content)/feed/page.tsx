@@ -279,14 +279,19 @@ export default function FeedPage() {
         </div>
       </div>
 
-      {/* Card Section */}
+      {/* Card Section: on mobile */}
       {showDetails && (
-        <div className="md:block md:w-full lg:w-[30%] xl:w-[25%]">
-          <Card
-            details={showDetails}
-            onClick={() => closeDetailsPopUp()}
-            updateJoinedGroups={setJoinedGroups}
-          />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 max-md:bg-black/50 md:static md:inset-auto md:z-auto md:flex-none md:bg-transparent md:p-0 md:block md:w-full lg:w-[100%] xl:w-[100%]"
+          onClick={(e) => e.target === e.currentTarget && closeDetailsPopUp()}
+        >
+          <div className="w-full max-w-sm max-h-[90vh] overflow-auto md:max-h-none md:overflow-visible" onClick={(e) => e.stopPropagation()}>
+            <Card
+              details={showDetails}
+              onClick={() => closeDetailsPopUp()}
+              updateJoinedGroups={setJoinedGroups}
+            />
+          </div>
         </div>
       )}
     </div>

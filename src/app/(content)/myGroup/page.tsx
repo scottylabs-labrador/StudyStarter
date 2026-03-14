@@ -8,10 +8,14 @@ import { useUser } from "@clerk/nextjs";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
+import { redirect } from "next/navigation";
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
+  // if (user?.publicMetadata?.faculty === true) {
+  //   redirect("/faculty-restricted"); // block faculty
+  // }
   const [selectedCourses, setSelectedCourses] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);
@@ -196,12 +200,17 @@ export default function FeedPage() {
 
       {/* Card Section */}
       {showDetails && (
-        <div className="md:block md:w+-full lg:w-[30%] xl:w-[25%]">
-          <Card
-            details={showDetails}
-            onClick={() => setShowDetails(null)}
-            updateJoinedGroups={setJoinedGroups}
-          />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 max-md:bg-black/50 md:bg-transparent md:static md:inset-auto md:z-auto md:flex-none md:bg-transparent md:p-0 md:block md:w-full lg:w-[100%] xl:w-[100%]"
+          onClick={(e) => e.target === e.currentTarget && setShowDetails(null)}
+        >
+          <div className="w-full max-w-sm max-h-[90vh] overflow-auto md:max-h-none md:overflow-visible" onClick={(e) => e.stopPropagation()}>
+            <Card
+              details={showDetails}
+              onClick={() => setShowDetails(null)}
+              updateJoinedGroups={setJoinedGroups}
+            />
+          </div>
         </div>
       )}
     </div>

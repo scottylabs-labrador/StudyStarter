@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import groupDetails from "~/types";
 import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/uiSlice";
 import { useUser } from "@clerk/nextjs";
@@ -90,12 +90,34 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   useEffect(() => {
     setCurrentDetails(details);
   }, [details]);
-
-  useEffect(() => {
+useEffect(() => {
     setupGoogleApi().catch((err) => {
       console.warn("Failed to initialize Google API:", err);
     });
   }, []);
+
+  /* Dynamic size for the info popup */
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const [maxHeight, setMaxHeight] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    const updateHeight = () => {
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      const top = rect.top; // distance from top of viewport
+      const available = window.innerHeight - top - 20; // 20px from bottom
+      setMaxHeight(`${available}px`);
+    };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    window.addEventListener("scroll", updateHeight, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("scroll", updateHeight);
+    };
+  });
+
+
 
   const joinGroup = async () => {
     let calendarAuthPromise: Promise<void> | null = null;
@@ -240,9 +262,12 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
     currentDetails.startTime,
   );
   return (
-    <div className="overflow-y-scroll fixed md:bottom-[2rem] top-[5rem] md:right-[1rem] mr-[4rem] w-[93%] h-[85%] md:h-[85%] md:w-[30%] rounded-[10px] bg-lightAccent dark:bg-darkAccent text-black dark:text-white p-[1rem]">
-      {/* Close Button */}
-      <div className="flex justify-end">
+    <div ref={cardRef} style={{ maxHeight }}className="my-3 max-w-sm overflow-auto rounded-xl bg-lightAccent dark:bg-darkAccent px-6 shadow-lg text-black dark:text-white">
+      
+      {/* Title */}
+      <div className="py-4 font-['Verdana'] text-[35px] sticky top-0 bg-lightAccent dark:bg-darkAccent flex items-start justify-between">
+        <p className="whitespace-normal break-words flex-1 min-w-0">{currentDetails.title}</p>
+        {/* Edit Group */}
         {joinedState && currentDetails.participantDetails.length === 1 ? (
           <button
             className="mb-[-12px] me-5 mt-3 text-xl font-bold"
@@ -254,87 +279,89 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
         ) : (
           <div></div>
         )}
+        {/* Close Button */}
         <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
           <big>&times;</big>
         </button>
         
       </div>
 
-      {/* Title */}
-      <div className="font-['Verdana'] text-[35px] whitespace-normal break-words">{currentDetails.title}</div>
+      <div id="group_info_popup_body" className="pb-20">
+        {/* Card Body */}
+        <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
+          <strong>Course:</strong> {currentDetails.course}
+        </p>
+        <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
+          <strong>Purpose</strong>: {currentDetails.purpose}
+        </p>
+        <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
+          <strong>Time</strong>: {formattedTime}
+        </p>
+        <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
+          <strong>Date</strong>: {formattedDate}
+        </p>
+        <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
+          <strong>Location:</strong> {currentDetails.location}
+        </p>
+        <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
+          <strong>Participants:</strong>{" "}
+          {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
+          <button
+            onClick={() => participantsSetState(!participantsState)}
+            className="text-[12px]"
+          >
+            {participantsState ? "▼" : "▲"}
+          </button>
+        </p>
 
-      {/* Card Body */}
-      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
-        <strong>Course:</strong> {currentDetails.course}
-      </p>
-      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
-        <strong>Purpose</strong>: {currentDetails.purpose}
-      </p>
-      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
-        <strong>Time</strong>: {formattedTime}
-      </p>
-      <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
-        <strong>Date</strong>: {formattedDate}
-      </p>
-      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
-        <strong>Location:</strong> {currentDetails.location}
-      </p>
-      <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
-        <strong>Participants:</strong>{" "}
-        {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
-        <button
-          onClick={() => participantsSetState(!participantsState)}
-          className="text-[12px]"
-        >
-          {participantsState ? "▼" : "▲"}
-        </button>
-      </p>
+        {/* Participant List */}
+        {participantsState && (
+          <div className="h-40 overflow-y-scroll p-[10px]">
+            {currentDetails.participantDetails.map((participantDetail, index) => (
+              <div key={index} className="flex items-center p-[5px]">
+                <button
+                  onClick={handleViewProfileClick}
+                  className = "flex items-center p-[5px]"
+                  data-username={participantDetail.name}
+                  data-email={participantDetail.email}
+                  >
+                  <img
+                    className="h-[2rem] w-[2rem] rounded-full"
+                    src={participantDetail.url}
+                  />
+                  {/* <p className="indent-[1rem]"><strong className="indent-[2rem] font-['Verdana'] text-[16px]">
+                    Name: 
+                  </strong>{" "}
+                  {" "+participantDetail.name}</p> */}
+                  <p className="indent-[0.5rem] font-['Verdana'] text-[16px]">
+                    {participantDetail.name.split(" ")[0]}
+                  </p>
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* Participant List */}
-      {participantsState && (
-        <div className="h-40 overflow-y-scroll p-[10px]">
-          {currentDetails.participantDetails.map((participantDetail, index) => (
-            <div key={index} className="flex items-center p-[5px]">
-              <button
-                onClick={handleViewProfileClick}
-                className = "flex items-center p-[5px]"
-                data-username={participantDetail.name}
-                data-email={participantDetail.email}
-                >
-                <img
-                  className="h-[2rem] w-[2rem] rounded-full"
-                  src={participantDetail.url}
-                />
-                {/* <p className="indent-[1rem]"><strong className="indent-[2rem] font-['Verdana'] text-[16px]">
-                  Name: 
-                </strong>{" "}
-                {" "+participantDetail.name}</p> */}
-                <p className="indent-[0.5rem] font-['Verdana'] text-[16px]">
-                  {participantDetail.name.split(" ")[0]}
-                </p>
-              </button>
-            </div>
-          ))}
+        {/* Details Section */}
+        <strong className="font-['Verdana'] text-[20px]">Details:</strong>
+        <div className="mx-auto mb-1 mt-[1px] h-[4rem] max-w-[25rem] rounded-[10px] p-[3px]">
+          {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
         </div>
-      )}
 
-      {/* Details Section */}
-      <strong className="font-['Verdana'] text-[20px]">Details:</strong>
-      <div className="mx-auto mb-1 mt-[1px] h-[4rem] max-w-[25rem] rounded-[10px] p-[3px]">
-        {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
-      </div>
+        {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
+        </div>
 
       {/* Join Button */}
-      <button
-        className={`float-end me-3 mt-3 w-[100px] rounded-[26px] p-[10px]  ${
-          joinedState
-            ? " bg-lightSelected dark:bg-darkSelected text-white"
-            : "text-black dark:text-white border-2"
-        }`}
-        onClick={joinGroup}
-      >
-        {joinedState ? "Leave" : "Join"}
-      </button>
+        <button id="card_info_join_btn"
+          className={`sticky bottom-4 float-end mt-3 w-[100px] rounded-[26px] p-[10px]  ${
+            joinedState
+              ? " bg-lightSelected dark:bg-darkSelected text-white"
+              : "text-black dark:text-white border-2"
+          }`}
+          onClick={joinGroup}
+        >
+          {joinedState ? "Leave" : "Join"}
+        </button>
       {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
       <EditGroupModal group={currentDetails} />
     </div>
