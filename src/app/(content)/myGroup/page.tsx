@@ -9,6 +9,7 @@ import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
 import { redirect } from "next/navigation";
+import Card from "~/components/Card";
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -119,30 +120,39 @@ export default function FeedPage() {
     if (!isParticipant) return;
     if (shouldFilter(group)) return;
     return (
-      <div
-        className="my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl px-6 py-4 shadow-lg bg-lightAccent dark:bg-darkAccent text-black dark:text-white"
+      <Card
         onClick={() => setShowDetails(group)}
-      >
-        <div className="mb-2 text-xl font-bold">{group.title}</div>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Course: &nbsp; </li>{" "}
-          <li>{group.course}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Purpose: &nbsp; </li>{" "}
-          <li>{group.purpose}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Time: &nbsp; </li> <li>{formattedTime}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Date: &nbsp; </li> <li>{formattedDate}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold"> Location: &nbsp; </li>{" "}
-          <li>{group.location}</li>
-        </ul>
-      </div>
+        group={group}
+        time={formattedTime}
+        date={formattedDate}
+        isInGroup={true}
+        lightColor={"lightAccent"}
+        darkColor={"darkAccent"}
+      />
+      // <div
+      //   className="my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl px-6 py-4 shadow-lg bg-lightAccent dark:bg-darkAccent text-black dark:text-white"
+      //   onClick={() => setShowDetails(group)}
+      // >
+      //   <div className="mb-2 text-xl font-bold">{group.title}</div>
+      //   <ul style={{ display: "flex", flexDirection: "row" }}>
+      //     <li className="font-bold"> Course: &nbsp; </li>{" "}
+      //     <li>{group.course}</li>
+      //   </ul>
+      //   <ul style={{ display: "flex", flexDirection: "row" }}>
+      //     <li className="font-bold"> Purpose: &nbsp; </li>{" "}
+      //     <li>{group.purpose}</li>
+      //   </ul>
+      //   <ul style={{ display: "flex", flexDirection: "row" }}>
+      //     <li className="font-bold"> Time: &nbsp; </li> <li>{formattedTime}</li>
+      //   </ul>
+      //   <ul style={{ display: "flex", flexDirection: "row" }}>
+      //     <li className="font-bold"> Date: &nbsp; </li> <li>{formattedDate}</li>
+      //   </ul>
+      //   <ul style={{ display: "flex", flexDirection: "row" }}>
+      //     <li className="font-bold"> Location: &nbsp; </li>{" "}
+      //     <li>{group.location}</li>
+      //   </ul>
+      // </div>
     );
   });
 
@@ -177,7 +187,7 @@ export default function FeedPage() {
     setSelectedDate={setSelectedDate}
   />
 
-  <div className="">
+  <div className="pt-[20px]">
     <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
       {/* Display Scheduled Section */}
       <div

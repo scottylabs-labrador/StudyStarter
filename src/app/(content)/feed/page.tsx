@@ -16,6 +16,7 @@ import {
 import { usePostHog } from 'posthog-js/react'
 
 import { BlockedUsers } from "~/components/BlockList";
+import Card from "~/components/Card";
 
 
 export default function FeedPage() {
@@ -188,33 +189,42 @@ export default function FeedPage() {
     const [lightColor, darkColor] = cardColorMapping.get(group.id === selectedGroup)!;
     if (shouldFilter(group)) return;
     return (
-      <div
-        className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white`}
+      <Card
         onClick={() => handleCardClick(group)}
-      >
-        <div className="mb-2 text-xl font-bold truncate">{group.title}</div>
-        <ul className="flex flex-row min-w-0">
-          <li className="font-bold flex-shrink-0"> Course: &nbsp; </li>
-          <li className="truncate flex-1">{group.course}</li>
-        </ul>
-        <ul className="flex flex-row min-w-0">
-          <li className="font-bold flex-shrink-0"> Purpose: &nbsp; </li>
-          <li className="truncate flex-1">{group.purpose}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold truncate"> Time: &nbsp; </li> <li>{formattedTime}</li>
-        </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold truncate"> Date: &nbsp; </li> <li>{formattedDate}</li>
-        </ul>
-        <ul className="flex flex-row min-w-0">
-          <li className="font-bold flex-shrink-0"> Location: &nbsp; </li>
-          <li className="truncate flex-1">{group.location}</li>
-        </ul>
-        {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
-          <li className="bg-joined text-joinedText px-3 py-1 rounded-md -mt-8">Joined</li>
-        </ul>}
-      </div>
+        group={group}
+        time={formattedTime}
+        date={formattedDate}
+        isInGroup={isInGroup}
+        lightColor={lightColor}
+        darkColor={darkColor}
+      />
+      // <div
+      //   className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white`}
+      //   onClick={() => handleCardClick(group)}
+      // >
+      //   <div className="mb-2 text-xl font-bold truncate">{group.title}</div>
+      //   <ul className="flex flex-row min-w-0">
+      //     <li className="font-bold flex-shrink-0"> Course: &nbsp; </li>
+      //     <li className="truncate flex-1">{group.course}</li>
+      //   </ul>
+      //   <ul className="flex flex-row min-w-0">
+      //     <li className="font-bold flex-shrink-0"> Purpose: &nbsp; </li>
+      //     <li className="truncate flex-1">{group.purpose}</li>
+      //   </ul>
+      //   <ul style={{ display: "flex", flexDirection: "row" }}>
+      //     <li className="font-bold truncate"> Time: &nbsp; </li> <li>{formattedTime}</li>
+      //   </ul>
+      //   <ul style={{ display: "flex", flexDirection: "row" }}>
+      //     <li className="font-bold truncate"> Date: &nbsp; </li> <li>{formattedDate}</li>
+      //   </ul>
+      //   <ul className="flex flex-row min-w-0">
+      //     <li className="font-bold flex-shrink-0"> Location: &nbsp; </li>
+      //     <li className="truncate flex-1">{group.location}</li>
+      //   </ul>
+      //   {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
+      //     <li className="bg-joined text-joinedText px-3 py-1 rounded-md -mt-8">Joined</li>
+      //   </ul>}
+      // </div>
     );
   });
   displayScheduled.unshift(
