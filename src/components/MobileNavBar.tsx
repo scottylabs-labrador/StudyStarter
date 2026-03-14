@@ -136,19 +136,9 @@ export default function MobileNavBar() {
             >
                 <div className="min-h-0">
                     <div className="bg-lightSidebar dark:bg-darkSidebar px-[1rem] pb-4">
-                        <nav className="flex flex-col gap-y-4">
-                            <a
-                                href="/profile"
-                                className="flex items-center font-bold text-black dark:text-white"
-                            >
-                                <span className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton font-bold shrink-0">
-                                    <img
-                                        src={user?.imageUrl || "https://via.placeholder.com/80"}
-                                        alt="Profile"
-                                        className="rounded-full"
-                                    />
-                                </span>
-                                <p className="ml-4">{displayName}</p>
+                        <nav className="flex flex-col gap-y-1">
+                            <a href="/profile" className={`py-2 ${page === "profile" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
+                                View Profile
                             </a>
                             <a href="/feed" className={`py-2 ${page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                                 Group Finder
