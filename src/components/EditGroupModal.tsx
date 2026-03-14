@@ -17,6 +17,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'
 import groupDetails from "~/types";
+import {
+  updateEvent,
+  setupGoogleApi,
+  isCalendarApiReady,
+  requestCalendarAccessInteractive,
+  hasCalendarAccess,
+} from "~/helpers/calendar_helper";
 
 interface EditGroupModalProps {
   group: groupDetails | null;
@@ -54,6 +61,12 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
 
     const firestoreTimestamp = Timestamp.fromDate(date);
     const groupDocRef = doc(db, "Study Groups", group.id);
+    let calendarAuthPromise: Promise<void> | null = null;
+    if (isCalendarApiReady() && !hasCalendarAccess()) {
+      calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
+        console.warn("Calendar auth failed:", err);
+      });
+    }
     await updateDoc(groupDocRef, {
       title,
       course,
@@ -63,6 +76,24 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
       totalSeats: Number(seats),
       participantDetails: group.participantDetails,
       details,
+    });
+    if (calendarAuthPromise) {
+      await calendarAuthPromise;
+    }
+    const userEmail = user?.emailAddresses[0]?.emailAddress;
+    const participant = group.participantDetails?.find(
+      (p) => p.email === userEmail,
+    );
+    const eventId =
+      (participant as any)?.eventId || (participant as any)?.event || "None";
+    const start = firestoreTimestamp.toDate().toISOString();
+    const end = new Date(firestoreTimestamp.toMillis() + 3600000).toISOString();
+    await updateEvent(eventId, {
+      summary: `Study Group: ${title}`,
+      location,
+      description: `Course: ${course}\nPurpose: ${purpose}\nDetails: ${details}`,
+      start: { dateTime: start, timeZone: "America/New_York" },
+      end: { dateTime: end, timeZone: "America/New_York" },
     });
 
     setTitle("");
@@ -120,6 +151,21 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     setSeats(group.totalSeats ? String(group.totalSeats) : "");
     setDetails(group.details || "");
   }, [isOpen, group]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    setupGoogleApi()
+      .then(() => {
+        if (cancelled) return;
+      })
+      .catch((err) => {
+        console.error("Failed to initialize Google API:", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

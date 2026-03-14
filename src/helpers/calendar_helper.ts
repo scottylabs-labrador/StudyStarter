@@ -303,3 +303,36 @@ export async function deleteFromCal(
     console.warn("Failed to delete calendar event:", err);
   }
 }
+
+/**
+ * Updates an existing Google Calendar event by ID.
+ *
+ * @param eventId ID of the event in the calendar.
+ * @param data Partial event fields to update.
+ */
+export async function updateEvent(
+  eventId: string,
+  data: Record<string, any>,
+): Promise<any> {
+  if (eventId == "None") {
+    return null;
+  }
+  const authorized = await ensureAuthorized();
+  if (!authorized) {
+    console.warn("Calendar authorization required to update event.");
+    return null;
+  }
+
+  try {
+    const response = await gapi.client.calendar.events.patch({
+      calendarId: "primary",
+      eventId,
+      resource: data,
+    });
+    console.log(`Event ${eventId} updated.`);
+    return response.result;
+  } catch (err) {
+    console.warn("Failed to update calendar event:", err);
+    return null;
+  }
+}
