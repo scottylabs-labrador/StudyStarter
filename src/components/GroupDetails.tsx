@@ -32,7 +32,7 @@ import { Pencil } from "lucide-react";
 import { BlockedUsers } from "~/components/BlockList";
 
 
-const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
+const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
@@ -287,7 +287,7 @@ useEffect(() => {
       </div>
 
       <div id="group_info_popup_body" className="pb-20">
-        {/* Card Body */}
+        {/* GroupDetails Body */}
         <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
           <strong>Course:</strong> {currentDetails.course}
         </p>
@@ -368,4 +368,4 @@ useEffect(() => {
   );
 };
 
-export default Card;
+export default GroupDetails;

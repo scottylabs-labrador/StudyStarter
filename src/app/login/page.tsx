@@ -1,13 +1,11 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "~/lib/api/firebaseConfig";
 import {
   doc,
-  getDoc,
   collection,
   getDocs,
 } from "firebase/firestore";
-import { clerkClient } from "@clerk/nextjs/server";
 
 export default async function LoginPage() {
   console.log("LOGIN PAGE HIT");

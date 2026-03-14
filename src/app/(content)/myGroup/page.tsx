@@ -1,5 +1,5 @@
 "use client";
-import Card from "~/components/Card";
+import GroupDetails from "~/components/GroupDetails";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
@@ -198,14 +198,14 @@ export default function FeedPage() {
         </div>
       </div>
 
-      {/* Card Section */}
+      {/* GroupDetails Section */}
       {showDetails && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 max-md:bg-black/50 md:bg-transparent md:static md:inset-auto md:z-auto md:flex-none md:bg-transparent md:p-0 md:block md:w-full lg:w-[100%] xl:w-[100%]"
           onClick={(e) => e.target === e.currentTarget && setShowDetails(null)}
         >
           <div className="w-full max-w-sm max-h-[90vh] overflow-auto md:max-h-none md:overflow-visible" onClick={(e) => e.stopPropagation()}>
-            <Card
+            <GroupDetails
               details={showDetails}
               onClick={() => setShowDetails(null)}
               updateJoinedGroups={setJoinedGroups}
