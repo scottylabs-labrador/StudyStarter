@@ -36,7 +36,7 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
   const [participantsState, participantsSetState] = useState(true);
   const [joinedState, joinedSetState] = useState(false);
-  const [eventIdState, setEventIdState] = useState<string | undefined>(undefined)
+  const [eventIdState, setEventIdState] = useState<string>("None")
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
@@ -70,12 +70,15 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           (participant: any) =>
             participant.email === user.emailAddresses[0]?.emailAddress,
         );
-        let eventId = undefined
+        let eventId = undefined;
         if (isParticipant) {
           eventId = participants.find(
             (participant: any) =>
               participant.email === user.emailAddresses[0]?.emailAddress,
           )?.eventId;
+        }
+        if (eventId == undefined) {
+          eventId = "None"
         }
         joinedSetState(isParticipant);
         setEventIdState(eventId);
@@ -183,6 +186,13 @@ const Card = ({ onClick, details, updateJoinedGroups }: Props) => {
           url: user?.imageUrl,
           email: user?.emailAddresses[0]?.emailAddress,
           eventId: eventIdState,
+        }),
+      });
+      await updateDoc(groupDocRef, {
+        participantDetails: arrayRemove({
+          name: user?.fullName,
+          url: user?.imageUrl,
+          email: user?.emailAddresses[0]?.emailAddress,
         }),
       });
       await setDoc(
