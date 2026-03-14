@@ -75,7 +75,7 @@ export default function HomePage() {
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <SignInButton mode="modal" forceRedirectUrl="/create_account">
+              <SignInButton mode="modal" forceRedirectUrl="/login">
                 <button className="px-8 py-4 text-lg font-bold rounded-lg bg-lightButton dark:bg-darkButton text-black dark:text-white hover:bg-lightSelected dark:hover:bg-darkSelected transition-colors shadow-lg hover:shadow-xl">
                   Create Account
                 </button>

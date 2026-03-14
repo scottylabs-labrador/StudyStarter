@@ -12,6 +12,9 @@ import SigninBtn from "@/components/SigninBtn";
 import { db } from '@/firebaseConfig';
 import { doc, setDoc } from "firebase/firestore";
 
+// ✅ Import the calendar helper
+import { setupGoogleApi, requestCalendarAccess } from "@/utils/calendar_helper";
+
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
     void WebBrowser.warmUpAsync();
@@ -30,6 +33,7 @@ const LoginScreen = () => {
   const { user } = useUser();
 
   const [createdSessionId, setCreatedSessionId] = useState<string | null>(null);
+  const [calendarReady, setCalendarReady] = useState(false);
 
   const onPress = React.useCallback(async () => {
     try {
@@ -46,27 +50,35 @@ const LoginScreen = () => {
     }
   }, [startOAuthFlow]);
 
-  // useEffect to handle side effects based on session creation and user
+  // ✅ When the user logs in successfully, initialize Firestore + Calendar
   useEffect(() => {
-    const updateFirestore = async () => {
+    const afterLoginSetup = async () => {
       if (createdSessionId && user) {
         try {
           const username = user.emailAddresses[0]["emailAddress"];
-          await setDoc(doc(db, "Users", username), {
-          }, { merge: true });
 
-          console.log('User logged in successfully and Firestore updated');
+          // Save user to Firestore
+          await setDoc(doc(db, "Users", username), {}, { merge: true });
+          console.log("User logged in successfully and Firestore updated");
+
+          // ✅ Setup Google Calendar once, right after login
+          await setupGoogleApi();
+          await requestCalendarAccess();
+          setCalendarReady(true);
+          console.log("Google Calendar access ready for user.");
         } catch (err) {
-          console.error("Firestore error", err);
+          console.error("Setup error:", err);
         }
       }
     };
 
-    updateFirestore();
+    afterLoginSetup();
   }, [createdSessionId, user]);
 
   const { isSignedIn } = useAuth();
-  if (isSignedIn) {
+
+  // ✅ Wait until both sign-in and calendar access are done
+  if (isSignedIn && calendarReady) {
     return <Redirect href="feed" />;
   }
 
@@ -77,7 +89,9 @@ const LoginScreen = () => {
           <ThemedText style={styles.heading} type="title">
             Login
           </ThemedText>
-          <ThemedText style={styles.centerText}>Welcome to InstaPlate!</ThemedText>
+          <ThemedText style={styles.centerText}>
+            Welcome to InstaPlate!
+          </ThemedText>
           <View style={styles.btnContainer}>
             <SigninBtn theme={theme} width={250} height={88} onPress={onPress} />
           </View>
