@@ -29,6 +29,11 @@ export default async function LoginPage() {
     redirect("/");
   }
 
+  const andrewRegex = /^[a-zA-Z0-9._%+-]+@andrew\.cmu\.edu$/;
+
+  if (!andrewRegex.test(email)) {
+    redirect("/faculty-restricted");
+  }
   /* ===============================
      2. CHECK FACULTY VIA PYTHON API
   =============================== */
