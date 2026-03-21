@@ -21,6 +21,11 @@ export default function ProfilePage() {
   //   redirect("/faculty-restricted"); // block faculty
   // }
   const userId = user?.emailAddresses[0]?.emailAddress;
+  const andrewRegex = /^[a-zA-Z0-9._%+-]+@andrew\.cmu\.edu$/;
+
+  if (!andrewRegex.test(userId)) {
+    redirect("/faculty-restricted");
+  }
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();
   const years = [(startYear).toString(), (startYear+1).toString(), (startYear+2).toString(), (startYear+3).toString(), (startYear+4).toString(), (startYear+5).toString()];
