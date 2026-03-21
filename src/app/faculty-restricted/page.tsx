@@ -56,7 +56,7 @@ export default function FacultyRestrictedPage() {
         <div className="ml-auto">
           <SignOutButton>
             <button
-              className="px-4 py-2 bg-gray-200   text-white font-bold rounded-lg bg-lightButton dark:bg-darkButton"
+              className="px-4 py-2 bg-gray-200 text-black dark:text-white font-bold rounded-lg bg-lightButton dark:bg-darkButton"
             >
               Home
             </button>
