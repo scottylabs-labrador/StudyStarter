@@ -25,8 +25,8 @@ export default async function ContentLayout({
   }
 
   const user = await currentUser();
-  // const email = user?.emailAddresses[0]?.emailAddress;
-  const email = "copetas@cs.cmu.edu"
+  const email = user?.emailAddresses[0]?.emailAddress;
+  // const email = "copetas@cs.cmu.edu"
 
   if (!email) {
     redirect("/");
@@ -50,7 +50,7 @@ export default async function ContentLayout({
     await clerkClient.users.updateUser(userId, {
       publicMetadata: { faculty: true },
     });
-    redirect("/faculty-restricted");
+    redirect("/access-restricted");
   }
 
   const userRef = doc(db, "Users", email);

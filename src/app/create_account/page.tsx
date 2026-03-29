@@ -24,7 +24,7 @@ export default function ProfilePage() {
   const andrewRegex = /^[a-zA-Z0-9._%+-]+@andrew\.cmu\.edu$/;
 
   if (!andrewRegex.test(userId)) {
-    redirect("/faculty-restricted");
+    redirect("/access-restricted");
   }
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();

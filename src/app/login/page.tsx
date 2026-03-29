@@ -22,8 +22,8 @@ export default async function LoginPage() {
 
   const user = await currentUser();
 
-  // const email = user?.emailAddresses[0]?.emailAddress;
-  const email = "copetas@cs.cmu.edu"
+  const email = user?.emailAddresses[0]?.emailAddress;
+  // const email = "copetas@cs.cmu.edu"
   console.log("Email:", email);
 
   if (!email) {
@@ -59,7 +59,7 @@ export default async function LoginPage() {
     await clerkClient.users.updateUser(userId, {
       publicMetadata: { faculty: true },
     });
-    redirect("/faculty-restricted");
+    redirect("/access-restricted");
   }
 
 

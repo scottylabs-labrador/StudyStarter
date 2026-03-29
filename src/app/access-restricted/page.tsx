@@ -8,7 +8,7 @@ import { ShieldAlert } from "lucide-react";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-export default function FacultyRestrictedPage() {
+export default function AccessRestrictedPage() {
   const { user } = useUser();
   return (
     <div className="min-h-screen bg-lightbg dark:bg-darkbg flex items-center justify-center px-4">
@@ -67,7 +67,7 @@ export default function FacultyRestrictedPage() {
         <div className="mt-12 text-sm text-black dark:text-white opacity-70">
         If you believe you reached this page in error, please contact{" "}
         <a
-          href="mailto:cmustudy.help@gmail.com?subject=Faculty%20Access%20Restriction%20Issue"
+          href="mailto:cmustudy.help@gmail.com?subject=Access%20Restriction%20Issue"
           className="underline hover:text-lightSelected dark:hover:text-darkSelected transition-colors"
         >
           cmustudy.help@gmail.com

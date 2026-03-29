@@ -2,6 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isProtectedRoute = createRouteMatcher([
     '/feed(.*)',
+    '/myGroup(.*)',
     '/profile(.*)',
     '/login(.*)',
     '/create_account(.*)',
@@ -12,7 +13,7 @@ export default clerkMiddleware((auth, req) => {
 });
   
 export const config = {
-  matcher: ['/', '/create_account(.*)', '/login', '/profile', '/feed'],
+  matcher: ['/', '/create_account(.*)', '/login', '/profile(.*)', '/feed(.*)', '/myGroup(.*)'],
 };
 
 // import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
