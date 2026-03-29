@@ -7,8 +7,11 @@ import {
   getDocs,
 } from "firebase/firestore";
 
+// const AuthContext = createContext<boolean | undefined>(undefined);
+
 export default async function LoginPage() {
   console.log("LOGIN PAGE HIT");
+  // const [isAuthorized, setIsAuthorized] = useState<boolean | undefined>(undefined);
   /* ===============================
      1. CHECK AUTH
   =============================== */
@@ -21,8 +24,8 @@ export default async function LoginPage() {
 
   const user = await currentUser();
 
-  const email = user?.emailAddresses[0]?.emailAddress;
-  // const email = "copetas@cs.cmu.edu"
+  // const email = user?.emailAddresses[0]?.emailAddress;
+  const email = "copetas@cs.cmu.edu"
   console.log("Email:", email);
 
   if (!email) {
