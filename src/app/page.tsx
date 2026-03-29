@@ -31,7 +31,7 @@ export default function HomePage() {
         ...doc.data(),
       }));
       if (classes == undefined || classes == null || classes.length == 0) {
-        router.push("/create_account");
+        router.push("/create-account");
       } else {
         router.push("/feed");
       }

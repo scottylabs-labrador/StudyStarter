@@ -7,6 +7,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 
+
 export default async function LoginPage() {
   console.log("LOGIN PAGE HIT");
   /* ===============================
@@ -31,9 +32,6 @@ export default async function LoginPage() {
 
 //   const andrewRegex = /^[a-zA-Z0-9._%+-]+@andrew\.cmu\.edu$/;
 
-//   if (email.endsWith("@andrew.cmu.edu")) {
-//     redirect("/faculty-restricted");
-//   }
   /* ===============================
      2. CHECK FACULTY VIA PYTHON API
   =============================== */
@@ -61,7 +59,7 @@ export default async function LoginPage() {
     await clerkClient.users.updateUser(userId, {
       publicMetadata: { faculty: true },
     });
-    redirect("/faculty-restricted");
+    redirect("/access-restricted");
   }
 
 
@@ -75,7 +73,7 @@ export default async function LoginPage() {
   const classesSnap = await getDocs(classesRef);
 
   if (classesSnap.empty) {
-    redirect("/create_account");
+    redirect("/create-account");
   }
 
   redirect("/feed");

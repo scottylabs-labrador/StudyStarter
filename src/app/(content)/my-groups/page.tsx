@@ -8,7 +8,6 @@ import { useUser } from "@clerk/nextjs";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
-import { redirect } from "next/navigation";
 import Card from "~/components/Card";
 
 export default function FeedPage() {
