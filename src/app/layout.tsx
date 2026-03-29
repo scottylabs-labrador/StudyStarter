@@ -1,6 +1,5 @@
 import "~/styles/globals.css";
 
-import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
 import { PostHogProvider } from './providers'
@@ -18,38 +17,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <ReduxProvider>
-        <PostHogProvider>
-          <html lang="en">
-            <head>
-              <script
-                dangerouslySetInnerHTML={{
-                  __html: `
-                    (function () {
-                      try {
-                        let theme = localStorage.getItem("theme") || "light";
-                        if (theme === "dark") {
-                          document.documentElement.classList.add("dark");
-                        }
-                          console.log("idk");
-                      } catch (e) {
-                        //console.error("Theme loading error:", e);
+    <ReduxProvider>
+      <PostHogProvider>
+        <html lang="en">
+          <head>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  (function () {
+                    try {
+                      let theme = localStorage.getItem("theme") || "light";
+                      if (theme === "dark") {
+                        document.documentElement.classList.add("dark");
                       }
-                    })();
-                  `,
-                }}
-              />
-            </head>
-            <body className="bg">
-              <main>
-                {children}
-                <Toaster />
-              </main>
-            </body>
-          </html>
-        </PostHogProvider>
-      </ReduxProvider>
-    </ClerkProvider>
+                        console.log("idk");
+                    } catch (e) {
+                      //console.error("Theme loading error:", e);
+                    }
+                  })();
+                `,
+              }}
+            />
+          </head>
+          <body className="bg">
+            <main>
+              {children}
+              <Toaster />
+            </main>
+          </body>
+        </html>
+      </PostHogProvider>
+    </ReduxProvider>
   );
 }

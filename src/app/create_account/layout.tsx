@@ -1,5 +1,8 @@
 import "~/styles/globals.css";
 import React from "react";
+import { redirect } from "next/navigation";
+
+import { requireServerSession } from "~/lib/auth";
 
 export const metadata = {
   title: "CMU Study",
@@ -12,6 +15,12 @@ export default async function ContentLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await requireServerSession();
+
+  if (!session?.user) {
+    redirect("/");
+  }
+
   return (
     <div className="flex h-screen w-screen bg-lightbg dark:bg-darkbg">
       <div className="flex-1 overflow-auto">

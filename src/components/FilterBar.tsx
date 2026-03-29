@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { SignOutButton, useUser } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "~/lib/auth-client";
 import Select, { MultiValue } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

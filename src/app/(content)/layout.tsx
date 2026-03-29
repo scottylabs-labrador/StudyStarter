@@ -1,9 +1,10 @@
 import "~/styles/globals.css";
 
-
 import NavBar from "~/components/NavBar";
 import React from "react";
+import { redirect } from "next/navigation";
 import MobileNavBar from "~/components/MobileNavBar";
+import { requireServerSession } from "~/lib/auth";
 
 export const metadata = {
   title: "CMU Study",
@@ -16,6 +17,12 @@ export default async function ContentLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await requireServerSession();
+
+  if (!session?.user) {
+    redirect("/");
+  }
+
   return (
     <div className="flex h-screen w-screen bg-lightbg dark:bg-darkbg">
       <NavBar />

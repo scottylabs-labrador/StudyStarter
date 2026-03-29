@@ -1,7 +1,7 @@
 "use client";
 import "~/styles/globals.css";
 import { redirect } from "next/navigation";
-import { useUser, SignOutButton } from "@clerk/nextjs";
+import { useUser, SignOutButton } from "~/lib/auth-client";
 import { useState } from "react";
 import { ClassList } from "~/components/ClassList";
 import { BlockList } from "~/components/BlockList";

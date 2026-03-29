@@ -1,75 +1,42 @@
-import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { doc, collection, getDocs } from "firebase/firestore";
+
 import { db } from "~/lib/api/firebaseConfig";
-import {
-  doc,
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { requireServerSession } from "~/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
-  console.log("LOGIN PAGE HIT");
-  /* ===============================
-     1. CHECK AUTH
-  =============================== */
+  const session = await requireServerSession();
 
-  const { userId } = await auth();
-
-  if (!userId) {
+  if (!session?.user) {
     redirect("/");
   }
 
-  const user = await currentUser();
-
-  const email = user?.emailAddresses[0]?.emailAddress;
-  // const email = "copetas@cs.cmu.edu"
-  console.log("Email:", email);
+  const email = session.user.email;
 
   if (!email) {
     redirect("/");
   }
 
-//   const andrewRegex = /^[a-zA-Z0-9._%+-]+@andrew\.cmu\.edu$/;
-
-//   if (email.endsWith("@andrew.cmu.edu")) {
-//     redirect("/faculty-restricted");
-//   }
-  /* ===============================
-     2. CHECK FACULTY VIA PYTHON API
-  =============================== */
-
-  const response = await fetch(
-    "https://updateuser-jmpi7y54bq-uc.a.run.app",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        firstName: "Test",
-      }),
-      cache: "no-store", // always re-check
-    }
-  );
+  const response = await fetch("https://updateuser-jmpi7y54bq-uc.a.run.app", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      firstName: session.user.name ?? "User",
+    }),
+    cache: "no-store",
+  });
 
   const result = await response.json();
 
-  console.log("Faculty result:", result);
-
   if (result?.success === true) {
-    await clerkClient.users.updateUser(userId, {
-      publicMetadata: { faculty: true },
-    });
     redirect("/faculty-restricted");
   }
 
-
-  
-
-  /* ===============================
-     3. NORMAL USER FLOW
-  =============================== */
   const userRef = doc(db, "Users", email);
   const classesRef = collection(userRef, "Classes");
   const classesSnap = await getDocs(classesRef);

@@ -12,7 +12,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "~/lib/auth-client";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'

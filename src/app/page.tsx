@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import "~/styles/globals.css";
-import { useUser, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { useUser, SignInButton, SignedIn, SignedOut } from "~/lib/auth-client";
 import { useEffect, useState } from "react";
 import { db } from '~/lib/api/firebaseConfig';
 import { doc, collection, query, onSnapshot } from 'firebase/firestore';

@@ -4,7 +4,7 @@ import groupDetails from "~/types";
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { db } from "~/lib/api/firebaseConfig";
 import { collection, query, onSnapshot, doc } from "firebase/firestore";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "~/lib/auth-client";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
 import TopFilterBar from "~/components/FilterBar";
