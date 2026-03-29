@@ -20,24 +20,6 @@ import Card from "~/components/Card";
 
 
 export default function FeedPage() {
-  // if (typeof window !== 'undefined') {
-  //   if (localStorage.getItem('isAuthorized') === 'false') {
-  //     redirect("/faculty-restricted");
-  //   } else if (localStorage.getItem('isAuthorized') === 'true') {
-      
-  //   } else {
-  //     redirect("/login")
-  //   }
-  // // }
-  // useEffect(() => {
-  //   // This code runs only in the browser
-  //   const authorized = localStorage.getItem('isAuthorized');
-  //   console.log(authorized);
-  //   if (authorized !== "true") {
-  //     redirect("/faculty-restricted");
-  //   }
-  // }, []);
-
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
   const [selectedCourses, setSelectedCourses] = useState<

@@ -7,11 +7,9 @@ import {
   getDocs,
 } from "firebase/firestore";
 
-// const AuthContext = createContext<boolean | undefined>(undefined);
 
 export default async function LoginPage() {
   console.log("LOGIN PAGE HIT");
-  // const [isAuthorized, setIsAuthorized] = useState<boolean | undefined>(undefined);
   /* ===============================
      1. CHECK AUTH
   =============================== */
@@ -34,9 +32,6 @@ export default async function LoginPage() {
 
 //   const andrewRegex = /^[a-zA-Z0-9._%+-]+@andrew\.cmu\.edu$/;
 
-//   if (email.endsWith("@andrew.cmu.edu")) {
-//     redirect("/faculty-restricted");
-//   }
   /* ===============================
      2. CHECK FACULTY VIA PYTHON API
   =============================== */
