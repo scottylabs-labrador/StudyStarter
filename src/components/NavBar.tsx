@@ -227,7 +227,7 @@ export default function NavBar() {
           <a href="/feed" className={`w-full text-center py-2 rounded-lg ${page == "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
             Group Finder
           </a>
-          <a href="/myGroup" className={`w-full text-center py-2 rounded-lg ${page == "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
+          <a href="/my-groups" className={`w-full text-center py-2 rounded-lg ${page == "my-groups" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
             My Groups
           </a>
           {/* <button
@@ -291,7 +291,7 @@ export default function NavBar() {
               <a href="/feed" className={`py-2 ${page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                 Group Finder
               </a>
-              <a href="/myGroup" className={page === "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}>
+              <a href="/my-groups" className={page === "my-groups" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}>
                 My Groups
               </a>
               {/* <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">

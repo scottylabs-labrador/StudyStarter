@@ -143,7 +143,7 @@ export default function MobileNavBar() {
                             <a href="/feed" className={`py-2 ${page === "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                                 Group Finder
                             </a>
-                            <a href="/myGroup" className={`py-2 ${page === "myGroup" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
+                            <a href="/my-groups" className={`py-2 ${page === "my-groups" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}`}>
                                 My Groups
                             </a>
                             <div className="py-2 flex justify-between">

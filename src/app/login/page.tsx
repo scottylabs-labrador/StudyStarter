@@ -73,7 +73,7 @@ export default async function LoginPage() {
   const classesSnap = await getDocs(classesRef);
 
   if (classesSnap.empty) {
-    redirect("/create_account");
+    redirect("/create-account");
   }
 
   redirect("/feed");

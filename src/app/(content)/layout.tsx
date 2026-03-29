@@ -58,7 +58,7 @@ export default async function ContentLayout({
   const classesSnap = await getDocs(classesRef);
 
   if (classesSnap.empty) {
-    redirect("/create_account");
+    redirect("/create-account");
   }
 
   return (
