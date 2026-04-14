@@ -29,7 +29,7 @@
     "google-auth-library": "^10.3.0",
     "googleapis": "^160.0.0",
     "lucide-react": "^0.475.0",
-    "next": "^14.2.13",
+    "next": "14.2.35",
     "posthog-js": "^1.328.0",
     "posthog-node": "^5.21.1",
     "react": "^18.3.0",
