@@ -23,7 +23,8 @@ export default async function LoginPage() {
   const user = await currentUser();
 
   const email = user?.emailAddresses[0]?.emailAddress;
-  // const email = "copetas@cs.cmu.edu"
+  // const email = "cseluzhy@andrew.cmu.edu"
+  // const email = "jmackey@andrew.cmu.edu"
   console.log("Email:", email);
 
   if (!email) {
@@ -56,6 +57,7 @@ export default async function LoginPage() {
   console.log("Faculty result:", result);
 
   if (result?.success === true) {
+    console.log("User identified as faculty. Updating metadata and redirecting.");
     await clerkClient.users.updateUser(userId, {
       publicMetadata: { faculty: true },
     });
@@ -73,8 +75,9 @@ export default async function LoginPage() {
   const classesSnap = await getDocs(classesRef);
 
   if (classesSnap.empty) {
+    console.log("No classes found for user. Redirecting to account creation.");
     redirect("/create-account");
   }
-
+  console.log("User has classes. Redirecting to feed.");
   redirect("/feed");
 }

@@ -26,7 +26,8 @@ export default async function ContentLayout({
 
   const user = await currentUser();
   const email = user?.emailAddresses[0]?.emailAddress;
-  // const email = "copetas@cs.cmu.edu"
+  // const email = "cseluzhy@andrew.cmu.edu"
+  // const email = "jmackey@andrew.cmu.edu"
 
   if (!email) {
     redirect("/");
