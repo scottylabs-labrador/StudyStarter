@@ -34,7 +34,9 @@ export default async function LoginPage() {
   const result = await response.json();
 
   if (result?.success === true) {
-    redirect("/faculty-restricted");
+    console.log("User identified as faculty. Updating metadata and redirecting.");
+    
+    redirect("/access-restricted");
   }
 
   const userRef = doc(db, "Users", email);
@@ -42,8 +44,9 @@ export default async function LoginPage() {
   const classesSnap = await getDocs(classesRef);
 
   if (classesSnap.empty) {
-    redirect("/create_account");
+    console.log("No classes found for user. Redirecting to account creation.");
+    redirect("/create-account");
   }
-
+  console.log("User has classes. Redirecting to feed.");
   redirect("/feed");
 }

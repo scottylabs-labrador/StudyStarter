@@ -1,9 +1,12 @@
 import "~/styles/globals.css";
-
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import NavBar from "~/components/NavBar";
 import React from "react";
 import { redirect } from "next/navigation";
 import MobileNavBar from "~/components/MobileNavBar";
+import { collection, doc, getDocs } from "firebase/firestore";
+import { db } from "~/lib/api/firebaseConfig";
 import { requireServerSession } from "~/lib/auth";
 
 export const metadata = {
@@ -21,6 +24,50 @@ export default async function ContentLayout({
 
   if (!session?.user) {
     redirect("/");
+  }
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/");
+  }
+
+  const user = await currentUser();
+  const email = user?.emailAddresses[0]?.emailAddress;
+  // const email = "cseluzhy@andrew.cmu.edu"
+  // const email = "jmackey@andrew.cmu.edu"
+
+  if (!email) {
+    redirect("/");
+  }
+
+  const facultyResult = await fetch("https://updateuser-jmpi7y54bq-uc.a.run.app", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      firstName: user?.firstName ?? "Test",
+    }),
+    cache: "no-store",
+  }).then((response) => response.json());
+
+  console.log("faculty result from layout: ", facultyResult);
+
+  if (facultyResult?.success === true) {
+    await clerkClient.users.updateUser(userId, {
+      publicMetadata: { faculty: true },
+    });
+    redirect("/access-restricted");
+  }
+
+  const userRef = doc(db, "Users", email);
+  const classesRef = collection(userRef, "Classes");
+  const classesSnap = await getDocs(classesRef);
+
+  if (classesSnap.empty) {
+    redirect("/create-account");
   }
 
   return (
