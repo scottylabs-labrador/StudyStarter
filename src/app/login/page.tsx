@@ -14,6 +14,7 @@ export default async function LoginPage() {
   }
 
   const email = session.user.email;
+  console.log("session: ", session);
 
   if (!email) {
     redirect("/");

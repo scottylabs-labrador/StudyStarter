@@ -120,11 +120,31 @@ export default function ProfilePage() {
     <div className="p-4 font-sans w-full lg:w-1/3">
       <ConfirmProvider>
       <div className="flex items-center mb-4">
-        <img
+        {/* <img
           src={user?.imageUrl || "https://via.placeholder.com/80"}
           alt="Profile"
           className="w-20 h-20 rounded-full"
-        />
+        /> */}
+        {user && user.image && (
+          <img
+            src={user?.imageUrl || "https://via.placeholder.com/80"}
+            alt="Profile"
+            className="rounded-full"
+          />
+        )} 
+        {user && !user.image && (
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-black dark:text-white text-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+            >{user.firstName[0]}
+          </div>
+        )}
+        {!user && (
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-sm text-black dark:text-white shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+            >Profile
+          </div>
+        )}
+
         <div className="ml-4">
           <h1 className="text-2xl font-bold text-black dark:text-white">{displayName}</h1>
           <p className="text-black dark:text-white">{user?.emailAddresses[0]?.emailAddress}</p>

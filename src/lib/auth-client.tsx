@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement, ReactNode } from "react";
-import { cloneElement, isValidElement } from "react";
+import { cloneElement, isValidElement, useMemo } from "react";
 import { createAuthClient } from "better-auth/react";
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { useRouter } from "next/navigation";
@@ -70,7 +70,7 @@ function withClickHandler(children: ReactNode, onClick: () => void): ReactNode {
 
 export function useUser() {
   const session = authClient.useSession();
-  const user = getCompatUser(session.data);
+  const user = useMemo(() => getCompatUser(session.data), [session.data?.user]);
 
   return {
     user,
