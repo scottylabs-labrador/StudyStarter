@@ -44,7 +44,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-lightbg dark:bg-darkbg">
-      {/* <SignedOut> */}
+      <SignedOut>
         <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12">
           {/* Hero Section */}
           <div className="max-w-4xl w-full text-center mb-16">
@@ -181,7 +181,7 @@ export default function HomePage() {
             </a>
           </div>
         </div>
-      {/* </SignedOut> */}
+      </SignedOut>
 
       <SignedIn>
         {isRedirecting && (
