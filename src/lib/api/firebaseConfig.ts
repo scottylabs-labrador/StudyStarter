@@ -21,6 +21,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+console.log({
+  projectId: app.options.projectId,
+});
 export const db = getFirestore(app);
 
 export const usersRef = collection(db, "Users");

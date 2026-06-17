@@ -29,8 +29,13 @@ export default function ProfilePage() {
 
   async function getThemeData() {
     try {
-      const docRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const docRef = doc(db, "Users", userId);
+      console.log(docRef);
       const docSnap = await getDoc(docRef);
+      console.log(docSnap.exists())
       if (docSnap.exists()) {
         theme = docSnap.data().theme;
         if(theme === 'dark'){
@@ -55,7 +60,10 @@ export default function ProfilePage() {
 
   async function getYear() {
     try {
-      const docRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const docRef = doc(db, "Users", userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         year = docSnap.data().year;
@@ -71,7 +79,10 @@ export default function ProfilePage() {
 
   async function getMajors() {
     try {
-      const docRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const docRef = doc(db, "Users", userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         majors = docSnap.data().majors;
@@ -87,7 +98,10 @@ export default function ProfilePage() {
 
   async function getMinors() {
     try {
-      const docRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const docRef = doc(db, "Users", userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         minors = docSnap.data().minors;
@@ -109,7 +123,10 @@ export default function ProfilePage() {
     year = document.getElementById("yearSelect").value;
     const userId = user?.emailAddresses[0]?.emailAddress;
     try {
-      const usersDocRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const usersDocRef = doc(db, "Users", userId);
       await setDoc(usersDocRef, { year: year }, { merge: true });
     } catch (err) {
       console.error(err);
@@ -120,7 +137,10 @@ export default function ProfilePage() {
     majors = document.getElementById("majorInput").value;
     const userId = user?.emailAddresses[0]?.emailAddress;
     try {
-      const usersDocRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const usersDocRef = doc(db, "Users", userId);
       await setDoc(usersDocRef, { majors: majors }, { merge: true });
     } catch (err) {
       console.error(err);
@@ -131,7 +151,10 @@ export default function ProfilePage() {
     minors = document.getElementById("minorInput").value;
     const userId = user?.emailAddresses[0]?.emailAddress;
     try {
-      const usersDocRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const usersDocRef = doc(db, "Users", userId);
       await setDoc(usersDocRef, { minors: minors }, { merge: true });
     } catch (err) {
       console.error(err);

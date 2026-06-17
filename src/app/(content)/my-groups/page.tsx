@@ -79,7 +79,10 @@ export default function FeedPage() {
       if (!user) return;
       const userId = user.emailAddresses[0]?.emailAddress;
     
-      const userDocRef = doc(db, "Users", userId ? userId : "");
+      if (!userId) {
+        return;
+      }
+      const userDocRef = doc(db, "Users", userId);
       const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
@@ -93,7 +96,10 @@ export default function FeedPage() {
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
+    if (!userId) {
+      return;
+    }
+    const usersDocRef = doc(db, "Users", userId);
     const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
 

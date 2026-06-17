@@ -37,7 +37,10 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
   async function getProfile() {
     const userId = email;
     try {
-      const docRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const docRef = doc(db, "Users", userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();

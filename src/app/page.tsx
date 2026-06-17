@@ -22,7 +22,10 @@ export default function HomePage() {
     }
     setIsRedirecting(true);
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId? userId : "");
+    if (!userId) {
+      return;
+    }
+    const usersDocRef = doc(db, "Users", userId);
     const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
 

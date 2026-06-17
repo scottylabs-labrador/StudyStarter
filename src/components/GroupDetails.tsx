@@ -60,7 +60,10 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   useEffect(() => {
     if (!details || !user) return;
 
-    const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+    if (!details.id) {
+      return;
+    }
+    const groupDocRef = doc(db, "Study Groups", details.id);
     const unsubscribe = onSnapshot(groupDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const data = docSnapshot.data() as groupDetails;
@@ -154,7 +157,10 @@ useEffect(() => {
       }
 
       // check that group still exists
-      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+      if (!details.id) {
+        return;
+      }
+      const groupDocRef = doc(db, "Study Groups", details.id);
       const groupDocSnap = await getDoc(groupDocRef);
       if (!groupDocSnap.exists()) {
         toast.error("Group unavailable");
@@ -201,7 +207,10 @@ useEffect(() => {
       });
     }
     if (joinedState) {
-      const groupDocRef = doc(db, "Study Groups", details.id ? details.id : "");
+      if (!details.id) {
+        return;
+      }
+      const groupDocRef = doc(db, "Study Groups", details.id);
       await updateDoc(groupDocRef, {
         participantDetails: arrayRemove({
           name: user?.fullName,

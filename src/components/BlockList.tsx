@@ -21,7 +21,10 @@ export function BlockList() {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
     try {
-      const docRef = doc(db, "Users", userId ? userId : "");
+      if (!userId) {
+        return;
+      }
+      const docRef = doc(db, "Users", userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data()

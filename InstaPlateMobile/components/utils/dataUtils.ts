@@ -101,8 +101,10 @@ export const uploadProfileImage = async ({selectedImage, setSelectedImage, usern
         //     userId: username,
         //     uploadTime: Timestamp.now()
         // });
-
-        await setDoc(doc(db, "Users", username ?? ''), {
+        if (!username) {
+          return;
+        }
+        await setDoc(doc(db, "Users", username), {
             ProfileImage: imgName
         }, { merge: true });
 

@@ -12,7 +12,7 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "node scripts/ensure-sqlite-auth-db.mjs && next start"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",

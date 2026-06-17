@@ -20,7 +20,10 @@ const Courses: React.FC = () => {
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId? userId : "");
+    if (!userId) {
+      return;
+    }
+    const usersDocRef = doc(db, "Users", userId);
     const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -86,7 +89,10 @@ const Courses: React.FC = () => {
   const addClass = async (course: Course) => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     try {
-      const usersDocRef = doc(db, "Users", userId? userId : "");
+      if (!userId) {
+        return;
+      }
+      const usersDocRef = doc(db, "Users", userId);
       const classesRef = collection(usersDocRef, "Classes");
       await setDoc(doc(classesRef, course.courseID), course);
       classes.push(course.courseID);
@@ -163,7 +169,10 @@ export function ClassList() {
 
   const deleteClass = (cls: any) => {
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId? userId : "");
+    if (!userId) {
+      return;
+    }
+    const usersDocRef = doc(db, "Users", userId);
     const classesRef = collection(usersDocRef, "Classes");
     deleteDoc(doc(classesRef, cls));
   };
@@ -171,7 +180,10 @@ export function ClassList() {
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId? userId : "");
+    if (!userId) {
+      return;
+    }
+    const usersDocRef = doc(db, "Users", userId);
     const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
 

@@ -71,7 +71,10 @@ export default function UploadScreen() {
                 uploadTime: Timestamp.now()
             });
 
-            await setDoc(doc(db, "Users", username ?? ''), {
+            if (!username) {
+              return;
+            }
+            await setDoc(doc(db, "Users", username), {
                 Posts: arrayUnion(imgName)
             }, { merge: true });
 

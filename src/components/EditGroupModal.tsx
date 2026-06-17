@@ -130,7 +130,10 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
   useEffect(() => {
     if (!user) return;
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
+    if (!userId) {
+      return;
+    }
+    const usersDocRef = doc(db, "Users", userId);
     const classesRef = collection(usersDocRef, "Classes");
     getDocs(classesRef).then((querySnapshot) => {
       const classList: string[] = [];
