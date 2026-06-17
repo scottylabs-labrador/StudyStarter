@@ -3,8 +3,6 @@ import { useRouter } from "next/navigation";
 import "~/styles/globals.css";
 import { useUser, SignInButton, SignedIn, SignedOut } from "~/lib/auth-client";
 import { useEffect, useState } from "react";
-import { db } from '~/lib/api/firebaseConfig';
-import { doc, collection, query, onSnapshot } from 'firebase/firestore';
 import Image from 'next/image';
 import darkLogo from "~/image/darkLogoLarge.png";
 import lightLogo from "~/image/lightLogoLarge.png";
@@ -17,32 +15,11 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!user) {
-      console.log("bad turkey");
       return;
     }
+
     setIsRedirecting(true);
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    if (!userId) {
-      return;
-    }
-    const usersDocRef = doc(db, "Users", userId);
-    const classesRef = collection(usersDocRef, "Classes");
-    const q = query(classesRef);
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const classes = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-      }));
-      if (classes == undefined || classes == null || classes.length == 0) {
-        router.push("/create-account");
-      } else {
-        router.push("/feed");
-      }
-    }, (error) => {
-      console.error('Error getting documents: ', error);
-    });
-
-    return () => unsubscribe();
+    router.replace("/login");
   }, [user, router]);
 
   return (
