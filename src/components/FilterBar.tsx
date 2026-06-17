@@ -117,7 +117,6 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   }, [isProfileMenuOpen]);
   // Handler for focus event
   const handleFocus = () => {
-    console.log("DatePicker is focused!");
     setIsFocused(true);
   };
 

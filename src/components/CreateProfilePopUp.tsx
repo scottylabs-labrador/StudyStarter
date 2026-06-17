@@ -64,7 +64,7 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
             </div>
           `
       } else {
-        console.log("No such document!");
+        console.warn("No such document!");
       }
     } catch (err) {
       console.error(err);

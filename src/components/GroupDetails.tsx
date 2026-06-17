@@ -184,7 +184,6 @@ useEffect(() => {
         email: user?.emailAddresses[0]?.emailAddress,
         eventId
       }
-      console.log(newParticipant);
       await updateDoc(groupDocRef, {
         participantDetails: arrayUnion(newParticipant),
       });

@@ -30,7 +30,6 @@ export default function RootLayout({
                       if (theme === "dark") {
                         document.documentElement.classList.add("dark");
                       }
-                        console.log("idk");
                     } catch (e) {
                       //console.error("Theme loading error:", e);
                     }

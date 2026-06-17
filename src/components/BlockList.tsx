@@ -41,7 +41,7 @@ export function BlockList() {
           setGroups([])
         }
       } else {
-        console.log("No such document!");
+        console.warn("No such document!");
         setBlocked({blockedByMe: [], blockedByThem:[]});
       }
     } catch (err) {
@@ -71,7 +71,6 @@ export function BlockList() {
   const handleBlockSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const userToBlock = inputValue.toLowerCase().trim();
-    console.log("hi");
 
     if (userToBlock === "" || !user) {
       return;
@@ -131,7 +130,7 @@ export function BlockList() {
                 let newParticipants = groupParticipants.filter((p) => p.email != userId);
                 await setDoc(toRemoveDocRef, { participantDetails: newParticipants }, { merge: true });
               } else {
-                console.log("broken");
+                console.warn("broken");
               }
             } else {
               newGroups.push(g);

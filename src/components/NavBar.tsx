@@ -43,89 +43,10 @@ export default function NavBar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isProfileMenuOpen]);
-
-  // var [theme, setTheme] = useState("light")
-  // var theme = "light";
   
   const handleCreateGroupClick = () => {
     dispatch(setIsCreateGroupModalOpen(true));
   };
-
-  // async function getThemeData() {
-  //   try {
-  //     const docRef = doc(db, "Users", userId? userId : "");
-  //     const docSnap = await getDoc(docRef);
-  //     if (docSnap.exists()) {
-  //       theme = docSnap.data().theme;
-  //       if(theme === 'dark'){
-  //         document.querySelector('html')?.classList.add('dark');
-  //       }else{
-  //         document.querySelector('html')?.classList.remove('dark');
-  //       }
-  //       const modeButton = document.getElementById("mode");
-  //       if (modeButton) {
-  //         modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-  //       }
-  //       return theme;
-  //     } else {
-  //       console.log("No such document!");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
-
-  // getThemeData();
-  
-  // const updateTheme = async () => {
-  //   // theme = document.getElementById("yearSelect").value;
-  //   const userId = user?.emailAddresses[0]?.emailAddress;
-  //   try {
-  //     const usersDocRef = doc(db, "Users", userId? userId : "");
-  //     await setDoc(usersDocRef, { theme: theme }, { merge: true });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
-
-  // const toggleTheme = () => {
-  //   theme = (theme == "light") ? "dark" : "light";
-  //   document.documentElement.classList.toggle("dark");
-  //   if(theme === 'dark'){
-  //     document.querySelector('html')?.classList.add('dark');
-  //   }else{
-  //     document.querySelector('html')?.classList.remove('dark');
-  //   }
-  //   const modeButton = document.getElementById("mode");
-  //   if (modeButton) {
-  //     modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-  //   }
-  //   updateTheme();
-  // };
-
-  // const getTheme = () => {
-  //   if (theme == "dark") {
-  //     return (
-  //       <button
-  //         onClick={toggleTheme}
-  //         className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
-  //         id="mode"
-  //       >
-  //         Light Mode
-  //       </button>
-  //     );
-  //   } else {
-  //     return (
-  //       <button
-  //         onClick={toggleTheme}
-  //         className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg"
-  //         id="mode"
-  //       >
-  //         Dark Mode
-  //       </button>
-  //     );
-  //   }
-  // }
 
   const isModalOpen = useAppSelector((state) => state.ui.isModalOpen);
   const isCreateGroupModalOpen = useAppSelector(
