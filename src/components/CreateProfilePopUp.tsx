@@ -16,7 +16,7 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "~/lib/auth-client";
 
 
 interface CreateProfilePopUpProps {

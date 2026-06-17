@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, collection, query, onSnapshot, deleteDoc } from 'firebase/firestore';
-import { useUser } from '@clerk/nextjs';
+import { useUser } from "~/lib/auth-client";
 import axios from 'axios';
 
 interface Course {

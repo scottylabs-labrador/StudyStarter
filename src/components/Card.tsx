@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import groupDetails from "~/types";
 import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/uiSlice";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "~/lib/auth-client";
 import CreateProfilePopUp from "./CreateProfilePopUp";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";

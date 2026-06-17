@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "~/lib/auth-client";
 import { useDispatch } from "react-redux";
 import { postImage } from "~/lib/api/postImage";
 import { setIsModalOpen } from "~/lib/features/uiSlice";
@@ -68,4 +68,3 @@ export default function UploadModal() {
         </div>
     );
 }
-

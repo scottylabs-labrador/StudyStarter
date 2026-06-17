@@ -5,7 +5,7 @@ import Image from "next/image";
 import darkLogo from "~/image/darkLogoLarge.png";
 import lightLogo from "~/image/lightLogoLarge.png";
 import { ShieldAlert } from "lucide-react";
-import { useUser, SignOutButton } from "@clerk/nextjs";
+import { useUser, SignOutButton } from "~/lib/auth-client";
 import { redirect } from "next/navigation";
 
 export default function AccessRestrictedPage() {

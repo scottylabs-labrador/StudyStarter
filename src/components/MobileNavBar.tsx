@@ -10,9 +10,9 @@ import {
   setIsCreateGroupModalOpen,
 } from "~/lib/features/uiSlice";
 import { usePathname } from "next/navigation";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignOutButton } from "~/lib/auth-client";
 import { useAppSelector } from "~/lib/hooks";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "~/lib/auth-client";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 import { Menu, X } from 'lucide-react';

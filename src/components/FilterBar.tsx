@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { SignOutButton, useUser } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "~/lib/auth-client";
 import Select, { MultiValue } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -170,15 +170,28 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           <button
             type="button"
             onClick={() => setIsProfileMenuOpen((prev) => !prev)}
-            className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+            className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-black dark:text-white text-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
             aria-haspopup="menu"
             aria-expanded={isProfileMenuOpen}
-          >
+          >{user && user.image && (
             <img
               src={user?.imageUrl || "https://via.placeholder.com/80"}
               alt="Profile"
               className="rounded-full"
             />
+          )} 
+          {user && !user.image && (
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-black dark:text-white text-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+              >{user.firstName[0]}
+            </div>
+          )}
+          {!user && (
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-sm text-black dark:text-white shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+              >Profile
+            </div>
+          )}
           </button>
           {isProfileMenuOpen && (
             <div className="absolute right-0 top-12 w-40 overflow-hidden rounded-lg border border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg shadow-lg">

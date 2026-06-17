@@ -1,11 +1,11 @@
 import "~/styles/globals.css";
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import NavBar from "~/components/NavBar";
 import React from "react";
 import MobileNavBar from "~/components/MobileNavBar";
 import { collection, doc, getDocs } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
+import { requireServerSession } from "~/lib/auth";
 
 export const metadata = {
   title: "CMU Study",
@@ -13,44 +13,60 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/CMUStudy.ico" }],
 };
 
+async function checkFacultyStatus(email: string, firstName: string) {
+  try {
+    const response = await fetch("https://updateuser-jmpi7y54bq-uc.a.run.app", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        firstName,
+      }),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      console.warn(`Faculty check failed: ${response.status} ${response.statusText}`);
+      return false;
+    }
+
+    const contentType = response.headers.get("content-type");
+
+    if (!contentType?.includes("application/json")) {
+      console.warn(`Faculty check returned non-JSON response: ${contentType ?? "unknown"}`);
+      return false;
+    }
+
+    const result = await response.json();
+    return result?.success === true;
+  } catch (error) {
+    console.warn("Faculty check failed:", error);
+    return false;
+  }
+}
+
 export default async function ContentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { userId } = await auth();
+  const session = await requireServerSession();
 
-  if (!userId) {
+  if (!session?.user) {
     redirect("/");
   }
 
-  const user = await currentUser();
-  const email = user?.emailAddresses[0]?.emailAddress;
-  // const email = "cseluzhy@andrew.cmu.edu"
-  // const email = "jmackey@andrew.cmu.edu"
+  const email = session.user.email;
 
   if (!email) {
     redirect("/");
   }
 
-  const facultyResult = await fetch("https://updateuser-jmpi7y54bq-uc.a.run.app", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      firstName: user?.firstName ?? "Test",
-    }),
-    cache: "no-store",
-  }).then((response) => response.json());
+  const isFaculty = await checkFacultyStatus(email, session.user.name ?? "User");
 
-  console.log("faculty result from layout: ", facultyResult);
-
-  if (facultyResult?.success === true) {
-    await clerkClient.users.updateUser(userId, {
-      publicMetadata: { faculty: true },
-    });
+  if (isFaculty) {
     redirect("/access-restricted");
   }
 
