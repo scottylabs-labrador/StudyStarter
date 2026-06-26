@@ -20,7 +20,7 @@ import { useUser } from "~/lib/auth-client";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'
-import { addToCal, setupGoogleApi, isCalendarApiReady, requestCalendarAccessInteractive, hasCalendarAccess } from "../helpers/calendar_helper";
+import { addToCal, setupGoogleApi, isCalendarApiReady, requestCalendarAccessInteractive } from "../helpers/calendar_helper";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -54,8 +54,8 @@ export default function CreateGroupModal() {
     e.preventDefault();
 
     let calendarAuthPromise: Promise<void> | null = null;
-    if (isCalendarApiReady() && !hasCalendarAccess()) {
-      calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
+    if (isCalendarApiReady()) {
+      calendarAuthPromise = requestCalendarAccessInteractive({ forceRefresh: true }).catch((err) => {
         console.warn("Calendar auth failed:", err);
       });
     }

@@ -140,8 +140,7 @@ function initTokenClient(): void {
         console.error("Token error:", tokenResponse.error);
         return;
       }
-      accessToken = tokenResponse.access_token;
-      gapi.client.setToken({ access_token: accessToken });
+      persistToken(tokenResponse.access_token, tokenResponse.expires_in);
       console.log("Access token granted and stored.");
     },
   });
@@ -176,7 +175,7 @@ export async function setupGoogleApi(): Promise<void> {
 export async function requestCalendarAccess(): Promise<void> {
   await setupGoogleApi();
 
-  if (!accessToken) {
+  if (!isAccessTokenValid()) {
     return new Promise((resolve) => {
       tokenClient.callback = (tokenResponse: any) => {
         if (tokenResponse.error) {
@@ -198,12 +197,17 @@ export async function requestCalendarAccess(): Promise<void> {
  * Interactive OAuth request that must be triggered by a user gesture (click/tap).
  * Assumes scripts are already loaded to avoid popup blockers on mobile.
  */
-export function requestCalendarAccessInteractive(): Promise<void> {
+export function requestCalendarAccessInteractive({
+  forceRefresh = false,
+}: { forceRefresh?: boolean } = {}): Promise<void> {
   if (!isCalendarApiReady()) {
     return Promise.reject(new Error("Google API not ready"));
   }
-  if (isAccessTokenValid()) return Promise.resolve();
-  clearCalendarToken();
+  if (isAccessTokenValid() && !forceRefresh) return Promise.resolve();
+
+  if (!isAccessTokenValid() || forceRefresh) {
+    clearCalendarToken();
+  }
 
   return new Promise((resolve, reject) => {
     tokenClient.callback = (tokenResponse: any) => {
