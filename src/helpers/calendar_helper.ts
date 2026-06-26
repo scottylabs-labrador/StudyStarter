@@ -8,6 +8,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CALENDAR_CLIENT_ID!;
 const DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
 const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/calendar.freebusy";
 const TOKEN_STORAGE_KEY = "google_calendar_token_v1";
+const TOKEN_EXPIRY_BUFFER_MS = 60_000;
 
 let tokenClient: any;
 let gapiInited = false;
@@ -20,7 +21,30 @@ export function isCalendarApiReady(): boolean {
 }
 
 export function hasCalendarAccess(): boolean {
-  return !!accessToken;
+  return isAccessTokenValid();
+}
+
+function isAccessTokenValid(): boolean {
+  if (!accessToken) return false;
+  if (!accessTokenExpiresAt) return false;
+  return accessTokenExpiresAt > Date.now() + TOKEN_EXPIRY_BUFFER_MS;
+}
+
+function clearCalendarToken() {
+  accessToken = null;
+  accessTokenExpiresAt = null;
+
+  if (typeof gapi !== "undefined" && gapi.client) {
+    gapi.client.setToken(null);
+  }
+
+  if (typeof window === "undefined") return;
+
+  try {
+    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+  } catch {
+    // ignore storage failures (e.g. private mode)
+  }
 }
 
 function persistToken(access_token: string, expires_in?: number) {
@@ -45,7 +69,10 @@ function persistToken(access_token: string, expires_in?: number) {
 }
 
 function restoreTokenFromStorage(): boolean {
-  if (accessToken) return true;
+  if (isAccessTokenValid()) return true;
+  if (accessToken) {
+    clearCalendarToken();
+  }
   if (typeof window === "undefined") return false;
   try {
     const raw = sessionStorage.getItem(TOKEN_STORAGE_KEY);
@@ -58,8 +85,8 @@ function restoreTokenFromStorage(): boolean {
       sessionStorage.removeItem(TOKEN_STORAGE_KEY);
       return false;
     }
-    if (parsed.expiresAt <= Date.now()) {
-      sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+    if (parsed.expiresAt <= Date.now() + TOKEN_EXPIRY_BUFFER_MS) {
+      clearCalendarToken();
       return false;
     }
     accessToken = parsed.accessToken;
@@ -175,7 +202,8 @@ export function requestCalendarAccessInteractive(): Promise<void> {
   if (!isCalendarApiReady()) {
     return Promise.reject(new Error("Google API not ready"));
   }
-  if (accessToken) return Promise.resolve();
+  if (isAccessTokenValid()) return Promise.resolve();
+  clearCalendarToken();
 
   return new Promise((resolve, reject) => {
     tokenClient.callback = (tokenResponse: any) => {
@@ -200,7 +228,8 @@ export function requestCalendarAccessInteractive(): Promise<void> {
  */
 async function requestCalendarAccessSilent(): Promise<boolean> {
   if (!isCalendarApiReady()) return false;
-  if (accessToken) return true;
+  if (isAccessTokenValid()) return true;
+  clearCalendarToken();
 
   return new Promise((resolve) => {
     tokenClient.callback = (tokenResponse: any) => {
@@ -223,7 +252,8 @@ async function requestCalendarAccessSilent(): Promise<boolean> {
  * If token expired or missing, will try to refresh silently.
  */
 async function ensureAuthorized(): Promise<boolean> {
-  if (accessToken) return true;
+  if (isAccessTokenValid()) return true;
+  clearCalendarToken();
   return requestCalendarAccessSilent();
 }
 
@@ -267,6 +297,10 @@ export async function addToCal(
     console.log("Event created:", response.result.htmlLink);
     return response.result.id;
   } catch (err) {
+    const status = (err as { status?: number })?.status;
+    if (status === 401) {
+      clearCalendarToken();
+    }
     console.error("Error creating event:", err);
     return "None";
   }
@@ -298,6 +332,10 @@ export async function deleteFromCal(
     });
     console.log(`Event ${eventId} deleted.`);
   } catch (err) {
+    const status = (err as { status?: number })?.status;
+    if (status === 401) {
+      clearCalendarToken();
+    }
     console.warn("Failed to delete calendar event:", err);
   }
 }
@@ -330,6 +368,10 @@ export async function updateEvent(
     console.log(`Event ${eventId} updated.`);
     return response.result;
   } catch (err) {
+    const status = (err as { status?: number })?.status;
+    if (status === 401) {
+      clearCalendarToken();
+    }
     console.warn("Failed to update calendar event:", err);
     return null;
   }
