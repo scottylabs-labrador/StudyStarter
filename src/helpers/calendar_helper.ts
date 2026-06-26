@@ -3,11 +3,10 @@ import { Timestamp } from "firebase/firestore";
 declare const gapi: any;
 declare const google: any;
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID!;
-const API_KEY = process.env.NEXT_PUBLIC_CALENDAR_API_KEY!;
+const CLIENT_ID = process.env.NEXT_PUBLIC_CALENDAR_CLIENT_ID!;
 
 const DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
-const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned";
+const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/calendar.freebusy";
 const TOKEN_STORAGE_KEY = "google_calendar_token_v1";
 
 let tokenClient: any;
@@ -92,7 +91,6 @@ async function initGapiClient(): Promise<void> {
     gapi.load("client", async () => {
       try {
         await gapi.client.init({
-          apiKey: API_KEY,
           discoveryDocs: [DISCOVERY_DOC],
         });
         gapiInited = true;

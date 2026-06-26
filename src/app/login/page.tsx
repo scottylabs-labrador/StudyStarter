@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
-import { doc, collection, getDocs } from "firebase/firestore";
 
-import { db } from "~/lib/api/firebaseConfig";
 import { requireServerSession } from "~/lib/auth";
+import { getAdminDb } from "~/lib/firebase-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -61,9 +60,11 @@ export default async function LoginPage() {
     redirect("/access-restricted");
   }
 
-  const userRef = doc(db, "Users", email);
-  const classesRef = collection(userRef, "Classes");
-  const classesSnap = await getDocs(classesRef);
+  const classesSnap = await getAdminDb()
+    .collection("Users")
+    .doc(email)
+    .collection("Classes")
+    .get();
 
   if (classesSnap.empty) {
     console.log("No classes found for user. Redirecting to account creation.");

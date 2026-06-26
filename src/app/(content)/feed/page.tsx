@@ -117,7 +117,7 @@ export default function FeedPage() {
   useEffect(() => {
     if (!user) return;
     
-    const classesRef = collection(db, "Study Groups");
+    const classesRef = collection(db, "StudyGroups");
     const q = query(classesRef);
 
     const unsubscribe = onSnapshot(

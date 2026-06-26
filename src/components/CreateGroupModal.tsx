@@ -73,13 +73,13 @@ export default function CreateGroupModal() {
       return;
     }
 
-    let groupDocRef = doc(db, "Study Groups", id);
+    let groupDocRef = doc(db, "StudyGroups", id);
     while (await checkId(groupDocRef)) {
       id = "";
       for (let i = 0; i < 20; i++) {
         id += characters.charAt(Math.floor(Math.random() * characters.length));
       }
-      groupDocRef = doc(db, "Study Groups", id);
+      groupDocRef = doc(db, "StudyGroups", id);
     }
     const firestoreTimestamp = Timestamp.fromDate(date);
     const userEmail = user?.emailAddresses[0]?.emailAddress;
@@ -98,7 +98,14 @@ export default function CreateGroupModal() {
     if (calendarAuthPromise) {
       await calendarAuthPromise;
     }
-    const eventId = await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail);
+    const eventId = (await addToCal(title, course, purpose, firestoreTimestamp, location, details, userEmail)) ?? "None";
+    const participant = {
+      name: user?.fullName || "User",
+      url: user?.imageUrl ?? null,
+      email: userEmail,
+      eventId,
+    };
+
     await setDoc(groupDocRef, {
       id,
       title,
@@ -107,14 +114,7 @@ export default function CreateGroupModal() {
       startTime: firestoreTimestamp,
       location,
       totalSeats: Number(seats),
-      participantDetails: [
-        {
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: userEmail,
-          eventId: eventId
-        },
-      ],
+      participantDetails: [participant],
       details,
     });
     if (!userId) {
@@ -155,13 +155,7 @@ export default function CreateGroupModal() {
       startTime: firestoreTimestamp,
       location,
       totalSeats: Number(seats),
-      participantDetails: [
-        {
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
-        },
-      ],
+      participantDetails: [participant],
       details,
     }})
   };

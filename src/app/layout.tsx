@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
 import { PostHogProvider } from './providers'
+import { FirebaseAuthBridge } from "~/components/FirebaseAuthBridge";
 
 
 export const metadata = {
@@ -40,7 +41,7 @@ export default function RootLayout({
           </head>
           <body className="bg">
             <main>
-              {children}
+              <FirebaseAuthBridge>{children}</FirebaseAuthBridge>
               <Toaster />
             </main>
           </body>

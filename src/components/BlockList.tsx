@@ -116,7 +116,7 @@ export function BlockList() {
           }
           for (const g of groups) {
             if (theirGroups.includes(g)) {
-              const toRemoveDocRef = doc(db, "Study Groups", g);
+              const toRemoveDocRef = doc(db, "StudyGroups", g);
               const toRemoveDoc = await getDoc(toRemoveDocRef);
               if (toRemoveDoc.exists()) {
                 const groupData = toRemoveDoc.data();

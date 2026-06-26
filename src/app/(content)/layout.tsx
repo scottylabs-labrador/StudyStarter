@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 import NavBar from "~/components/NavBar";
 import React from "react";
 import MobileNavBar from "~/components/MobileNavBar";
-import { collection, doc, getDocs } from "firebase/firestore";
-import { db } from "~/lib/api/firebaseConfig";
 import { requireServerSession } from "~/lib/auth";
+import { getAdminDb } from "~/lib/firebase-admin";
 
 export const metadata = {
   title: "CMU Study",
@@ -70,9 +69,11 @@ export default async function ContentLayout({
     redirect("/access-restricted");
   }
 
-  const userRef = doc(db, "Users", email);
-  const classesRef = collection(userRef, "Classes");
-  const classesSnap = await getDocs(classesRef);
+  const classesSnap = await getAdminDb()
+    .collection("Users")
+    .doc(email)
+    .collection("Classes")
+    .get();
 
   if (classesSnap.empty) {
     redirect("/create-account");

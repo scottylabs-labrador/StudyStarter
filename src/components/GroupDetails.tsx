@@ -63,7 +63,7 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
     if (!details.id) {
       return;
     }
-    const groupDocRef = doc(db, "Study Groups", details.id);
+    const groupDocRef = doc(db, "StudyGroups", details.id);
     const unsubscribe = onSnapshot(groupDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const data = docSnapshot.data() as groupDetails;
@@ -160,7 +160,7 @@ useEffect(() => {
       if (!details.id) {
         return;
       }
-      const groupDocRef = doc(db, "Study Groups", details.id);
+      const groupDocRef = doc(db, "StudyGroups", details.id);
       const groupDocSnap = await getDoc(groupDocRef);
       if (!groupDocSnap.exists()) {
         toast.error("Group unavailable");
@@ -172,16 +172,16 @@ useEffect(() => {
         await calendarAuthPromise;
       }
       if (userId) {
-        eventId = await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId);
+        eventId = (await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId)) ?? "None";
       } else {
         eventId = "None";
       }
 
       // update group with new participant
       const newParticipant = {
-        name: user?.fullName,
-        url: user?.imageUrl,
-        email: user?.emailAddresses[0]?.emailAddress,
+        name: user?.fullName || "User",
+        url: user?.imageUrl ?? null,
+        email: user?.emailAddresses[0]?.emailAddress ?? userId,
         eventId
       }
       await updateDoc(groupDocRef, {
@@ -209,20 +209,20 @@ useEffect(() => {
       if (!details.id) {
         return;
       }
-      const groupDocRef = doc(db, "Study Groups", details.id);
+      const groupDocRef = doc(db, "StudyGroups", details.id);
       await updateDoc(groupDocRef, {
         participantDetails: arrayRemove({
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
+          name: user?.fullName || "User",
+          url: user?.imageUrl ?? null,
+          email: user?.emailAddresses[0]?.emailAddress ?? userId,
           eventId: eventIdState,
         }),
       });
       await updateDoc(groupDocRef, {
         participantDetails: arrayRemove({
-          name: user?.fullName,
-          url: user?.imageUrl,
-          email: user?.emailAddresses[0]?.emailAddress,
+          name: user?.fullName || "User",
+          url: user?.imageUrl ?? null,
+          email: user?.emailAddresses[0]?.emailAddress ?? userId,
         }),
       });
       await setDoc(

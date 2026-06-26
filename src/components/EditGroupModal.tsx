@@ -60,7 +60,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     }
 
     const firestoreTimestamp = Timestamp.fromDate(date);
-    const groupDocRef = doc(db, "Study Groups", group.id);
+    const groupDocRef = doc(db, "StudyGroups", group.id);
     let calendarAuthPromise: Promise<void> | null = null;
     if (isCalendarApiReady() && !hasCalendarAccess()) {
       calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {

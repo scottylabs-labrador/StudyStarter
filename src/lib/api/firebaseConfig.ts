@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { collection } from "firebase/firestore"; 
 import { getStorage } from "firebase/storage";
@@ -20,12 +20,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-console.log({
-  projectId: app.options.projectId,
-});
-export const db = getFirestore(app);
+export const firebaseApp = getApps()[0] ?? initializeApp(firebaseConfig);
+export const db = getFirestore(firebaseApp);
 
 export const usersRef = collection(db, "Users");
 export const photosRef = collection(db, "Photos");
-export const storageRef = getStorage(app);
+export const storageRef = getStorage(firebaseApp);
