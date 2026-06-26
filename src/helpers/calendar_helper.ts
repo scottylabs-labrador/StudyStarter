@@ -9,6 +9,7 @@ const DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/
 const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/calendar.freebusy";
 const TOKEN_STORAGE_KEY = "google_calendar_token_v1";
 const TOKEN_EXPIRY_BUFFER_MS = 60_000;
+const CALENDAR_EVENTS_URL = "https://www.googleapis.com/calendar/v3/calendars/primary/events";
 
 let tokenClient: any;
 let gapiInited = false;
@@ -261,6 +262,64 @@ async function ensureAuthorized(): Promise<boolean> {
   return requestCalendarAccessSilent();
 }
 
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function calendarRequest<T>(
+  path: string,
+  init: RequestInit,
+  retries = 1,
+): Promise<T> {
+  if (!accessToken) {
+    throw new Error("Missing Google Calendar access token");
+  }
+
+  try {
+    const response = await fetch(`${CALENDAR_EVENTS_URL}${path}`, {
+      ...init,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        ...init.headers,
+      },
+    });
+
+    if (response.status === 401) {
+      clearCalendarToken();
+    }
+
+    if (!response.ok) {
+      let errorBody: unknown = null;
+
+      try {
+        errorBody = await response.json();
+      } catch {
+        errorBody = await response.text();
+      }
+
+      throw {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorBody,
+      };
+    }
+
+    if (response.status === 204) {
+      return null as T;
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    if (retries > 0) {
+      await wait(500);
+      return calendarRequest<T>(path, init, retries - 1);
+    }
+
+    throw error;
+  }
+}
+
 /** Adds an event to the user's Google Calendar. */
 export async function addToCal(
   title: string,
@@ -294,12 +353,12 @@ export async function addToCal(
   };
 
   try {
-    const response = await gapi.client.calendar.events.insert({
-      calendarId: "primary",
-      resource: event,
+    const response = await calendarRequest<{ htmlLink?: string; id?: string }>("", {
+      method: "POST",
+      body: JSON.stringify(event),
     });
-    console.log("Event created:", response.result.htmlLink);
-    return response.result.id;
+    console.log("Event created:", response.htmlLink);
+    return response.id ?? "None";
   } catch (err) {
     const status = (err as { status?: number })?.status;
     if (status === 401) {
@@ -330,9 +389,8 @@ export async function deleteFromCal(
   }
 
   try {
-    await gapi.client.calendar.events.delete({
-      calendarId: "primary",
-      eventId,
+    await calendarRequest<void>(`/${encodeURIComponent(eventId)}`, {
+      method: "DELETE",
     });
     console.log(`Event ${eventId} deleted.`);
   } catch (err) {
@@ -364,13 +422,12 @@ export async function updateEvent(
   }
 
   try {
-    const response = await gapi.client.calendar.events.patch({
-      calendarId: "primary",
-      eventId,
-      resource: data,
+    const response = await calendarRequest<Record<string, any>>(`/${encodeURIComponent(eventId)}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
     });
     console.log(`Event ${eventId} updated.`);
-    return response.result;
+    return response;
   } catch (err) {
     const status = (err as { status?: number })?.status;
     if (status === 401) {
