@@ -38,6 +38,7 @@ export default function RootLayout({
                 `,
               }}
             />
+            <meta name="google-site-verification" content="Lf_uD2-tHPEfZOIdYWrILlDTmOXS_8G5g1z82ZXhTFk" />
           </head>
           <body className="bg">
             <main>
