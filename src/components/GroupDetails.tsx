@@ -210,20 +210,25 @@ useEffect(() => {
         return;
       }
       const groupDocRef = doc(db, "StudyGroups", details.id);
+      const groupDocSnap = await getDoc(groupDocRef);
+
+      if (!groupDocSnap.exists()) {
+        toast.error("Group unavailable");
+        return;
+      }
+
+      const groupData = groupDocSnap.data() as groupDetails;
+      const userEmail = user?.emailAddresses[0]?.emailAddress ?? userId;
+      const participant = groupData.participantDetails.find(
+        (participantDetail) => participantDetail.email === userEmail,
+      );
+      const eventIdToDelete = participant?.eventId ?? eventIdState;
+      const remainingParticipants = groupData.participantDetails.filter(
+        (participantDetail) => participantDetail.email !== userEmail,
+      );
+
       await updateDoc(groupDocRef, {
-        participantDetails: arrayRemove({
-          name: user?.fullName || "User",
-          url: user?.imageUrl ?? null,
-          email: user?.emailAddresses[0]?.emailAddress ?? userId,
-          eventId: eventIdState,
-        }),
-      });
-      await updateDoc(groupDocRef, {
-        participantDetails: arrayRemove({
-          name: user?.fullName || "User",
-          url: user?.imageUrl ?? null,
-          email: user?.emailAddresses[0]?.emailAddress ?? userId,
-        }),
+        participantDetails: remainingParticipants,
       });
       await setDoc(
         usersDocRef,
@@ -240,27 +245,28 @@ useEffect(() => {
       });
       posthog.capture('group_left', { group: currentDetails })
 
-      const updatedGroupSnap = await getDoc(groupDocRef);
-      if (updatedGroupSnap.exists()) {
-        const updatedData = updatedGroupSnap.data();
-        const onlyMember = !updatedData.participantDetails || updatedData.participantDetails.length === 0
-        if (onlyMember) {
-          await deleteDoc(groupDocRef);
-          onClick();
-          posthog.capture('group_emptied', { group: currentDetails })
-        }
-        if (eventIdState && eventIdState != "None") {
-          deleteFromCal(eventIdState);
-        } else {
-          toast("Could not delete from calendar", {
-            icon: "❌",
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
-        }
+      if (calendarAuthPromise) {
+        await calendarAuthPromise;
+      }
+
+      if (eventIdToDelete && eventIdToDelete != "None") {
+        await deleteFromCal(eventIdToDelete);
+      } else {
+        toast("Could not delete from calendar", {
+          icon: "❌",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+      }
+
+      const onlyMember = remainingParticipants.length === 0;
+      if (onlyMember) {
+        await deleteDoc(groupDocRef);
+        onClick();
+        posthog.capture('group_emptied', { group: currentDetails })
       }
     }
   };
