@@ -55,12 +55,12 @@ export default function HomePage() {
             </p>
             
             <div className="landing-actions">
-              <SignInButton mode="modal" forceRedirectUrl="/login">
+              <SignInButton forceRedirectUrl="/login">
                 <button className="button-large">
                   Create Account
                 </button>
               </SignInButton>
-              <SignInButton mode="modal" forceRedirectUrl="/login">
+              <SignInButton forceRedirectUrl="/login">
                 <button className="button-large">
                   Sign in
                 </button>

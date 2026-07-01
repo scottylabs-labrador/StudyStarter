@@ -22,13 +22,15 @@ import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
 import EditGroupModal from "./EditGroupModal";
 import { addToCal, deleteFromCal, isCalendarApiReady, requestCalendarAccessInteractive, setupGoogleApi } from "~/helpers/calendar_helper";
+import { GroupDetailsHeader } from "./GroupDetailsHeader";
+import { JoinGroupButton } from "./JoinGroupButton";
+import { ParticipantList } from "./ParticipantList";
 interface Props {
   onClick: () => void;
   details: groupDetails;
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 import { usePostHog } from 'posthog-js/react'
-import { Pencil } from "lucide-react";
 import { BlockedUsers } from "~/features/profile/components/BlockList";
 
 
@@ -40,16 +42,11 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   const [currentDetails, setCurrentDetails] = useState(details);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
-  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
 
   const dispatch = useDispatch();
-  const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
-  const isViewProfileOpen = useAppSelector(
-    (state) => state.ui.isViewProfileOpen,
-  );
   const posthog = usePostHog()
 
-  const handleViewProfileClick = (event) => {
+  const handleViewProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setViewUser(event.currentTarget.getAttribute('data-username'));
     setViewEmail(event.currentTarget.getAttribute('data-email'));
     dispatch(setIsViewProfileOpen(true));
@@ -116,7 +113,7 @@ useEffect(() => {
       window.removeEventListener("resize", updateHeight);
       window.removeEventListener("scroll", updateHeight);
     };
-  });
+  }, []);
 
 
 
@@ -273,33 +270,18 @@ useEffect(() => {
   const [formattedDate, formattedTime] = formatDateTime(
     currentDetails.startTime,
   );
+  const canEditGroup = joinedState && currentDetails.participantDetails.length === 1;
+
   return (
     <div ref={cardRef} style={{ maxHeight }} className="group-details-card">
-      
-      {/* Title */}
-      <div className="group-details-header">
-        <p className="group-details-title">{currentDetails.title}</p>
-        {/* Edit Group */}
-        {joinedState && currentDetails.participantDetails.length === 1 ? (
-          <button
-            className="group-details-action"
-            onClick={() => dispatch(setIsEditGroupModalOpen(true))}
-            aria-label="Edit group"
-          >
-            <Pencil size={20} />
-          </button>
-        ) : (
-          <div></div>
-        )}
-        {/* Close Button */}
-        <button className="group-details-action" onClick={onClick}>
-          <big>&times;</big>
-        </button>
-        
-      </div>
+      <GroupDetailsHeader
+        title={currentDetails.title}
+        canEdit={canEditGroup}
+        onEdit={() => dispatch(setIsEditGroupModalOpen(true))}
+        onClose={onClick}
+      />
 
       <div id="group_info_popup_body" className="pb-20">
-        {/* GroupDetails Body */}
         <p className="group-details-text">
           <strong>Course:</strong> {currentDetails.course}
         </p>
@@ -326,55 +308,22 @@ useEffect(() => {
           </button>
         </p>
 
-        {/* Participant List */}
         {participantsState && (
-          <div className="participant-list">
-            {currentDetails.participantDetails.map((participantDetail, index) => (
-              <div key={index} className="participant-row">
-                <button
-                  onClick={handleViewProfileClick}
-                  className="participant-row"
-                  data-username={participantDetail.name}
-                  data-email={participantDetail.email}
-                  >
-                  <img
-                    className="participant-avatar"
-                    src={participantDetail.url}
-                  />
-                  {/* <p className="indent-[1rem]"><strong className="indent-[2rem] font-['Verdana'] text-[16px]">
-                    Name: 
-                  </strong>{" "}
-                  {" "+participantDetail.name}</p> */}
-                  <p className="participant-name">
-                    {participantDetail.name.split(" ")[0]}
-                  </p>
-                </button>
-              </div>
-            ))}
-          </div>
+          <ParticipantList
+            participants={currentDetails.participantDetails}
+            onViewProfile={handleViewProfileClick}
+          />
         )}
 
-        {/* Details Section */}
         <strong className="group-details-text">Details:</strong>
         <div className="group-details-freeform">
           {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
         </div>
 
-        {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
-        </div>
+        {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail ?? ""} />}
+      </div>
 
-      {/* Join Button */}
-        <button id="card_info_join_btn"
-          className={`join-button ${
-            joinedState
-              ? "join-button-active"
-              : "join-button-inactive"
-          }`}
-          onClick={joinGroup}
-        >
-          {joinedState ? "Leave" : "Join"}
-        </button>
-      {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail}/>}
+      <JoinGroupButton isJoined={joinedState} onClick={joinGroup} />
       <EditGroupModal group={currentDetails} />
     </div>
   );

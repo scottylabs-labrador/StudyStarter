@@ -1,229 +1,51 @@
 "use client";
-import "~/styles/globals.css";
-import { useUser, SignOutButton } from "~/lib/auth-client";
-import { useState } from "react";
+
+import { useEffect } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import { ClassList } from "~/features/profile/components/ClassList";
-import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
-import { redirect } from "next/navigation";
+import { ProfileDetailsForm } from "~/features/profile/components/ProfileDetailsForm";
+import { ProfileHeader } from "~/features/profile/components/ProfileHeader";
+import { db } from "~/lib/api/firebaseConfig";
+import { useUser } from "~/lib/auth-client";
 
 function ContinueButton() {
   return (
     <a href="/feed" className="button-outline bg-lightbg dark:bg-darkbg">
       Continue
     </a>
-  )
+  );
 }
 
-export default function ProfilePage() {
-  console.log("PROFILE PAGE HIT");
+export default function CreateAccountPage() {
   const { user } = useUser();
   const userId = user?.emailAddresses[0]?.emailAddress;
-  const displayName = user?.fullName || user?.firstName || user?.username || "User";
-  const startYear = new Date().getFullYear();
-  const years = [(startYear).toString(), (startYear+1).toString(), (startYear+2).toString(), (startYear+3).toString(), (startYear+4).toString(), (startYear+5).toString()];
-  var theme = "dark";
-  var year = "default";
-  var majors = "";
-  var minors = "";
 
-  async function getThemeData() {
-    try {
-      if (!userId) {
-        return;
-      }
-      const docRef = doc(db, "Users", userId);
-      console.log(docRef);
-      const docSnap = await getDoc(docRef);
-      console.log(docSnap.exists())
-      if (docSnap.exists()) {
-        theme = docSnap.data().theme;
-        if(theme === 'dark'){
-          document.querySelector('html')?.classList.add('dark');
-        }else{
-          document.querySelector('html')?.classList.remove('dark');
-        }
-        const modeButton = document.getElementById("mode");
-        if (modeButton) {
-          modeButton.innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-        }
-        return theme;
-      } else {
-        console.log("No such document!");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  useEffect(() => {
+    if (!userId) return;
 
-  getThemeData();
+    const loadTheme = async () => {
+      try {
+        const docRef = doc(db, "Users", userId);
+        const docSnap = await getDoc(docRef);
 
-  async function getYear() {
-    try {
-      if (!userId) {
-        return;
-      }
-      const docRef = doc(db, "Users", userId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        year = docSnap.data().year;
-        document.getElementById("yearSelect").value = (year != undefined)? year : "default";
-        return year;
-      } else {
-        console.log("No such document!");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
+        if (!docSnap.exists()) return;
 
-  async function getMajors() {
-    try {
-      if (!userId) {
-        return;
+        const theme = docSnap.data().theme;
+        document.documentElement.classList.toggle("dark", theme === "dark");
+      } catch (error) {
+        console.error(error);
       }
-      const docRef = doc(db, "Users", userId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        majors = docSnap.data().majors;
-        document.getElementById("majorInput").value = (majors != undefined)? majors : "";
-        return majors;
-      } else {
-        console.log("No such document!");
-      }
-    } catch (err) {
-      console.error(err);
-    }    
-  }
+    };
 
-  async function getMinors() {
-    try {
-      if (!userId) {
-        return;
-      }
-      const docRef = doc(db, "Users", userId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        minors = docSnap.data().minors;
-        document.getElementById("minorInput").value = (minors != undefined)? minors : "";
-        return minors;
-      } else {
-        console.log("No such document!");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  year = getYear();
-  majors = getMajors();
-  minors = getMinors();
-
-  const changeYear = async () => {
-    year = document.getElementById("yearSelect").value;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    try {
-      if (!userId) {
-        return;
-      }
-      const usersDocRef = doc(db, "Users", userId);
-      await setDoc(usersDocRef, { year: year }, { merge: true });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  const changeMajors = async () => {
-    majors = document.getElementById("majorInput").value;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    try {
-      if (!userId) {
-        return;
-      }
-      const usersDocRef = doc(db, "Users", userId);
-      await setDoc(usersDocRef, { majors: majors }, { merge: true });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  const changeMinors = async () => {
-    minors = document.getElementById("minorInput").value;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    try {
-      if (!userId) {
-        return;
-      }
-      const usersDocRef = doc(db, "Users", userId);
-      await setDoc(usersDocRef, { minors: minors }, { merge: true });
-    } catch (err) {
-      console.error(err);
-    }
-  }
+    loadTheme();
+  }, [userId]);
 
   return (
-    <div className="p-4 font-sans ">
-      <div className="flex items-center mb-4">
-        <img
-          src={user?.imageUrl || "https://via.placeholder.com/80"}
-          alt="Profile"
-          className="w-20 h-20 rounded-full"
-        />
-        <div className="ml-4">
-          <h1 className="text-2xl font-bold text-black dark:text-white">{displayName}</h1>
-          <p className="text-black dark:text-white">{user?.emailAddresses[0]?.emailAddress}</p>
-        </div>
-        <div className="ml-auto">
-          <SignOutButton>
-            <button
-              className="button-primary"
-            >
-              Logout
-            </button>
-          </SignOutButton>
-        </div>
-      </div>
-      {/* <br></br> */}
-      <div>
-        <select id="yearSelect" name="yearSelect" onChange={changeYear} className="profile-select-compact">
-          <option disabled selected value={"default"}>Select Year</option>
-          <option value={years[0]}>Class of {years[0]}</option>
-          <option value={years[1]}>Class of {years[1]}</option>
-          <option value={years[2]}>Class of {years[2]}</option>
-          <option value={years[3]}>Class of {years[3]}</option>
-          <option value={years[4]}>Class of {years[4]}</option>
-          <option value={years[5]}>Class of {years[5]}</option>
-          <option value="Masters">Masters Student</option>
-          <option value="PhD Student">PhD Student</option>
-        </select>
-      </div>
-      <br></br>
-      <hr className="text-darkbg dark:text-lightbg"/>
-      <br></br>
-      <h1 className="text-l mb-1 font-bold text-black dark:text-white">Majors:</h1>
-      <input
-        id="majorInput"
-        className="profile-input-compact"
-        type="text"
-        onChange={changeMajors}
-        placeholder="Add your major(s) here"
-        required
-      />
-      <br></br>
-      <br></br>
-      <h1 className="text-l mb-1 font-bold text-black dark:text-white">Minors:</h1>
-      <input
-        id="minorInput"
-        className="profile-input-compact mb-3"
-        type="text"
-        onChange={changeMinors}
-        placeholder="Add any minors or concentrations here"
-      />
-      <br></br>
-      <br></br>
-      <hr className="text-darkbg dark:text-lightbg"/>
+    <div className="profile-page-panel">
+      <ProfileHeader user={user} showLogout />
+      <ProfileDetailsForm userId={userId} mastersValue="Masters" />
       <ClassList />
-      <br></br>
+      <br />
       <ContinueButton />
     </div>
   );

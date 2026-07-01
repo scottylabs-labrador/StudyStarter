@@ -3,6 +3,8 @@ import { z } from "zod";
 
 // Define the schema as an object with all of the env variables and their types
 const envSchema = z.object({
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  PRISMA_QUERY_LOG: z.coerce.boolean().default(false),
   SERVER_URL: z.string().url(),
   SERVER_PORT: z.coerce.number().default(80),
 

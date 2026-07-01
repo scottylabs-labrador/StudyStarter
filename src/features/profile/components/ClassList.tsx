@@ -15,7 +15,7 @@ const Courses: React.FC = () => {
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  var [classes, setClasses] = useState<any[]>([]);
+  const [classes, setClasses] = useState<Course[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -27,10 +27,10 @@ const Courses: React.FC = () => {
     const classesRef = collection(usersDocRef, "Classes");
     const q = query(classesRef);
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    const classes = querySnapshot.docs.map((doc) => ({
-      ...doc.data(),
+    const classes = querySnapshot.docs.map((classDoc) => ({
+      ...(classDoc.data() as Course),
     }));
-    setClasses(classes)
+    setClasses(classes);
   }, (error) => {
     console.error('Error getting documents: ', error);
   });
@@ -52,11 +52,7 @@ const Courses: React.FC = () => {
     fetchCourses();
   }, []);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event) {
-      var query = event.target.value.toLowerCase();
-      setSearchQuery(query);
-
+  const updateFilteredCourses = (query: string, selectedClasses: Course[]) => {
     if (query === "") {
       setFilteredCourses([]);
       return;
@@ -66,24 +62,23 @@ const Courses: React.FC = () => {
       query = query.substring(0,2)+'-'+query.substring(2);
       setSearchQuery(query);
     }
-    } else {
-      var query = document.getElementById("searchBar").value.toLowerCase();
-    }
 
-    if (typeof classes[0] == "object") {
-      for (let i = 0; i < classes.length; i++) {
-        classes[i] = classes[i].courseID;
-      }
-    }
+    const selectedCourseIds = selectedClasses.map((course) => course.courseID);
     const filtered = courses
     .filter((course) =>
       (course.name.toLowerCase().includes(query) || 
       course.courseID.toLowerCase().includes(query)) &&
-    !(classes.includes(course.courseID))
+    !(selectedCourseIds.includes(course.courseID))
     )
     .slice(0, 10);
 
     setFilteredCourses(filtered);
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+    updateFilteredCourses(query, classes);
   };
 
   const addClass = async (course: Course) => {
@@ -95,17 +90,21 @@ const Courses: React.FC = () => {
       const usersDocRef = doc(db, "Users", userId);
       const classesRef = collection(usersDocRef, "Classes");
       await setDoc(doc(classesRef, course.courseID), course);
-      classes.push(course.courseID);
+      const nextClasses = [...classes, course];
+      setClasses(nextClasses);
+      updateFilteredCourses(searchQuery, nextClasses);
     } catch (err) {
       console.error(err);
     }
-      handleSearch(null);
   }
 
   const handleSearchKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && filteredCourses.length > 0) {
       event.preventDefault();
-      await addClass(filteredCourses[0]);
+      const firstFilteredCourse = filteredCourses[0];
+      if (firstFilteredCourse) {
+        await addClass(firstFilteredCourse);
+      }
     }
   };
 
@@ -158,16 +157,16 @@ const Courses: React.FC = () => {
 
 export function ClassList() {
   const { user } = useUser();
-  var [classes, setClasses] = useState<any[]>([]);
+  const [classes, setClasses] = useState<Course[]>([]);
 
-  const deleteClass = (cls: any) => {
+  const deleteClass = (courseID: string) => {
     const userId = user?.emailAddresses[0]?.emailAddress;
     if (!userId) {
       return;
     }
     const usersDocRef = doc(db, "Users", userId);
     const classesRef = collection(usersDocRef, "Classes");
-    deleteDoc(doc(classesRef, cls));
+    deleteDoc(doc(classesRef, courseID));
   };
 
   useEffect(() => {
@@ -181,10 +180,10 @@ export function ClassList() {
     const q = query(classesRef);
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const classes = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
+      const classes = querySnapshot.docs.map((classDoc) => ({
+        ...(classDoc.data() as Course),
       }));
-      setClasses(classes)
+      setClasses(classes);
     }, (error) => {
       console.error('Error getting documents: ', error);
     });
@@ -195,12 +194,12 @@ export function ClassList() {
   return (
     <div className="mt-8">
       <Courses />
-      <br></br>
+      <br />
       <h2 className="text-l font-bold mb-1 text-black dark:text-white">{(classes == undefined || classes == null || classes.length == 0) ? '' : "My Classes"}</h2>
       <ul className="mt-212 space-y-2">
         {classes.map((cls) => (
           <li
-            key={cls.id}
+            key={cls.courseID}
             className="class-list-item">
             <div className="class-list-text">
               <strong>{cls.courseID}</strong> - {cls.name}
