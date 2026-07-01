@@ -30,13 +30,6 @@ export default function MobileNavBar() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       document.documentElement.classList.toggle("dark", theme === "dark");
-      const modeButtons = document.getElementsByClassName("modeButton");
-      if (modeButtons[0]) {
-        modeButtons[0].innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-        if (modeButtons[1]) {
-          modeButtons[1].innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-        }
-      }
       localStorage.setItem("theme", theme);
     }
   }, [theme]);
@@ -124,7 +117,7 @@ export default function MobileNavBar() {
                             </a>
                             <div className="py-2 flex justify-between">
                                 <button onClick={toggleTheme} className="button-inverse p-2 modeButton" id="mode">
-                                    Dark Mode
+                                    {theme === "light" ? "Dark Mode" : "Light Mode"}
                                 </button>
                             </div>
                         </nav>

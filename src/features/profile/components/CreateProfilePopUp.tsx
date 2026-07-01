@@ -1,76 +1,98 @@
 "use client";
+
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { doc, getDoc } from "firebase/firestore";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsViewProfileOpen } from "~/lib/features/uiSlice";
 import { db } from "~/lib/api/firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
-
 
 interface CreateProfilePopUpProps {
   username: string;
   email: string;
 }
 
+type ProfileSummary = {
+  year?: string;
+  majors?: string;
+  minors?: string;
+};
+
+const formatYear = (year?: string) => {
+  if (!year) return "";
+  return year.startsWith("2") ? `Class of ${year}` : year;
+};
+
 const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email }) => {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
-  
+  const [profile, setProfile] = useState<ProfileSummary>({});
+  const firstName = username.split(" ")[0] || username;
+
+  useEffect(() => {
+    if (!isOpen || !email) return;
+
+    const loadProfile = async () => {
+      try {
+        const docRef = doc(db, "Users", email);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          console.warn("No such document!");
+          setProfile({});
+          return;
+        }
+
+        const data = docSnap.data();
+        setProfile({
+          year: data.year,
+          majors: data.majors,
+          minors: data.minors,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadProfile();
+  }, [email, isOpen]);
+
   const handleClose = () => {
-      dispatch(setIsViewProfileOpen(false));
+    dispatch(setIsViewProfileOpen(false));
   };
 
   if (!isOpen) return null;
 
-  async function getProfile() {
-    const userId = email;
-    try {
-      if (!userId) {
-        return;
-      }
-      const docRef = doc(db, "Users", userId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const elem = document.getElementById("profileData")
-        let year = data.year;
-        year = year ? `<p class="font-bold">${year[0] == "2" ? `Class of ${year}` : year}</p>` : ''
-        let majors = data.majors;
-        majors = majors ? `<p class=""><strong>Majors: </strong>`+majors+`</p>` : ''
-        let minors = data.minors;
-        minors = (minors && minors != '') ? `<p class=""><strong>Minors: </strong>`+minors+`</p>` : ''
-        const first = username.split(" ")[0];
-        if (first) username = first;
-        if (elem)
-          elem.innerHTML = `
-            <div>
-              <h2 class="text-xl font-bold"><big>`+username+`</big></h2>
-              <p class="text-l">`+email+`</p>
-              `+year+`
-              `+majors+`
-              `+minors+`
-            </div>
-          `
-      } else {
-        console.warn("No such document!");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  getProfile();
-
-  return ( 
-    <div className="absolute inset-0 z-50 flex items-center justify-center">
-        <div className="w-96 rounded-lg p-6 bg-lightSidebar dark:bg-darkSidebar">
-            <div className="flex items-center justify-between">
-                <div id="profileData" className="text-black dark:text-white"></div>
-                <button onClick={handleClose} className="text-xl font-bold">
-                  <big>&times;</big>
-                 </button>
-            </div>
+  return (
+    <div className="profile-popup-overlay">
+      <div className="profile-popup-panel">
+        <div className="profile-popup-header">
+          <div className="text-black dark:text-white">
+            <h2 className="text-xl font-bold">
+              <big>{firstName}</big>
+            </h2>
+            <p className="text-l">{email}</p>
+            {profile.year && <p className="font-bold">{formatYear(profile.year)}</p>}
+            {profile.majors && (
+              <p>
+                <strong>Majors: </strong>
+                {profile.majors}
+              </p>
+            )}
+            {profile.minors && (
+              <p>
+                <strong>Minors: </strong>
+                {profile.minors}
+              </p>
+            )}
+          </div>
+          <button onClick={handleClose} className="profile-popup-close">
+            <big>&times;</big>
+          </button>
         </div>
+      </div>
     </div>
   );
-}
+};
 
 export default CreateProfilePopUp;

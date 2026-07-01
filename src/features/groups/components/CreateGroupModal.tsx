@@ -2,7 +2,7 @@
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
-import React, { useEffect, useState, forwardRef } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
 import {
   setDoc,
@@ -17,10 +17,10 @@ import {
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "~/lib/auth-client";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'
 import { addToCal, setupGoogleApi, isCalendarApiReady, requestCalendarAccessInteractive } from "~/helpers/calendar_helper";
+import { GroupModalFrame } from "./GroupModalFrame";
+import { GroupModalFields } from "./GroupModalFields";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -194,104 +194,31 @@ export default function CreateGroupModal() {
 
   if (!isOpen) return null;
 
-  const CustomDateInput = forwardRef(
-    ({ value, onClick, placeholder, className, ...rest }, ref) => (
-      <input
-        onClick={onClick}
-        ref={ref}
-        value={value}
-        readOnly
-        placeholder={placeholder}
-        // Merge the existing className with your own
-        className={`form-control block ${className || ''}`}
-        {...rest}
-      />
-    )
-  );
-
   return (
-    <div className="modal-overlay" id="createGroupPopUp">
-      <div className="modal-panel">
-        <div className="modal-header">
-          <h2 className="modal-title">Create New Study Group</h2>
-          <button onClick={handleClose} className="modal-close">
-            <big>&times;</big>
-          </button>
-        </div>
+    <GroupModalFrame
+      id="createGroupPopUp"
+      title="Create New Study Group"
+      onClose={handleClose}
+    >
         <form onSubmit={handleSubmit}>
-          <input
-            className="form-control-accent"
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            maxLength={27} // Reasonable character limit
-          />
-          <select
-            className="form-control"
-            id="classSelect"
-            value={course}
-            onChange={(e) => setCourse(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              Select a class
-            </option>
-            {classes.map((cls) => (
-              <option key={cls} value={cls}>
-                {cls}
-              </option>
-            ))}
-          </select>
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Purpose"
-            value={purpose}
-            onChange={(e) => setPurpose(e.target.value)}
-            required
-            maxLength={50} // Reasonable character limit
-          />
-          <DatePicker
-            selected={date}
-            onChange={(d) => setDate(d)}
-            showTimeSelect
-            dateFormat="Pp"
-            placeholderText="Date/Time"
-            popperClassName="custom-popper"
-            calendarClassName="bg-lightInput dark:bg-darkInput"
-            customInput={<CustomDateInput />}
-            wrapperClassName="w-full"
-            className="w-full"
-            required
-          />
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
-            maxLength={40}
-          />
-          <input
-            className="form-control"
-            type="number"
-            placeholder="Max Seats"
-            value={seats}
-            onChange={(e) => setSeats(e.target.value)}
-            required
-            min="2" // Minimum participants of 2
-            max="100"
-          />
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Details"
-            value={details}
-            maxLength={200} // Reasonable character limit
-            onChange={(e) => setDetails(e.target.value)}
+          <GroupModalFields
+            title={title}
+            setTitle={setTitle}
+            titleMaxLength={27}
+            course={course}
+            setCourse={setCourse}
+            classes={classes}
+            purpose={purpose}
+            setPurpose={setPurpose}
+            date={date}
+            setDate={setDate}
+            location={location}
+            setLocation={setLocation}
+            locationMaxLength={40}
+            seats={seats}
+            setSeats={setSeats}
+            details={details}
+            setDetails={setDetails}
           />
           <button
             type="submit"
@@ -300,7 +227,6 @@ export default function CreateGroupModal() {
             Create Group
           </button>
         </form>
-      </div>
-    </div>
+    </GroupModalFrame>
   );
 }

@@ -1,14 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { SignOutButton, useUser } from "~/lib/auth-client";
-import Select, { MultiValue } from "react-select";
+import React from "react";
+import Select, { MultiValue, StylesConfig } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ProfileMenu } from "~/components/ui/ProfileMenu";
+
+type FilterOption = { value: string; label: string };
 
 const customSelectComponents = {
   ClearIndicator: () => null, // Do not render the remove icon ("x")
 };
 
-const customSelectStyles = {
+const customSelectStyles: StylesConfig<FilterOption, true> = {
   input: (provided) => ({
     ...provided,
     color: '#000', // Change text color in the input area to black
@@ -42,15 +44,15 @@ const customSelectStyles = {
 };
 
 interface TopFilterBarProps {
-  courseOptions: { value: string; label: string }[];
-  locationOptions: { value: string; label: string }[];
-  selectedCourses: MultiValue<{ value: string; label: string }>;
+  courseOptions: FilterOption[];
+  locationOptions: FilterOption[];
+  selectedCourses: MultiValue<FilterOption>;
   setSelectedCourses: (
-    selected: MultiValue<{ value: string; label: string }>,
+    selected: MultiValue<FilterOption>,
   ) => void;
-  selectedLocations: MultiValue<{ value: string; label: string }>;
+  selectedLocations: MultiValue<FilterOption>;
   setSelectedLocations: (
-    selected: MultiValue<{ value: string; label: string }>,
+    selected: MultiValue<FilterOption>,
   ) => void;
   selectedDate: Date | null;
   setSelectedDate: (date: Date | null) => void;
@@ -66,24 +68,6 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   selectedDate,
   setSelectedDate,
 }) => {
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const { user } = useUser();
-  const profileMenuRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isProfileMenuOpen &&
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsProfileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isProfileMenuOpen]);
   return (
     <div className="filter-bar">
       <div className="filter-controls">
@@ -105,61 +89,10 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           customInput={<input className="filter-date-input" />}
           popperClassName="custom-popper" // Class for popper customization
           placeholderText="Date"
-          classNamePrefix="react-datepicker"
           className="filter-select"
         />
 
-        {/* Profile Button - Hidden on small screens */}
-        <div
-          ref={profileMenuRef}
-          className="profile-menu-container"
-        >
-          <button
-            type="button"
-            onClick={() => setIsProfileMenuOpen((prev) => !prev)}
-            className="avatar-button"
-            aria-haspopup="menu"
-            aria-expanded={isProfileMenuOpen}
-          >{user && user.image && (
-            <img
-              src={user?.imageUrl || "https://via.placeholder.com/80"}
-              alt="Profile"
-              className="rounded-full"
-            />
-          )} 
-          {user && !user.image && (
-            <div
-              className="avatar-fallback"
-              >{user.firstName[0]}
-            </div>
-          )}
-          {!user && (
-            <div
-              className="avatar-label"
-              >Profile
-            </div>
-          )}
-          </button>
-          {isProfileMenuOpen && (
-            <div className="profile-menu">
-              <a
-                href="/profile"
-                className="profile-menu-item"
-                onClick={() => setIsProfileMenuOpen(false)}
-              >
-                Profile
-              </a>
-              <SignOutButton>
-                <button
-                  type="button"
-                  className="profile-menu-item"
-                >
-                  Logout
-                </button>
-              </SignOutButton>
-            </div>
-          )}
-        </div>
+        <ProfileMenu />
       </div>
     </div>
   );

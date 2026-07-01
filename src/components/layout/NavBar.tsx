@@ -1,43 +1,23 @@
 "use client";
 import darkLogo from "~/image/darkLogo2.png"
 import lightLogo from "~/image/lightLogo2.png"
-import { Fragment, useState, useEffect, useRef } from "react";
+import { Fragment, useState, useEffect } from "react";
 import CreateGroupModal from "~/features/groups/components/CreateGroupModal";
-import { useDispatch } from "react-redux";
-import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import { usePathname } from "next/navigation";
-import { SignOutButton } from "~/lib/auth-client";
 import { useUser } from "~/lib/auth-client";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import { ProfileMenu } from "~/components/ui/ProfileMenu";
 
 
 export default function NavBar() {
   const { user } = useUser();
   const userId = user?.emailAddresses[0]?.emailAddress;
-  const dispatch = useDispatch();
   const pathname = usePathname();
   const page = pathname.split("/")[1];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const profileMenuRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isProfileMenuOpen &&
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsProfileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isProfileMenuOpen]);
   
   // Read theme from localStorage immediately to prevent flickering
   const getInitialTheme = () => {
@@ -52,13 +32,6 @@ export default function NavBar() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       document.documentElement.classList.toggle("dark", theme === "dark");
-      const modeButtons = document.getElementsByClassName("modeButton");
-      if (modeButtons[0]) {
-        modeButtons[0].innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-        if (modeButtons[1]) {
-          modeButtons[1].innerHTML = (theme == "light") ? "Dark Mode" : "Light Mode";
-        }
-      }
       localStorage.setItem("theme", theme);
     }
   }, [theme]);
@@ -137,18 +110,12 @@ export default function NavBar() {
           <a href="/my-groups" className={`nav-link ${page == "my-groups" ? "nav-link-active" : ""}`}>
             My Groups
           </a>
-          {/* <button
-            onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
-            className="w-full rounded-lg px-2 py-2 font-bold bg-lightButton dark:bg-darkButton"
-          >
-            + Create
-          </button> */}
           <button
             onClick={toggleTheme}
             className="button-inverse w-full modeButton"
             id="mode"
           >
-            Light Mode
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
           </button>
         </div>
 
@@ -202,45 +169,9 @@ export default function NavBar() {
                 My Groups
               </a>
               <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
-                Dark Mode
+                {theme === "light" ? "Dark Mode" : "Light Mode"}
               </button>
-              <div
-                ref={profileMenuRef}
-                className="drawer-profile-menu-container"
-              >
-                <button
-                  type="button"
-                  onClick={() => setIsProfileMenuOpen((prev) => !prev)}
-                  className="avatar-button"
-                  aria-haspopup="menu"
-                  aria-expanded={isProfileMenuOpen}
-                >
-                  <img
-                    src={user?.imageUrl || "https://via.placeholder.com/80"}
-                    alt="Profile"
-                    className="rounded-full"
-                  />
-                </button>
-                {isProfileMenuOpen && (
-                  <div className="profile-menu">
-                    <a
-                      href="/profile"
-                      className="profile-menu-item"
-                      onClick={() => setIsProfileMenuOpen(false)}
-                    >
-                      Profile
-                    </a>
-                    <SignOutButton>
-                      <button
-                        type="button"
-                        className="profile-menu-item"
-                      >
-                        Logout
-                      </button>
-                    </SignOutButton>
-                  </div>
-                )}
-              </div>
+              <ProfileMenu containerClassName="drawer-profile-menu-container" />
             </nav>
           </div>
       

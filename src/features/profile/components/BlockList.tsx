@@ -10,6 +10,11 @@ export interface BlockedUsers {
   blockedByThem: string[]
 }
 
+type GroupParticipant = {
+  email: string;
+  eventId?: string;
+};
+
 export function BlockList() {
   const { user } = useUser();
   const [blocked, setBlocked] = useState<BlockedUsers>({blockedByMe: [], blockedByThem:[]});
@@ -109,7 +114,7 @@ export function BlockList() {
         if (numShared > 0) {
           const ok = await confirm(`You are currently in ${numShared} group${numShared == 1 ? "" : "s"} with ${userToBlock}. You will be removed from ${numShared == 1 ? "this group" : "these groups"} if you continue.`);
           if (!ok) {
-            return;   // <- simply stop the function
+            return;
           }
           if (calendarAuthPromise) {
             await calendarAuthPromise;
@@ -120,7 +125,7 @@ export function BlockList() {
               const toRemoveDoc = await getDoc(toRemoveDocRef);
               if (toRemoveDoc.exists()) {
                 const groupData = toRemoveDoc.data();
-                const groupParticipants = groupData.participantDetails;
+                const groupParticipants = groupData.participantDetails as GroupParticipant[];
                 const eventId = groupParticipants.find((p) => p.email === userId)?.eventId;
                 if (eventId && eventId !== "None") {
                   deleteFromCal(eventId);
@@ -234,7 +239,7 @@ export function BlockList() {
           </button>
         </form>
       </div>
-      <br></br>
+      <br />
       <h2 className="text-l font-bold mb-1 text-black dark:text-white">
         {blocked.blockedByMe.length > 0 ? "Blocked Students" : ''}
       </h2>

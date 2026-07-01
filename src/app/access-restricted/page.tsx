@@ -52,7 +52,7 @@ export default function AccessRestrictedPage() {
           <br />
           Faculty members are not permitted to access or use this application.
         </p>
-        <br></br>
+        <br />
         <div className="ml-auto">
           <SignOutButton>
             <button
