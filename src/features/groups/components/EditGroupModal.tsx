@@ -3,20 +3,14 @@ import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsEditGroupModalOpen } from "~/lib/features/uiSlice";
 import React, { useEffect, useState } from "react";
-import { db } from "~/lib/api/firebaseConfig";
-import {
-  doc,
-  getDocs,
-  collection,
-  Timestamp,
-  updateDoc,
-} from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useUser } from "~/lib/auth-client";
 import { usePostHog } from 'posthog-js/react'
 import groupDetails from "~/types";
 import { GroupModalFrame } from "./GroupModalFrame";
 import { GroupModalFields } from "./GroupModalFields";
+import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
+import { updateStudyGroup } from "../services/groupService";
 import {
   updateEvent,
   setupGoogleApi,
@@ -31,15 +25,16 @@ interface EditGroupModalProps {
 
 export default function EditGroupModal({ group }: EditGroupModalProps) {
   const { user } = useUser();
+  const userId = user?.emailAddresses[0]?.emailAddress;
   const [title, setTitle] = useState("");
   const [course, setCourse] = useState("");
   const [purpose, setPurpose] = useState("");
   const [date, setDate] = useState<Date | null>();
-  const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [seats, setSeats] = useState("");
   const [details, setDetails] = useState("");
-  const [classes, setClasses] = useState<string[]>([]); // Define classes state
+  const { classes } = useUserCourses(userId);
+  const classOptions = classes.map((course) => course.courseID);
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isEditGroupModalOpen);
@@ -59,23 +54,23 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
       return;
     }
 
-    const firestoreTimestamp = Timestamp.fromDate(date);
-    const groupDocRef = doc(db, "StudyGroups", group.id);
     let calendarAuthPromise: Promise<void> | null = null;
     if (isCalendarApiReady() && !hasCalendarAccess()) {
       calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
         console.warn("Calendar auth failed:", err);
       });
     }
-    await updateDoc(groupDocRef, {
-      title,
-      course,
-      purpose,
-      startTime: firestoreTimestamp,
-      location,
-      totalSeats: Number(seats),
-      participantDetails: group.participantDetails,
-      details,
+    const updatedGroup = await updateStudyGroup({
+      group,
+      input: {
+        title,
+        course,
+        purpose,
+        date,
+        location,
+        seats,
+        details,
+      },
     });
     if (calendarAuthPromise) {
       await calendarAuthPromise;
@@ -86,8 +81,8 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     );
     const eventId =
       (participant as any)?.eventId || (participant as any)?.event || "None";
-    const start = firestoreTimestamp.toDate().toISOString();
-    const end = new Date(firestoreTimestamp.toMillis() + 3600000).toISOString();
+    const start = updatedGroup.startTime.toDate().toISOString();
+    const end = new Date(updatedGroup.startTime.toMillis() + 3600000).toISOString();
     await updateEvent(eventId, {
       summary: `Study Group: ${title}`,
       location,
@@ -100,7 +95,6 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     setCourse("");
     setPurpose("");
     setDate(null);
-    setTime("");
     setLocation("");
     setSeats("");
     setDetails("");
@@ -119,30 +113,13 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
       title,
       course,
       purpose,
-      startTime: firestoreTimestamp,
+      startTime: updatedGroup.startTime,
       location,
       totalSeats: Number(seats),
       participantDetails: group.participantDetails,
       details,
     }})
   };
-
-  useEffect(() => {
-    if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    if (!userId) {
-      return;
-    }
-    const usersDocRef = doc(db, "Users", userId);
-    const classesRef = collection(usersDocRef, "Classes");
-    getDocs(classesRef).then((querySnapshot) => {
-      const classList: string[] = [];
-      querySnapshot.forEach((doc) => {
-        classList.push(doc.id);
-      });
-      setClasses(classList);
-    });
-  }, [user]);
 
   useEffect(() => {
     if (!isOpen || !group) return;
@@ -185,7 +162,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
             titleMaxLength={30}
             course={course}
             setCourse={setCourse}
-            classes={classes}
+            classes={classOptions}
             purpose={purpose}
             setPurpose={setPurpose}
             date={date}

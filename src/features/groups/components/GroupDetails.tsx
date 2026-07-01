@@ -5,19 +5,6 @@ import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/ui
 import { useUser } from "~/lib/auth-client";
 import CreateProfilePopUp from "~/features/profile/components/CreateProfilePopUp";
 import { useDispatch } from "react-redux";
-import { useAppSelector } from "~/lib/hooks";
-import {
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  doc,
-  getDoc,
-  onSnapshot,
-  increment,
-  setDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import { db } from "~/lib/api/firebaseConfig";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
 import EditGroupModal from "./EditGroupModal";
@@ -25,21 +12,31 @@ import { addToCal, deleteFromCal, isCalendarApiReady, requestCalendarAccessInter
 import { GroupDetailsHeader } from "./GroupDetailsHeader";
 import { JoinGroupButton } from "./JoinGroupButton";
 import { ParticipantList } from "./ParticipantList";
+import {
+  addParticipantToGroup,
+  getStudyGroup,
+  getUserBlockedEmails,
+  removeParticipantFromGroup,
+} from "../services/groupService";
+import { useLiveGroupDetails } from "../hooks/useLiveGroupDetails";
 interface Props {
   onClick: () => void;
   details: groupDetails;
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 import { usePostHog } from 'posthog-js/react'
-import { BlockedUsers } from "~/features/profile/components/BlockList";
 
 
 const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
+  const userEmail = user?.emailAddresses[0]?.emailAddress;
   const [participantsState, participantsSetState] = useState(true);
-  const [joinedState, joinedSetState] = useState(false);
-  const [eventIdState, setEventIdState] = useState<string>("None")
-  const [currentDetails, setCurrentDetails] = useState(details);
+  const {
+    currentDetails,
+    isJoined: joinedState,
+    setIsJoined: joinedSetState,
+    eventId: eventIdState,
+  } = useLiveGroupDetails(details, userEmail);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
 
@@ -52,42 +49,6 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
     dispatch(setIsViewProfileOpen(true));
   };
 
-  useEffect(() => {
-    if (!details || !user) return;
-
-    if (!details.id) {
-      return;
-    }
-    const groupDocRef = doc(db, "StudyGroups", details.id);
-    const unsubscribe = onSnapshot(groupDocRef, (docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const data = docSnapshot.data() as groupDetails;
-        setCurrentDetails(data);
-        const participants = docSnapshot.data()?.participantDetails;
-        const isParticipant = participants.some(
-          (participant: any) =>
-            participant.email === user.emailAddresses[0]?.emailAddress,
-        );
-        let eventId = undefined;
-        if (isParticipant) {
-          eventId = participants.find(
-            (participant: any) =>
-              participant.email === user.emailAddresses[0]?.emailAddress,
-          )?.eventId;
-        }
-        if (eventId == undefined) {
-          eventId = "None"
-        }
-        joinedSetState(isParticipant);
-        setEventIdState(eventId);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [user, details]);
-  useEffect(() => {
-    setCurrentDetails(details);
-  }, [details]);
 useEffect(() => {
     setupGoogleApi().catch((err) => {
       console.warn("Failed to initialize Google API:", err);
@@ -125,7 +86,6 @@ useEffect(() => {
       });
     }
     const userId = user?.emailAddresses[0]?.emailAddress;
-    const usersDocRef = doc(db, "Users", userId ? userId : "");
     let eventId:string | undefined = undefined;
     if (!joinedState) {
       if (
@@ -135,19 +95,18 @@ useEffect(() => {
         return;
       }
       // check that no participants blocked
-      const userDoc = await getDoc(usersDocRef);
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
-        const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
-        if (combinedBlocked.length > 0) {
-          const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
-            combinedBlocked.includes(participant.email?.toLowerCase() || "")
-          );
-          if (hasBlockedUser) {
-            toast.error("Group unavailable");
-            return;
-          }
+      if (!userId) {
+        toast.error("Group unavailable");
+        return;
+      }
+      const combinedBlocked = await getUserBlockedEmails(userId);
+      if (combinedBlocked.length > 0) {
+        const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
+          combinedBlocked.includes(participant.email?.toLowerCase() || "")
+        );
+        if (hasBlockedUser) {
+          toast.error("Group unavailable");
+          return;
         }
       }
 
@@ -155,9 +114,8 @@ useEffect(() => {
       if (!details.id) {
         return;
       }
-      const groupDocRef = doc(db, "StudyGroups", details.id);
-      const groupDocSnap = await getDoc(groupDocRef);
-      if (!groupDocSnap.exists()) {
+      const existingGroup = await getStudyGroup(details.id);
+      if (!existingGroup) {
         toast.error("Group unavailable");
         return;
       }
@@ -166,11 +124,7 @@ useEffect(() => {
       if (calendarAuthPromise) {
         await calendarAuthPromise;
       }
-      if (userId) {
-        eventId = (await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId)) ?? "None";
-      } else {
-        eventId = "None";
-      }
+      eventId = (await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId)) ?? "None";
 
       // update group with new participant
       const newParticipant = {
@@ -179,18 +133,11 @@ useEffect(() => {
         email: user?.emailAddresses[0]?.emailAddress ?? userId,
         eventId
       }
-      await updateDoc(groupDocRef, {
-        participantDetails: arrayUnion(newParticipant),
+      await addParticipantToGroup({
+        groupId: details.id,
+        userId,
+        participant: newParticipant,
       });
-
-      // update user with new group
-      await setDoc(
-        usersDocRef,
-        {
-          joinedGroups: arrayUnion(currentDetails.id),
-        },
-        { merge: true },
-      );
       toast.success("Joined group");
       posthog.capture('group_joined', { group: currentDetails })
       
@@ -204,34 +151,26 @@ useEffect(() => {
       if (!details.id) {
         return;
       }
-      const groupDocRef = doc(db, "StudyGroups", details.id);
-      const groupDocSnap = await getDoc(groupDocRef);
-
-      if (!groupDocSnap.exists()) {
+      const groupData = await getStudyGroup(details.id);
+      if (!groupData) {
         toast.error("Group unavailable");
         return;
       }
 
-      const groupData = groupDocSnap.data() as groupDetails;
       const userEmail = user?.emailAddresses[0]?.emailAddress ?? userId;
+      if (!userId || !userEmail) {
+        toast.error("Group unavailable");
+        return;
+      }
       const participant = groupData.participantDetails.find(
         (participantDetail) => participantDetail.email === userEmail,
       );
       const eventIdToDelete = participant?.eventId ?? eventIdState;
-      const remainingParticipants = groupData.participantDetails.filter(
-        (participantDetail) => participantDetail.email !== userEmail,
-      );
-
-      await updateDoc(groupDocRef, {
-        participantDetails: remainingParticipants,
+      const remainingParticipants = await removeParticipantFromGroup({
+        group: groupData,
+        userId,
+        userEmail,
       });
-      await setDoc(
-        usersDocRef,
-        {
-          joinedGroups: arrayRemove(currentDetails.id),
-        },
-        { merge: true },
-      );
       toast.success("Left group");
       joinedSetState(!joinedState);
       updateJoinedGroups((prev) => {
@@ -244,7 +183,7 @@ useEffect(() => {
         await calendarAuthPromise;
       }
 
-      if (eventIdToDelete && eventIdToDelete != "None") {
+      if (eventIdToDelete && eventIdToDelete !== "None") {
         await deleteFromCal(eventIdToDelete);
       } else {
         toast("Could not delete from calendar", {
@@ -259,7 +198,6 @@ useEffect(() => {
 
       const onlyMember = remainingParticipants.length === 0;
       if (onlyMember) {
-        await deleteDoc(groupDocRef);
         onClick();
         posthog.capture('group_emptied', { group: currentDetails })
       }

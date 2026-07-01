@@ -1,26 +1,33 @@
 "use client";
 import GroupDetails from "~/features/groups/components/GroupDetails";
 import groupDetails from "~/types";
-import React, { useEffect, useState } from "react";
-import { db } from "~/lib/api/firebaseConfig";
-import { collection, query, onSnapshot, doc } from "firebase/firestore";
+import React, { useState } from "react";
 import { useUser } from "~/lib/auth-client";
-import { formatDateTime, isInThePast } from "~/helpers/date_helper";
-import { MultiValue } from "react-select";
+import { formatDateTime } from "~/helpers/date_helper";
+import type { MultiValue } from "react-select";
 import TopFilterBar from "~/features/groups/components/FilterBar";
 import { useDispatch } from "react-redux";
-import {
-  setIsCreateGroupModalOpen,
-} from "~/lib/features/uiSlice";
+import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import { usePostHog } from 'posthog-js/react'
 
-import { BlockedUsers } from "~/features/profile/components/BlockList";
 import Card from "~/features/groups/components/Card";
+import { groupCardColors, groupLocationOptions } from "~/features/groups/constants";
+import { useStudyGroups } from "~/features/groups/hooks/useStudyGroups";
+import { useUserGroupState } from "~/features/groups/hooks/useUserGroupState";
+import { shouldHideFeedGroup } from "~/features/groups/utils/groupFilters";
+import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
 
 
 export default function FeedPage() {
-  const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
+  const userId = user?.emailAddresses[0]?.emailAddress;
+  const groups = useStudyGroups(Boolean(user));
+  const { classes: userClasses } = useUserCourses(userId);
+  const classOptions = userClasses.map((course) => ({
+    value: course.courseID,
+    label: course.courseID,
+  }));
+  const { joinedGroups, setJoinedGroups, blockedUsers } = useUserGroupState(userId);
   const [selectedCourses, setSelectedCourses] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);
@@ -28,82 +35,18 @@ export default function FeedPage() {
     MultiValue<{ value: string; label: string }>
   >([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [classes, setClasses] = useState<{ value: string; label: string }[]>(
-    [],
-  );
-  const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState<groupDetails | null>(null);
   const [showFullFilter, setShowFullFilter] = useState<boolean>(false);
-  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
-  const cardColorMapping = new Map<boolean, [string, string]>([
-    [true, ['lightAccent', "darkAccent"]],
-    [false, ["lightSidebar", "darkSidebar"]],
-  ]);
   const dispatch = useDispatch();
   const posthog = usePostHog()
 
-  const handleCardClick = (group: any) => {
+  const handleCardClick = (group: groupDetails) => {
     setSelectedGroup(group.id);
     setShowDetails(group);
     posthog.capture('group_clicked', { group: group })
   }
-  const shouldFilter = (group: groupDetails) => {
-    const isFull = group.participantDetails.length >= group.totalSeats;
-    const isParticipant = joinedGroups?.includes(group.id);
-    const groupDate = group.startTime.toDate();
 
-    // Uncomment to filter out any groups for classes user is not in
-    // if (classes.length > 0) {
-    //   if (!classes.some((entry) => entry.value === group.course)) {
-    //     return true;
-    //   }
-    // }
-
-    
-    // Filter out groups with blocked users
-    if (blockedUsers.length > 0) {
-      const hasBlockedUser = group.participantDetails.some((participant) =>
-        blockedUsers.includes(participant.email?.toLowerCase() || "")
-      );
-      if (hasBlockedUser) {
-        return true;
-      }
-    }
-    
-    if (isFull && !showFullFilter && !isParticipant) {
-      return true;
-    }
-    if (isInThePast(group.startTime)) return true;
-
-    console.log(selectedDate);
-
-    if (selectedDate) {
-      if (
-        groupDate.getDate() !== selectedDate.getDate() ||
-        groupDate.getMonth() !== selectedDate.getMonth() ||
-        groupDate.getFullYear() !== selectedDate.getFullYear()
-      ) {
-        return true;
-      }
-    }
-    if (selectedLocations.length > 0) {
-      if (!selectedLocations.some((entry) => entry.value === group.location)) {
-        return true;
-      }
-    }
-    if (selectedCourses.length > 0) {
-      if (!selectedCourses.some((entry) => entry.value === group.course)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  /*
-  Stops showing study group details and resets the selected group to null, removing the 
-  border on selected cards.
-  */
   const closeDetailsPopUp = () => {
     setShowDetails(null);
     setSelectedGroup(null);
@@ -113,83 +56,21 @@ export default function FeedPage() {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
-  useEffect(() => {
-    if (!user) return;
-    
-    const classesRef = collection(db, "StudyGroups");
-    const q = query(classesRef);
-
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const updatedGroups = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-        }));
-        updatedGroups.sort((a, b) => a.startTime - b.startTime);
-        setGroups(updatedGroups);
-      },
-      (error) => {
-        console.error("Error getting documents: ", error);
-      },
-    );
-
-    return () => unsubscribe();
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const userId = user?.emailAddresses[0]?.emailAddress;
-    if (!userId) {
-      return;
-    }
-    const usersDocRef = doc(db, "Users", userId);
-    const classesRef = collection(usersDocRef, "Classes");
-    const q = query(classesRef);
-
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const classOptions = querySnapshot.docs.map((doc) => ({
-          value: doc.id,
-          label: doc.id,
-        }));
-        setClasses(classOptions);
-      },
-      (error) => {
-        console.error("Error getting documents: ", error);
-      },
-    );
-    return () => unsubscribe();
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const userId = user.emailAddresses[0]?.emailAddress;
-  
-    if (!userId) {
-      return;
-    }
-    const userDocRef = doc(db, "Users", userId);
-    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setJoinedGroups(data.joinedGroups || []);
-        
-        // Get blocked users (where blockedByMe is true)
-        const blocked: BlockedUsers = data.blocked || {blockedByMe: [], blockedByThem: []};
-        const combinedBlocked = blocked.blockedByMe.concat(blocked.blockedByThem)
-        setBlockedUsers(combinedBlocked);
-      }
-    });
-  
-    return () => unsubscribe();
-  }, [user]);
-
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
     const isInGroup = joinedGroups ? joinedGroups.includes(group.id) : false;
-    const [lightColor, darkColor] = cardColorMapping.get(group.id === selectedGroup)!;
-    if (shouldFilter(group)) return;
+    const cardColors = group.id === selectedGroup
+      ? groupCardColors.selected
+      : groupCardColors.default;
+    if (shouldHideFeedGroup({
+      group,
+      joinedGroups,
+      blockedUsers,
+      showFullFilter,
+      selectedDate,
+      selectedLocationValues: selectedLocations.map((location) => location.value),
+      selectedCourseValues: selectedCourses.map((course) => course.value),
+    })) return;
     return (
       <Card
         onClick={() => handleCardClick(group)}
@@ -197,8 +78,8 @@ export default function FeedPage() {
         time={formattedTime}
         date={formattedDate}
         isInGroup={isInGroup}
-        lightColor={lightColor}
-        darkColor={darkColor}
+        lightColor={cardColors.light}
+        darkColor={cardColors.dark}
       />
     );
   });
@@ -212,29 +93,14 @@ export default function FeedPage() {
     </div>
   )
 
-  const locationOptions = [
-    { value: "Gates", label: "Gates" },
-    { value: "Wean", label: "Wean" },
-    { value: "Zoom", label: "Zoom" },
-    { value: "Doherty", label: "Doherty" },
-    { value: "Posner", label: "Posner" },
-    { value: "Porter", label: "Porter" },
-    { value: "Mudge", label: "Mudge" },
-    { value: "Stever", label: "Stever" },
-    { value: "Hammerschlag", label: "Hammerschlag" },
-  ];
-
-  let showNone = true;
-  displayScheduled.forEach( (group) => {
-    if (group != undefined) showNone = false;
-  })
+  const showNone = displayScheduled.every((group) => group === undefined);
 
   return (
     
     <main className="container relative h-screen">
   <TopFilterBar
-    courseOptions={classes}
-    locationOptions={locationOptions}
+    courseOptions={classOptions}
+    locationOptions={groupLocationOptions}
     selectedCourses={selectedCourses}
     setSelectedCourses={setSelectedCourses}
     selectedLocations={selectedLocations}
