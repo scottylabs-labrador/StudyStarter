@@ -113,7 +113,7 @@ const Courses: React.FC = () => {
 
   return (
     <div className="p-0">
-      <h1 className="text-black dark:text-white text-xl font-bold mb-2">Search Courses</h1>
+      <h1 className="section-heading">Search Courses</h1>
 
       {/* Search Bar */}
       <input
@@ -122,7 +122,7 @@ const Courses: React.FC = () => {
         value={searchQuery}
         onChange={handleSearch}
         onKeyDown={handleSearchKeyDown}
-        className="text-black border border-gray-300 rounded p-2 w-full mb-0 bg-lightInput dark:bg-darkInput"
+        className="course-search-input"
         id="searchBar"
       />
 
@@ -133,21 +133,14 @@ const Courses: React.FC = () => {
             <li className="flex items-center my-2" key={course.id}>
               <button
                 onClick={async () => await addClass(course)}
-                className="text-black dark:text-white hover:text-lightSelected dark:hover:text-darkSelected text-l px-2 py-1 rounded focus:outline-none flex items-center w-full"
+                className="course-search-result"
               >
                 {/* '+' Symbol */}
                 <span className="mr-2 text-xl flex-shrink-0">+</span>
 
                 {/* Course Text */}
                 <span
-                  className="font-medium text-left"
-                  style={{
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    display: 'block', // Ensures block behavior inside flex
-                    flexGrow: 1, // Allows the text to use remaining space
-                  }}
+                  className="course-search-text"
                   title={`${course.courseID} ${course.name}`} // Adds tooltip for full name
                 >
                   {course.courseID} {course.name}
@@ -208,8 +201,8 @@ export function ClassList() {
         {classes.map((cls) => (
           <li
             key={cls.id}
-            className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-full flex justify-between items-center">
-            <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
+            className="class-list-item">
+            <div className="class-list-text">
               <strong>{cls.courseID}</strong> - {cls.name}
             </div>
             <button

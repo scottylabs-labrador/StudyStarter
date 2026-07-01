@@ -6,16 +6,16 @@ import "~/styles/globals.css";
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen flex justify-center items-start bg-gradient-to-b from-lightbg to-lightSidebar dark:from-darkbg dark:to-darkSidebar px-6 py-16">
-      <div className="max-w-3xl w-full backdrop-blur-xl bg-white/60 dark:bg-black/40 border border-white/30 dark:border-white/10 shadow-2xl rounded-3xl p-10 sm:p-14 transition-all duration-300">
-        <h1 className="text-5xl font-extrabold mb-4 text-center tracking-tight bg-gradient-to-r from-lightSelected to-blue-500 dark:from-darkSelected dark:to-purple-400 bg-clip-text text-transparent">
+    <main className="privacy-page">
+      <div className="privacy-card">
+        <h1 className="privacy-title">
           Privacy Policy
         </h1>
         <p className="text-sm text-center mb-12 opacity-70">
           Effective Date: November 1, 2025
         </p>
 
-        <section className="space-y-10 leading-relaxed text-black dark:text-gray-200">
+        <section className="privacy-content">
           <p className="text-lg opacity-90 text-center">
             <strong>CMU Study</strong> (“we,” “our,” or “the app”) uses the Google
             Calendar API solely to help users create and manage study-related

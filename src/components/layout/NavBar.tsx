@@ -101,8 +101,8 @@ export default function NavBar() {
 
   return (
     <Fragment>
-      <div className="hidden md:block left-0 top-0 flex-none w-[12vw] h-full bg-lightSidebar dark:bg-darkSidebar">
-      <div className="grid grid-rows-[auto,1fr,auto] h-screen gap-y-6 overflow-hidden bg-lightbg dark:bg-darkbg md:bg-lightSidebar md:dark:bg-darkSidebar px-4 pt-[50px] text-black dark:text-white">
+      <div className="sidebar-shell">
+      <div className="sidebar-content">
         {/* Top Section */}
         <div>
           <div className="flex flex-row items-center w-full">
@@ -131,10 +131,10 @@ export default function NavBar() {
 
         {/* Middle Section (Navigation Buttons) - Hidden on small screens */}
         <div className="hidden md:flex flex-col gap-y-4">
-          <a href="/feed" className={`w-full text-center py-2 rounded-lg ${page == "feed" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
+          <a href="/feed" className={`nav-link ${page == "feed" ? "nav-link-active" : ""}`}>
             Group Finder
           </a>
-          <a href="/my-groups" className={`w-full text-center py-2 rounded-lg ${page == "my-groups" ? "font-bold text-lightSelected dark:text-darkSelected" : ""}`}>
+          <a href="/my-groups" className={`nav-link ${page == "my-groups" ? "nav-link-active" : ""}`}>
             My Groups
           </a>
           {/* <button
@@ -145,7 +145,7 @@ export default function NavBar() {
           </button> */}
           <button
             onClick={toggleTheme}
-            className="w-full rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg py-2 modeButton"
+            className="button-inverse w-full modeButton"
             id="mode"
           >
             Light Mode
@@ -155,7 +155,7 @@ export default function NavBar() {
 
         {/* Bottom Section (Feedback Button) - Hidden on small screens */}
         <div className="hidden md:block pb-4">
-          <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="block w-full rounded-lg px-2 py-2 font-bold text-center bg-lightButton dark:bg-darkButton text-black dark:text-white">
+          <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="button-primary block w-full text-center">
               Feedback
           </a>
           <a 
@@ -172,8 +172,8 @@ export default function NavBar() {
 
       {/* Drawer Menu */}
       {isDrawerOpen && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsDrawerOpen(false)}>
-        <div className="fixed left-0 top-0 h-full w-44 bg-lightSidebar dark:bg-darkSidebar p-4 shadow-lg flex flex-col justify-between" onClick={(e) => e.stopPropagation()}>
+        <div className="mobile-drawer-backdrop" onClick={() => setIsDrawerOpen(false)}>
+        <div className="mobile-drawer-panel" onClick={(e) => e.stopPropagation()}>
           <div>
             <button onClick={() => setIsDrawerOpen(false)} className="mb-4 text-black dark:text-white">
               <X size={24}/>
@@ -201,21 +201,17 @@ export default function NavBar() {
               <a href="/my-groups" className={page === "my-groups" ? "font-bold text-lightSelected dark:text-darkSelected" : "text-black dark:text-white"}>
                 My Groups
               </a>
-              {/* <button onClick={handleCreateGroupClick} className="rounded-lg px-2 py-1 font-bold bg-lightButton dark:bg-darkButton text-black dark:text-white">
-                + Create
-              </button> */}
               <button onClick={toggleTheme} className="rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
                 Dark Mode
               </button>
               <div
                 ref={profileMenuRef}
-                className="fixed right-6 top-4 flex items-center"
-                style={{ zIndex: 1000 }}
+                className="drawer-profile-menu-container"
               >
                 <button
                   type="button"
                   onClick={() => setIsProfileMenuOpen((prev) => !prev)}
-                  className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+                  className="avatar-button"
                   aria-haspopup="menu"
                   aria-expanded={isProfileMenuOpen}
                 >
@@ -226,10 +222,10 @@ export default function NavBar() {
                   />
                 </button>
                 {isProfileMenuOpen && (
-                  <div className="absolute right-0 top-12 w-40 overflow-hidden rounded-lg border border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg shadow-lg">
+                  <div className="profile-menu">
                     <a
                       href="/profile"
-                      className="block px-4 py-2 text-sm text-black dark:text-white hover:bg-lightButton dark:hover:bg-darkButton transition"
+                      className="profile-menu-item"
                       onClick={() => setIsProfileMenuOpen(false)}
                     >
                       Profile
@@ -237,7 +233,7 @@ export default function NavBar() {
                     <SignOutButton>
                       <button
                         type="button"
-                        className="block w-full px-4 py-2 text-left text-sm text-black dark:text-white hover:bg-lightButton dark:hover:bg-darkButton transition"
+                        className="profile-menu-item"
                       >
                         Logout
                       </button>
@@ -250,7 +246,7 @@ export default function NavBar() {
       
           {/* Feedback Button */}
           <div className="pb-4">
-            <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="block w-full rounded-lg px-2 py-2 font-bold text-center bg-lightButton dark:bg-darkButton text-black dark:text-white">
+            <a href='https://forms.gle/MEQ7miCZCrC48P6y8' target="_blank" rel="noopener noreferrer" className="feedback-link">
               Feedback
             </a>
             <a 

@@ -24,7 +24,7 @@ export default {
       'lightText': '#000000', // black
       'darkText': '#FFFFFF', // white
 
-      //light mode
+      // light mode
       'lightbg': '#f0f9fc',
       'lightSidebar': '#DDEAF0', // sidebar, unselected cards
       'lightAccent': '#95d1f0',  // selected card, details, createGroup bg

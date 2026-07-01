@@ -22,9 +22,9 @@ export default async function ContentLayout({
   }
 
   return (
-    <div className="flex h-screen w-screen bg-lightbg dark:bg-darkbg">
-      <div className="flex-1 overflow-auto">
-        <main className="container mx-auto px-4 py-8">
+    <div className="app-shell">
+      <div className="app-content">
+        <main className="app-main-padded">
           {children}
         </main>
       </div> 

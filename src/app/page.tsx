@@ -23,11 +23,11 @@ export default function HomePage() {
   }, [user, router]);
 
   return (
-    <div className="min-h-screen bg-lightbg dark:bg-darkbg">
+    <div className="landing-page">
       <SignedOut>
-        <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12">
+        <div className="landing-content">
           {/* Hero Section */}
-          <div className="max-w-4xl w-full text-center mb-16">
+          <div className="landing-hero">
             <div className="mb-8 flex justify-center">
               <Image
                 className="hidden dark:block"
@@ -47,21 +47,21 @@ export default function HomePage() {
               />
             </div>
             
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
+            <h1 className="landing-title">
               Find Your Study Group
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-black dark:text-white">
+            <p className="landing-subtitle">
               Connect with CMU students. Create, find, and join study groups for your classes.
             </p>
             
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <div className="landing-actions">
               <SignInButton mode="modal" forceRedirectUrl="/login">
-                <button className="px-8 py-4 text-lg font-bold rounded-lg bg-lightButton dark:bg-darkButton text-black dark:text-white hover:bg-lightSelected dark:hover:bg-darkSelected transition-colors shadow-lg hover:shadow-xl">
+                <button className="button-large">
                   Create Account
                 </button>
               </SignInButton>
               <SignInButton mode="modal" forceRedirectUrl="/login">
-                <button className="px-8 py-4 text-lg font-bold rounded-lg bg-lightButton dark:bg-darkButton text-black dark:text-white hover:bg-lightSelected dark:hover:bg-darkSelected transition-colors shadow-lg hover:shadow-xl">
+                <button className="button-large">
                   Sign in
                 </button>
               </SignInButton>
@@ -69,81 +69,81 @@ export default function HomePage() {
           </div>
 
           {/* Features Section */}
-          <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="feature-grid">
             {/* Feature 1 */}
-            <div className="bg-lightSidebar dark:bg-darkSidebar rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-lightButton dark:bg-darkButton mb-4 mx-auto">
+            <div className="feature-card">
+              <div className="feature-icon">
                 <PlusCircle className="w-8 h-8 text-black dark:text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-center text-black dark:text-white">
+              <h3 className="feature-title">
                 Create Groups
               </h3>
-              <p className="text-black dark:text-white text-center">
+              <p className="feature-copy">
                 Easily create study groups for your classes. Set the time, location, and purpose.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-lightSidebar dark:bg-darkSidebar rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-lightButton dark:bg-darkButton mb-4 mx-auto">
+            <div className="feature-card">
+              <div className="feature-icon">
                 <Search className="w-8 h-8 text-black dark:text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-center text-black dark:text-white">
+              <h3 className="feature-title">
                 Find Groups
               </h3>
-              <p className="text-black dark:text-white text-center">
+              <p className="feature-copy">
                 Search and filter study groups by course, or date to find the perfect match.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-lightSidebar dark:bg-darkSidebar rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-lightButton dark:bg-darkButton mb-4 mx-auto">
+            <div className="feature-card">
+              <div className="feature-icon">
                 <Users className="w-8 h-8 text-black dark:text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-center text-black dark:text-white">
+              <h3 className="feature-title">
                 Join & Collaborate
               </h3>
-              <p className="text-black dark:text-white text-center">
+              <p className="feature-copy">
                 Join study groups and collaborate with other CMU students to achieve your academic goals.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-lightSidebar dark:bg-darkSidebar rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-lightButton dark:bg-darkButton mb-4 mx-auto">
+            <div className="feature-card">
+              <div className="feature-icon">
                 <BookOpen className="w-8 h-8 text-black dark:text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-center text-black dark:text-white">
+              <h3 className="feature-title">
                 Manage Classes
               </h3>
-              <p className="text-black dark:text-white text-center">
+              <p className="feature-copy">
                 Organize your study groups by class and track all your academic commitments in one place.
               </p>
             </div>
 
             {/* Feature 5 */}
-            <div className="bg-lightSidebar dark:bg-darkSidebar rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-lightButton dark:bg-darkButton mb-4 mx-auto">
+            <div className="feature-card">
+              <div className="feature-icon">
                 <MapPin className="w-8 h-8 text-black dark:text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-center text-black dark:text-white">
+              <h3 className="feature-title">
                 CMU Locations
               </h3>
-              <p className="text-black dark:text-white text-center">
+              <p className="feature-copy">
                 Meet at popular CMU locations like Gates, Wean, Doherty, or join virtual sessions on Zoom.
               </p>
             </div>
 
             {/* Feature 6 */}
-            <div className="bg-lightSidebar dark:bg-darkSidebar rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-lightButton dark:bg-darkButton mb-4 mx-auto">
+            <div className="feature-card">
+              <div className="feature-icon">
                 <Calendar className="w-8 h-8 text-black dark:text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-center text-black dark:text-white">
+              <h3 className="feature-title">
                 Schedule Sessions
               </h3>
-              <p className="text-black dark:text-white text-center">
+              <p className="feature-copy">
                 Plan your study sessions with clear dates and times. Never miss an important study group again.
               </p>
             </div>
@@ -155,7 +155,7 @@ export default function HomePage() {
               href="/privacy" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-black dark:text-white hover:text-lightSelected dark:hover:text-darkSelected transition-colors underline"
+              className="text-link-subtle"
             >
               Privacy Policy
             </a>

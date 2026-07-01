@@ -49,8 +49,6 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   );
   const posthog = usePostHog()
 
-  // var viewUser = null;
-
   const handleViewProfileClick = (event) => {
     setViewUser(event.currentTarget.getAttribute('data-username'));
     setViewEmail(event.currentTarget.getAttribute('data-email'));
@@ -276,15 +274,15 @@ useEffect(() => {
     currentDetails.startTime,
   );
   return (
-    <div ref={cardRef} style={{ maxHeight }}className="my-3 max-w-sm overflow-auto rounded-xl bg-lightAccent dark:bg-darkAccent px-6 shadow-lg text-black dark:text-white">
+    <div ref={cardRef} style={{ maxHeight }} className="group-details-card">
       
       {/* Title */}
-      <div className="py-4 font-['Verdana'] text-[35px] sticky top-0 bg-lightAccent dark:bg-darkAccent flex items-start justify-between">
-        <p className="whitespace-normal break-words flex-1 min-w-0">{currentDetails.title}</p>
+      <div className="group-details-header">
+        <p className="group-details-title">{currentDetails.title}</p>
         {/* Edit Group */}
         {joinedState && currentDetails.participantDetails.length === 1 ? (
           <button
-            className="mb-[-12px] me-5 mt-3 text-xl font-bold"
+            className="group-details-action"
             onClick={() => dispatch(setIsEditGroupModalOpen(true))}
             aria-label="Edit group"
           >
@@ -294,7 +292,7 @@ useEffect(() => {
           <div></div>
         )}
         {/* Close Button */}
-        <button className="mb-[-12px] me-5 mt-3 text-xl font-bold" onClick={onClick}>
+        <button className="group-details-action" onClick={onClick}>
           <big>&times;</big>
         </button>
         
@@ -302,22 +300,22 @@ useEffect(() => {
 
       <div id="group_info_popup_body" className="pb-20">
         {/* GroupDetails Body */}
-        <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
+        <p className="group-details-text">
           <strong>Course:</strong> {currentDetails.course}
         </p>
-        <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
+        <p className="group-details-text">
           <strong>Purpose</strong>: {currentDetails.purpose}
         </p>
-        <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
+        <p className="group-details-text">
           <strong>Time</strong>: {formattedTime}
         </p>
-        <p className="card-text font-['Verdana'] text-[20px] whitespace-normal break-words">
+        <p className="group-details-text">
           <strong>Date</strong>: {formattedDate}
         </p>
-        <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
+        <p className="group-details-text">
           <strong>Location:</strong> {currentDetails.location}
         </p>
-        <p className="font-['Verdana'] text-[20px] whitespace-normal break-words">
+        <p className="group-details-text">
           <strong>Participants:</strong>{" "}
           {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
           <button
@@ -330,24 +328,24 @@ useEffect(() => {
 
         {/* Participant List */}
         {participantsState && (
-          <div className="h-40 overflow-y-scroll p-[10px]">
+          <div className="participant-list">
             {currentDetails.participantDetails.map((participantDetail, index) => (
-              <div key={index} className="flex items-center p-[5px]">
+              <div key={index} className="participant-row">
                 <button
                   onClick={handleViewProfileClick}
-                  className = "flex items-center p-[5px]"
+                  className="participant-row"
                   data-username={participantDetail.name}
                   data-email={participantDetail.email}
                   >
                   <img
-                    className="h-[2rem] w-[2rem] rounded-full"
+                    className="participant-avatar"
                     src={participantDetail.url}
                   />
                   {/* <p className="indent-[1rem]"><strong className="indent-[2rem] font-['Verdana'] text-[16px]">
                     Name: 
                   </strong>{" "}
                   {" "+participantDetail.name}</p> */}
-                  <p className="indent-[0.5rem] font-['Verdana'] text-[16px]">
+                  <p className="participant-name">
                     {participantDetail.name.split(" ")[0]}
                   </p>
                 </button>
@@ -357,8 +355,8 @@ useEffect(() => {
         )}
 
         {/* Details Section */}
-        <strong className="font-['Verdana'] text-[20px]">Details:</strong>
-        <div className="mx-auto mb-1 mt-[1px] h-[4rem] max-w-[25rem] rounded-[10px] p-[3px]">
+        <strong className="group-details-text">Details:</strong>
+        <div className="group-details-freeform">
           {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
         </div>
 
@@ -367,10 +365,10 @@ useEffect(() => {
 
       {/* Join Button */}
         <button id="card_info_join_btn"
-          className={`sticky bottom-4 float-end mt-3 w-[100px] rounded-[26px] p-[10px]  ${
+          className={`join-button ${
             joinedState
-              ? " bg-lightSelected dark:bg-darkSelected text-white"
-              : "text-black dark:text-white border-2"
+              ? "join-button-active"
+              : "join-button-inactive"
           }`}
           onClick={joinGroup}
         >

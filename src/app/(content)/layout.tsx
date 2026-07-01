@@ -80,11 +80,11 @@ export default async function ContentLayout({
   }
 
   return (
-    <div className="flex h-screen w-screen bg-lightbg dark:bg-darkbg">
+    <div className="app-shell">
       <NavBar />
-      <div className="flex-1 overflow-auto">     
+      <div className="app-content">     
         <MobileNavBar />
-        <main className="container mx-auto px-4 bg-lightbg dark:bg-darkbg">
+        <main className="app-main">
           {children}
         </main>
       </div> 

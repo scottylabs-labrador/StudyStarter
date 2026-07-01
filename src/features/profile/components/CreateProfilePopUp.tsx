@@ -60,7 +60,6 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
   getProfile();
 
   return ( 
-    // <div className="fixed inset-0 z-50 flex items-center justify-center y-50">
     <div className="absolute inset-0 z-50 flex items-center justify-center">
         <div className="w-96 rounded-lg p-6 bg-lightSidebar dark:bg-darkSidebar">
             <div className="flex items-center justify-between">

@@ -13,9 +13,6 @@ import Card from "~/features/groups/components/Card";
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useUser();
-  // if (user?.publicMetadata?.faculty === true) {
-  //   redirect("/faculty-restricted"); // block faculty
-  // }
   const [selectedCourses, setSelectedCourses] = useState<
     MultiValue<{ value: string; label: string }>
   >([]);
@@ -134,30 +131,6 @@ export default function FeedPage() {
         lightColor={"lightAccent"}
         darkColor={"darkAccent"}
       />
-      // <div
-      //   className="my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl px-6 py-4 shadow-lg bg-lightAccent dark:bg-darkAccent text-black dark:text-white"
-      //   onClick={() => setShowDetails(group)}
-      // >
-      //   <div className="mb-2 text-xl font-bold">{group.title}</div>
-      //   <ul style={{ display: "flex", flexDirection: "row" }}>
-      //     <li className="font-bold"> Course: &nbsp; </li>{" "}
-      //     <li>{group.course}</li>
-      //   </ul>
-      //   <ul style={{ display: "flex", flexDirection: "row" }}>
-      //     <li className="font-bold"> Purpose: &nbsp; </li>{" "}
-      //     <li>{group.purpose}</li>
-      //   </ul>
-      //   <ul style={{ display: "flex", flexDirection: "row" }}>
-      //     <li className="font-bold"> Time: &nbsp; </li> <li>{formattedTime}</li>
-      //   </ul>
-      //   <ul style={{ display: "flex", flexDirection: "row" }}>
-      //     <li className="font-bold"> Date: &nbsp; </li> <li>{formattedDate}</li>
-      //   </ul>
-      //   <ul style={{ display: "flex", flexDirection: "row" }}>
-      //     <li className="font-bold"> Location: &nbsp; </li>{" "}
-      //     <li>{group.location}</li>
-      //   </ul>
-      // </div>
     );
   });
 
@@ -216,10 +189,10 @@ export default function FeedPage() {
       {/* GroupDetails Section */}
       {showDetails && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 max-md:bg-black/50 md:bg-transparent md:static md:inset-auto md:z-auto md:flex-none md:bg-transparent md:p-0 md:block md:w-full lg:w-[100%] xl:w-[100%]"
+          className="details-overlay"
           onClick={(e) => e.target === e.currentTarget && setShowDetails(null)}
         >
-          <div className="w-full max-w-sm max-h-[90vh] overflow-auto md:max-h-none md:overflow-visible" onClick={(e) => e.stopPropagation()}>
+          <div className="details-overlay-inner" onClick={(e) => e.stopPropagation()}>
             <GroupDetails
               details={showDetails}
               onClick={() => setShowDetails(null)}

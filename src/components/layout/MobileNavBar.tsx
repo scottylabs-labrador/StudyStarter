@@ -17,10 +17,6 @@ export default function MobileNavBar() {
   const page = pathname.split("/")[1];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
-
-  // var [theme, setTheme] = useState("light")
-  // var theme = "light";
-  
   // Read theme from localStorage immediately to prevent flickering
   const getInitialTheme = () => {
     if (typeof window !== "undefined") {
@@ -127,7 +123,7 @@ export default function MobileNavBar() {
                                 My Groups
                             </a>
                             <div className="py-2 flex justify-between">
-                                <button onClick={toggleTheme} className="p-2 rounded-lg bg-darkbg dark:bg-lightbg text-lightbg dark:text-darkbg modeButton" id="mode">
+                                <button onClick={toggleTheme} className="button-inverse p-2 modeButton" id="mode">
                                     Dark Mode
                                 </button>
                             </div>

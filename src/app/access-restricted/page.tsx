@@ -11,8 +11,8 @@ import { redirect } from "next/navigation";
 export default function AccessRestrictedPage() {
   const { user } = useUser();
   return (
-    <div className="min-h-screen bg-lightbg dark:bg-darkbg flex items-center justify-center px-4">
-      <div className="max-w-3xl w-full text-center py-16">
+    <div className="center-page">
+      <div className="center-panel">
         
         {/* Logo */}
         <div className="mb-10 flex justify-center">
@@ -36,18 +36,18 @@ export default function AccessRestrictedPage() {
 
         {/* Icon */}
         <div className="flex justify-center mb-8">
-          <div className="flex items-center justify-center w-20 h-20 rounded-full bg-lightButton dark:bg-darkButton shadow-lg">
+          <div className="avatar-icon-large">
             <ShieldAlert className="w-10 h-10 text-black dark:text-white" />
           </div>
         </div>
 
         {/* Heading */}
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-black dark:text-white">
+        <h1 className="access-title">
           Access Restricted
         </h1>
 
         {/* Message */}
-        <p className="text-lg md:text-xl text-black dark:text-white leading-relaxed">
+        <p className="access-message">
           This platform is intended exclusively for CMU students.
           <br />
           Faculty members are not permitted to access or use this application.
@@ -56,7 +56,7 @@ export default function AccessRestrictedPage() {
         <div className="ml-auto">
           <SignOutButton>
             <button
-              className="px-4 py-2 bg-gray-200 text-black dark:text-white font-bold rounded-lg bg-lightButton dark:bg-darkButton"
+              className="button-primary"
             >
               Home
             </button>
@@ -68,7 +68,7 @@ export default function AccessRestrictedPage() {
         If you believe you reached this page in error, please contact{" "}
         <a
           href="mailto:cmustudy.help@gmail.com?subject=Access%20Restriction%20Issue"
-          className="underline hover:text-lightSelected dark:hover:text-darkSelected transition-colors"
+          className="inline-link"
         >
           cmustudy.help@gmail.com
         </a>

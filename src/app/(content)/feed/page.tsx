@@ -187,9 +187,6 @@ export default function FeedPage() {
 
   const displayScheduled = groups.map((group) => {
     const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-    // const [lightColor, darkColor] = cardColorMapping.get(
-    //   joinedGroups ? joinedGroups.includes(group.id) : false,
-    // )!;
     const isInGroup = joinedGroups ? joinedGroups.includes(group.id) : false;
     const [lightColor, darkColor] = cardColorMapping.get(group.id === selectedGroup)!;
     if (shouldFilter(group)) return;
@@ -203,38 +200,11 @@ export default function FeedPage() {
         lightColor={lightColor}
         darkColor={darkColor}
       />
-      // <div
-      //   className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white`}
-      //   onClick={() => handleCardClick(group)}
-      // >
-      //   <div className="mb-2 text-xl font-bold truncate">{group.title}</div>
-      //   <ul className="flex flex-row min-w-0">
-      //     <li className="font-bold flex-shrink-0"> Course: &nbsp; </li>
-      //     <li className="truncate flex-1">{group.course}</li>
-      //   </ul>
-      //   <ul className="flex flex-row min-w-0">
-      //     <li className="font-bold flex-shrink-0"> Purpose: &nbsp; </li>
-      //     <li className="truncate flex-1">{group.purpose}</li>
-      //   </ul>
-      //   <ul style={{ display: "flex", flexDirection: "row" }}>
-      //     <li className="font-bold truncate"> Time: &nbsp; </li> <li>{formattedTime}</li>
-      //   </ul>
-      //   <ul style={{ display: "flex", flexDirection: "row" }}>
-      //     <li className="font-bold truncate"> Date: &nbsp; </li> <li>{formattedDate}</li>
-      //   </ul>
-      //   <ul className="flex flex-row min-w-0">
-      //     <li className="font-bold flex-shrink-0"> Location: &nbsp; </li>
-      //     <li className="truncate flex-1">{group.location}</li>
-      //   </ul>
-      //   {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
-      //     <li className="bg-joined text-joinedText px-3 py-1 rounded-md -mt-8">Joined</li>
-      //   </ul>}
-      // </div>
     );
   });
   displayScheduled.unshift(
     <div
-      className="text-center min-h-48 my-3 max-w-sm cursor-pointer text-lightAccent dark:text-darkAccent hover:border-lightSidebar hover:dark:border-darkSidebar hover:text-black hover:dark:text-white overflow-hidden border-4 shadow-lg border-dashed rounded-xl border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg px-6 py-4 hover:bg-lightSidebar hover:dark:bg-darkSidebar flex items-center justify-center"
+      className="create-card"
       
       onClick={handleCreateGroup}
     >
@@ -297,10 +267,10 @@ export default function FeedPage() {
       {/* GroupDetails Section: on mobile */}
       {showDetails && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 max-md:bg-black/50 md:static md:inset-auto md:z-auto md:flex-none md:bg-transparent md:p-0 md:block md:w-full lg:w-[100%] xl:w-[100%]"
+          className="details-overlay"
           onClick={(e) => e.target === e.currentTarget && closeDetailsPopUp()}
         >
-          <div className="w-full max-w-sm max-h-[90vh] overflow-auto md:max-h-none md:overflow-visible" onClick={(e) => e.stopPropagation()}>
+          <div className="details-overlay-inner" onClick={(e) => e.stopPropagation()}>
             <GroupDetails
               details={showDetails}
               onClick={() => closeDetailsPopUp()}
