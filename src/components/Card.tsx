@@ -1,32 +1,11 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import groupDetails from "~/types";
-import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/uiSlice";
-import { useUser } from "~/lib/auth-client";
-import CreateProfilePopUp from "./CreateProfilePopUp";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "~/lib/hooks";
-import {
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  doc,
-  getDoc,
-  onSnapshot,
-  increment,
-  setDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import { db } from "~/lib/api/firebaseConfig";
-import toast from "react-hot-toast";
-import { formatDateTime } from "~/helpers/date_helper";
-import EditGroupModal from "./EditGroupModal";
-import { addToCal, deleteFromCal, isCalendarApiReady, requestCalendarAccessInteractive, setupGoogleApi, hasCalendarAccess } from "~/helpers/calendar_helper";
+import type groupDetails from "~/types";
+
 interface Props {
   onClick: (g: groupDetails) => void;
   group: groupDetails;
-  time: String | null;
-  date: String | null;
+  time: string | null;
+  date: string | null;
   isInGroup: boolean;
   lightColor: string;
   darkColor: string;

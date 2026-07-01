@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import React, { useEffect, useState, forwardRef } from "react";
-import { db, usersRef } from "~/lib/api/firebaseConfig";
+import { db } from "~/lib/api/firebaseConfig";
 import {
   setDoc,
   doc,

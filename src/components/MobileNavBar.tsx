@@ -2,19 +2,10 @@
 import darkLogo from "~/image/darkLogo2.png"
 import lightLogo from "~/image/lightLogo2.png"
 import { Fragment, useState, useEffect } from "react";
-import UploadModal from "./UploadModal";
-import CreateGroupModal from "./CreateGroupModal";
-import { useDispatch } from "react-redux";
-import {
-  setIsModalOpen,
-  setIsCreateGroupModalOpen,
-} from "~/lib/features/uiSlice";
 import { usePathname } from "next/navigation";
-import { SignOutButton } from "~/lib/auth-client";
-import { useAppSelector } from "~/lib/hooks";
 import { useUser } from "~/lib/auth-client";
 import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 
@@ -22,8 +13,6 @@ import Image from 'next/image';
 export default function MobileNavBar() {
   const { user } = useUser();
   const userId = user?.emailAddresses[0]?.emailAddress;
-  const displayName = user?.fullName || user?.firstName || user?.username || "User";
-  const dispatch = useDispatch();
   const pathname = usePathname();
   const page = pathname.split("/")[1];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -32,15 +21,6 @@ export default function MobileNavBar() {
   // var [theme, setTheme] = useState("light")
   // var theme = "light";
   
-  const handleCreateGroupClick = () => {
-    dispatch(setIsCreateGroupModalOpen(true));
-  };
-
-  const isModalOpen = useAppSelector((state) => state.ui.isModalOpen);
-  const isCreateGroupModalOpen = useAppSelector(
-    (state) => state.ui.isCreateGroupModalOpen
-  );
-
   // Read theme from localStorage immediately to prevent flickering
   const getInitialTheme = () => {
     if (typeof window !== "undefined") {

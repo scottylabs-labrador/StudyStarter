@@ -2,21 +2,8 @@
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsViewProfileOpen } from "~/lib/features/uiSlice";
-import { useEffect, useState } from "react";
-import { db, usersRef } from "~/lib/api/firebaseConfig";
-import {
-  setDoc,
-  doc,
-  getDoc,
-  getDocs,
-  collection,
-  DocumentReference,
-  Timestamp,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
-import toast from "react-hot-toast";
-import { useUser } from "~/lib/auth-client";
+import { db } from "~/lib/api/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 
 
 interface CreateProfilePopUpProps {
