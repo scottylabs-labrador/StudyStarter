@@ -11,7 +11,7 @@ import { ConfirmProvider } from "~/components/ui/ConfirmContext";
 
 function ContinueButton() {
   return (
-    <a href="/feed" className="px-4 py-2 border-2 text-black dark:text-white hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
+    <a href="/feed" className="button-outline">
       Continue
     </a>
   )
@@ -19,14 +19,10 @@ function ContinueButton() {
 
 export default function ProfilePage() {
   const { user } = useUser();
-  // if (user?.publicMetadata?.faculty === true) {
-  //   redirect("/faculty-restricted"); // block faculty
-  // }
   const userId = user?.emailAddresses[0]?.emailAddress;
   const displayName = user?.fullName || user?.firstName || user?.username || "User";
   const startYear = new Date().getFullYear();
   const years = [(startYear).toString(), (startYear+1).toString(), (startYear+2).toString(), (startYear+3).toString(), (startYear+4).toString(), (startYear+5).toString()];
-  // const schools = ["CIT", "CFA", "Dietrich", "Heinz/IS"]
   var year = "default";
   var majors = "";
   var minors = "";
@@ -152,13 +148,13 @@ export default function ProfilePage() {
         )} 
         {user && !user.image && (
           <div
-            className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-black dark:text-white text-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+            className="avatar-fallback"
             >{user.firstName[0]}
           </div>
         )}
         {!user && (
           <div
-            className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-sm text-black dark:text-white shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+            className="avatar-label"
             >Profile
           </div>
         )}
@@ -180,7 +176,7 @@ export default function ProfilePage() {
         </select>
       </div> */}
       <div>
-        <select id="yearSelect" name="yearSelect" onChange={changeYear} className= "px-4 py-2 mt-3 w-full border-2 text-black bg-lightInput dark:bg-darkInput hover:bg-lightAccent dark:hover:bg-darkAccent hover:border-lightbg dark:hover:border-darkbg font-bold rounded-lg margintop-100">
+        <select id="yearSelect" name="yearSelect" onChange={changeYear} className="profile-select">
           <option disabled selected value={"default"}>Select Year</option>
           <option value={years[0]}>Class of {years[0]}</option>
           <option value={years[1]}>Class of {years[1]}</option>
@@ -195,10 +191,10 @@ export default function ProfilePage() {
       <br></br>
       <hr className="text-darkbg dark:text-lightbg"/>
       <br></br>
-      <h1 className="text-l font-bold mb-1 text-black dark:text-white">Majors:</h1>
+      <h1 className="text-l mb-1 font-bold text-black dark:text-white">Majors:</h1>
       <input
         id="majorInput"
-        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-full mb-0"
+        className="profile-input"
         type="text"
         onChange={changeMajors}
         placeholder="Add your major(s) here"
@@ -206,10 +202,10 @@ export default function ProfilePage() {
       />
       <br></br>
       <br></br>
-      <h1 className="text-l font-bold mb-1 text-black dark:text-white">Minors:</h1>
+      <h1 className="text-l mb-1 font-bold text-black dark:text-white">Minors:</h1>
       <input
         id="minorInput"
-        className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-full mb-3"
+        className="profile-input mb-3"
         type="text"
         onChange={changeMinors}
         placeholder="Add any minors or concentrations here"

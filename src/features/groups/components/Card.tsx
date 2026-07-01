@@ -13,32 +13,37 @@ interface Props {
 
 
 const Card = ({ onClick, group, time,  date, isInGroup, lightColor, darkColor }: Props) => {
+  const colorClassName =
+    lightColor === "lightAccent" && darkColor === "darkAccent"
+      ? "study-card-accent"
+      : "study-card-sidebar";
+
   return (
     <div
-        className={`my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl bg-${lightColor} dark:bg-${darkColor} px-6 py-4 shadow-lg text-black dark:text-white`}
+        className={`study-card ${colorClassName}`}
         onClick={() => onClick(group)}
       >
-        <div className="mb-2 text-xl font-bold truncate">{group.title}</div>
-        <ul className="flex flex-row min-w-0">
-          <li className="font-bold flex-shrink-0"> Course: &nbsp; </li>
-          <li className="truncate flex-1">{group.course}</li>
+        <div className="study-card-title">{group.title}</div>
+        <ul className="study-card-row">
+          <li className="study-card-label"> Course: &nbsp; </li>
+          <li className="study-card-value">{group.course}</li>
         </ul>
-        <ul className="flex flex-row min-w-0">
-          <li className="font-bold flex-shrink-0"> Purpose: &nbsp; </li>
-          <li className="truncate flex-1">{group.purpose}</li>
+        <ul className="study-card-row">
+          <li className="study-card-label"> Purpose: &nbsp; </li>
+          <li className="study-card-value">{group.purpose}</li>
         </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold truncate"> Time: &nbsp; </li> <li>{time}</li>
+        <ul className="study-card-row">
+          <li className="study-card-label"> Time: &nbsp; </li> <li>{time}</li>
         </ul>
-        <ul style={{ display: "flex", flexDirection: "row" }}>
-          <li className="font-bold truncate"> Date: &nbsp; </li> <li>{date}</li>
+        <ul className="study-card-row">
+          <li className="study-card-label"> Date: &nbsp; </li> <li>{date}</li>
         </ul>
-        <ul className="flex flex-row min-w-0">
-          <li className="font-bold flex-shrink-0"> Location: &nbsp; </li>
-          <li className="truncate flex-1">{group.location}</li>
+        <ul className="study-card-row">
+          <li className="study-card-label"> Location: &nbsp; </li>
+          <li className="study-card-value">{group.location}</li>
         </ul>
-        {isInGroup && <ul style={{ display: "flex", flexDirection: "row", justifyContent: "right"}}>
-          <li className="bg-joined text-joinedText px-3 py-1 rounded-md -mt-8">Joined</li>
+        {isInGroup && <ul className="joined-row">
+          <li className="joined-badge">Joined</li>
         </ul>}
       </div>
   );

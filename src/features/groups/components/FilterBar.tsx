@@ -16,7 +16,7 @@ const customSelectStyles = {
   control: (provided, state) => ({
     ...provided,
     backgroundColor: state.isFocused ? '#f0f5f7' : '#f0f5f7', // Background color for the select field
-    borderColor: state.isFocused ? 'black' : 'black', // Border color when focused/unfocused
+    borderColor: '#d1d5db', // Match profile input border color
     boxShadow: state.isFocused ? '0 0 0 1px #1a73e8' : 'none', // Box shadow on focus
     borderRadius: '4px', // Adjust border radius if needed
     padding: '4px', // Adjust padding for a better look
@@ -24,7 +24,6 @@ const customSelectStyles = {
   multiValue: (provided, state) => ({
     ...provided,
     backgroundColor: state.isFocused ? '#DDEAF0' : '#DDEAF0', // Background color for the selected option
-    // border: state.isFocused ? '1px solid #0f5132' : '1px solid #084298', // Border color for the selected option
     borderRadius: '5px', // Adjust border radius if needed
     padding: '2px', // Optional: Adjust padding for more spacing
   }),
@@ -67,7 +66,6 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
   selectedDate,
   setSelectedDate,
 }) => {
-  const [isFocused, setIsFocused] = useState(false); // State to track focus
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const { user } = useUser();
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
@@ -86,26 +84,16 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isProfileMenuOpen]);
-  // Handler for focus event
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  // Handle blur when calendar closes or input loses focus
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
   return (
-    <div className="sticky top-0 z-10 w-full border-b-darkbg dark:border-b-lightbg border-b bg-lightbg dark:bg-darkbg px-6 pt-6 pb-4">
-      <div className="flex space-x-4 justify-between w-full">
+    <div className="filter-bar">
+      <div className="filter-controls">
         <Select
           isMulti
           options={courseOptions}
           value={selectedCourses}
           onChange={setSelectedCourses}
           classNamePrefix="react-select"
-          className="mb-2 rounded flex-1"
+          className="filter-select"
           placeholder="Courses"
           styles={customSelectStyles}
           components={customSelectComponents} // remove x
@@ -114,33 +102,22 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
-          customInput={<input style={{ 
-            color: '#000', 
-            backgroundColor: isFocused ? '#f0f5f7' : '#f0f5f7', // Background color for the select field
-            borderColor: isFocused ? 'black' : 'black', // Border color when focused/unfocused
-            boxShadow: isFocused ? '0 0 0 1px #1a73e8' : 'none', // Box shadow on focus
-            borderRadius: '4px', // Adjust border radius if needed
-            padding: '11px' 
-          }} />} // Custom input styles
+          customInput={<input className="filter-date-input" />}
           popperClassName="custom-popper" // Class for popper customization
           placeholderText="Date"
-          onFocus={handleFocus} // Focus event handler
           classNamePrefix="react-datepicker"
-          className="mb-2 rounded flex-1"
-          onCalendarClose={handleBlur} // Calendar closed (treat as blur)
-          onBlur={handleBlur} // Trigger blur when input loses focus
+          className="filter-select"
         />
 
         {/* Profile Button - Hidden on small screens */}
         <div
           ref={profileMenuRef}
-          className="relative hidden md:flex items-center"
-          style={{ zIndex: 1000 }}
+          className="profile-menu-container"
         >
           <button
             type="button"
             onClick={() => setIsProfileMenuOpen((prev) => !prev)}
-            className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-black dark:text-white text-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+            className="avatar-button"
             aria-haspopup="menu"
             aria-expanded={isProfileMenuOpen}
           >{user && user.image && (
@@ -152,22 +129,22 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
           )} 
           {user && !user.image && (
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-black dark:text-white text-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+              className="avatar-fallback"
               >{user.firstName[0]}
             </div>
           )}
           {!user && (
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-darkAccent bg-lightButton text-sm text-black dark:text-white shadow-lg ring-1 ring-black/5 dark:ring-white/10 hover:ring-black/10 dark:hover:ring-white/20 transition"
+              className="avatar-label"
               >Profile
             </div>
           )}
           </button>
           {isProfileMenuOpen && (
-            <div className="absolute right-0 top-12 w-40 overflow-hidden rounded-lg border border-lightAccent dark:border-darkAccent bg-lightbg dark:bg-darkbg shadow-lg">
+            <div className="profile-menu">
               <a
                 href="/profile"
-                className="block px-4 py-2 text-sm text-black dark:text-white hover:bg-lightButton dark:hover:bg-darkButton transition"
+                className="profile-menu-item"
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 Profile
@@ -175,7 +152,7 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
               <SignOutButton>
                 <button
                   type="button"
-                  className="block w-full px-4 py-2 text-left text-sm text-black dark:text-white hover:bg-lightButton dark:hover:bg-darkButton transition"
+                  className="profile-menu-item"
                 >
                   Logout
                 </button>
@@ -183,14 +160,6 @@ const TopFilterBar: React.FC<TopFilterBarProps> = ({
             </div>
           )}
         </div>
-        {/* <input
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          className="mb-2 w-full rounded border px-2 bg-lightInput"// top-0 z-10 w-full border-b-darkbg dark:border-b-lightbg border-b bg-lightbg dark:bg-darkbg px-6 py-4
-          type="date"
-          placeholder="Date"
-          id="filterDate"
-        /> */}
       </div>
     </div>
   );

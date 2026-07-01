@@ -213,11 +213,11 @@ export function BlockList() {
   return (
     <div className="mt-8">
       <div className="p-0">
-        <h1 className="text-black dark:text-white text-xl font-bold mb-2">Block Users</h1>
+        <h1 className="section-heading">Block Users</h1>
         <form onSubmit={handleBlockSubmit}>
           <input
             id="blockInput"
-            className="text-black border border-gray-300 bg-lightInput dark:bg-darkInput rounded p-2 w-full mb-0"
+            className="course-search-input"
             type="text"
             pattern='[A-Za-z]*@andrew.cmu.edu'
             title='"<id>@andrew.cmu.edu"'
@@ -228,7 +228,7 @@ export function BlockList() {
           />
           <button
             type="submit"
-            className="bg-blue-500 w-full rounded bg-lightButton dark:bg-darkButton hover:bg-lightSelected dark:hover:bg-darkSelected px-4 py-2 font-bold text-black dark:text-white mt-2"
+            className="button-primary mt-2 w-full"
           >
             Block User
           </button>
@@ -242,13 +242,13 @@ export function BlockList() {
         {blocked.blockedByMe.map((blockedUser) => (
             <li
               key={blockedUser}
-              className="text-black dark:text-white bg-lightSidebar dark:bg-darkSidebar p-2 rounded w-full flex justify-between items-center">
-              <div className="truncate" style={{ maxWidth: "calc(100% - 2rem)" }}>
+              className="class-list-item">
+              <div className="class-list-text">
                 {blockedUser}
               </div>
               <button
                 onClick={() => handleUnblock(blockedUser)}
-                className="text-lightgray-500 text-xl hover:text-red-500"
+                className="unblock-button"
                 aria-label={`Unblock ${blockedUser}`}
               >
                 <strong>&times;</strong>

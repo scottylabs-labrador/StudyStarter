@@ -1,4 +1,5 @@
 import "~/styles/globals.css";
+import "~/styles/components.css";
 
 import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
@@ -32,7 +33,7 @@ export default function RootLayout({
                         document.documentElement.classList.add("dark");
                       }
                     } catch (e) {
-                      //console.error("Theme loading error:", e);
+                      console.error("Theme loading error:", e);
                     }
                   })();
                 `,
