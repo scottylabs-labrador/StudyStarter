@@ -15,11 +15,11 @@ const formatYear = (year?: string) => {
   return year.startsWith("2") ? `Class of ${year}` : year;
 };
 
-const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email }) => {
+function CreateProfilePopUp({ username, email }: CreateProfilePopUpProps) {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
   const profile = useProfileSummary(email, isOpen);
-  const firstName = username.split(" ")[0] || username;
+  const firstName = username.split(" ")[0] ?? username;
 
   const handleClose = () => {
     dispatch(setIsViewProfileOpen(false));
@@ -35,8 +35,10 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
             <h2 className="text-xl font-bold">
               <big>{firstName}</big>
             </h2>
-            <p className="text-l">{email}</p>
-            {profile.year && <p className="font-bold">{formatYear(profile.year)}</p>}
+            <p className="text-lg">{email}</p>
+            {profile.year && (
+              <p className="font-bold">{formatYear(profile.year)}</p>
+            )}
             {profile.majors && (
               <p>
                 <strong>Majors: </strong>
@@ -57,6 +59,6 @@ const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email
       </div>
     </div>
   );
-};
+}
 
 export default CreateProfilePopUp;

@@ -5,8 +5,8 @@ import { setIsEditGroupModalOpen } from "~/lib/features/uiSlice";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUser } from "~/lib/auth-client";
-import { usePostHog } from 'posthog-js/react'
-import groupDetails from "~/types";
+import { usePostHog } from "posthog-js/react";
+import type { StudyGroup } from "~/types";
 import { GroupModalFrame } from "./GroupModalFrame";
 import { GroupModalFields } from "./GroupModalFields";
 import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
@@ -20,7 +20,7 @@ import {
 } from "~/helpers/calendar_helper";
 
 interface EditGroupModalProps {
-  group: groupDetails | null;
+  group: StudyGroup | null;
 }
 
 export default function EditGroupModal({ group }: EditGroupModalProps) {
@@ -38,7 +38,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isEditGroupModalOpen);
-  const posthog = usePostHog()
+  const posthog = usePostHog();
 
   const handleClose = () => {
     dispatch(setIsEditGroupModalOpen(false));
@@ -79,10 +79,11 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     const participant = group.participantDetails?.find(
       (p) => p.email === userEmail,
     );
-    const eventId =
-      (participant as any)?.eventId || (participant as any)?.event || "None";
+    const eventId = participant?.eventId ?? participant?.event ?? "None";
     const start = updatedGroup.startTime.toDate().toISOString();
-    const end = new Date(updatedGroup.startTime.toMillis() + 3600000).toISOString();
+    const end = new Date(
+      updatedGroup.startTime.toMillis() + 3600000,
+    ).toISOString();
     await updateEvent(eventId, {
       summary: `Study Group: ${title}`,
       location,
@@ -108,17 +109,19 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
         color: "#fff",
       },
     });
-    posthog.capture('group_edited', { group: {
-      id: group.id,
-      title,
-      course,
-      purpose,
-      startTime: updatedGroup.startTime,
-      location,
-      totalSeats: Number(seats),
-      participantDetails: group.participantDetails,
-      details,
-    }})
+    posthog.capture("group_edited", {
+      group: {
+        id: group.id,
+        title,
+        course,
+        purpose,
+        startTime: updatedGroup.startTime,
+        location,
+        totalSeats: Number(seats),
+        participantDetails: group.participantDetails,
+        details,
+      },
+    });
   };
 
   useEffect(() => {
@@ -155,33 +158,30 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
       title="Edit Study Group"
       onClose={handleClose}
     >
-        <form onSubmit={handleSubmit}>
-          <GroupModalFields
-            title={title}
-            setTitle={setTitle}
-            titleMaxLength={30}
-            course={course}
-            setCourse={setCourse}
-            classes={classOptions}
-            purpose={purpose}
-            setPurpose={setPurpose}
-            date={date}
-            setDate={setDate}
-            location={location}
-            setLocation={setLocation}
-            locationMaxLength={100}
-            seats={seats}
-            setSeats={setSeats}
-            details={details}
-            setDetails={setDetails}
-          />
-          <button
-            type="submit"
-            className="modal-submit-button"
-          >
-            Edit Group
-          </button>
-        </form>
+      <form onSubmit={handleSubmit}>
+        <GroupModalFields
+          title={title}
+          setTitle={setTitle}
+          titleMaxLength={30}
+          course={course}
+          setCourse={setCourse}
+          classes={classOptions}
+          purpose={purpose}
+          setPurpose={setPurpose}
+          date={date}
+          setDate={setDate}
+          location={location}
+          setLocation={setLocation}
+          locationMaxLength={100}
+          seats={seats}
+          setSeats={setSeats}
+          details={details}
+          setDetails={setDetails}
+        />
+        <button type="submit" className="modal-submit-button">
+          Edit Group
+        </button>
+      </form>
     </GroupModalFrame>
   );
 }

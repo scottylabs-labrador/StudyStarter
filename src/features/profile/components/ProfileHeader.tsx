@@ -15,15 +15,21 @@ type ProfileHeaderProps = {
   showLogout?: boolean;
 };
 
-export function ProfileHeader({ user, showLogout = false }: ProfileHeaderProps) {
-  const displayName = user?.fullName || user?.firstName || user?.username || "User";
+export function ProfileHeader({
+  user,
+  showLogout = false,
+}: ProfileHeaderProps) {
+  const displayName =
+    user?.fullName ?? user?.firstName ?? user?.username ?? "User";
   const emailAddress = user?.emailAddresses?.[0]?.emailAddress;
 
   return (
-    <div className="flex items-center mb-4">
+    <div className="mb-4 flex items-center">
       <UserAvatar user={user} size="lg" />
       <div className="ml-4">
-        <h1 className="text-2xl font-bold text-black dark:text-white">{displayName}</h1>
+        <h1 className="text-2xl font-bold text-black dark:text-white">
+          {displayName}
+        </h1>
         <p className="text-black dark:text-white">{emailAddress}</p>
       </div>
       {showLogout && (

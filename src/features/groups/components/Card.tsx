@@ -1,9 +1,9 @@
 "use client";
-import type groupDetails from "~/types";
+import type { StudyGroup } from "~/types";
 
 interface Props {
-  onClick: (g: groupDetails) => void;
-  group: groupDetails;
+  onClick: (g: StudyGroup) => void;
+  group: StudyGroup;
   time: string | null;
   date: string | null;
   isInGroup: boolean;
@@ -11,8 +11,15 @@ interface Props {
   darkColor: string;
 }
 
-
-const Card = ({ onClick, group, time,  date, isInGroup, lightColor, darkColor }: Props) => {
+const Card = ({
+  onClick,
+  group,
+  time,
+  date,
+  isInGroup,
+  lightColor,
+  darkColor,
+}: Props) => {
   const colorClassName =
     lightColor === "lightAccent" && darkColor === "darkAccent"
       ? "study-card-accent"
@@ -20,32 +27,34 @@ const Card = ({ onClick, group, time,  date, isInGroup, lightColor, darkColor }:
 
   return (
     <div
-        className={`study-card ${colorClassName}`}
-        onClick={() => onClick(group)}
-      >
-        <div className="study-card-title">{group.title}</div>
-        <ul className="study-card-row">
-          <li className="study-card-label"> Course: &nbsp; </li>
-          <li className="study-card-value">{group.course}</li>
-        </ul>
-        <ul className="study-card-row">
-          <li className="study-card-label"> Purpose: &nbsp; </li>
-          <li className="study-card-value">{group.purpose}</li>
-        </ul>
-        <ul className="study-card-row">
-          <li className="study-card-label"> Time: &nbsp; </li> <li>{time}</li>
-        </ul>
-        <ul className="study-card-row">
-          <li className="study-card-label"> Date: &nbsp; </li> <li>{date}</li>
-        </ul>
-        <ul className="study-card-row">
-          <li className="study-card-label"> Location: &nbsp; </li>
-          <li className="study-card-value">{group.location}</li>
-        </ul>
-        {isInGroup && <ul className="joined-row">
+      className={`study-card ${colorClassName}`}
+      onClick={() => onClick(group)}
+    >
+      <div className="study-card-title">{group.title}</div>
+      <ul className="study-card-row">
+        <li className="study-card-label"> Course: &nbsp; </li>
+        <li className="study-card-value">{group.course}</li>
+      </ul>
+      <ul className="study-card-row">
+        <li className="study-card-label"> Purpose: &nbsp; </li>
+        <li className="study-card-value">{group.purpose}</li>
+      </ul>
+      <ul className="study-card-row">
+        <li className="study-card-label"> Time: &nbsp; </li> <li>{time}</li>
+      </ul>
+      <ul className="study-card-row">
+        <li className="study-card-label"> Date: &nbsp; </li> <li>{date}</li>
+      </ul>
+      <ul className="study-card-row">
+        <li className="study-card-label"> Location: &nbsp; </li>
+        <li className="study-card-value">{group.location}</li>
+      </ul>
+      {isInGroup && (
+        <ul className="joined-row">
           <li className="joined-badge">Joined</li>
-        </ul>}
-      </div>
+        </ul>
+      )}
+    </div>
   );
 };
 

@@ -3,12 +3,15 @@ import { redirect } from "next/navigation";
 import NavBar from "~/components/layout/NavBar";
 import React from "react";
 import MobileNavBar from "~/components/layout/MobileNavBar";
-import { checkFacultyStatus, userHasCreatedProfile } from "~/features/profile/services/serverAccountService";
+import {
+  checkFacultyStatus,
+  userHasCreatedProfile,
+} from "~/features/profile/services/serverAccountService";
 import { requireServerSession } from "~/lib/auth";
 
 export const metadata = {
   title: "CMU Study",
-  description:"Totally novel way to support your grade",
+  description: "Totally novel way to support your grade",
   icons: [{ rel: "icon", url: "/CMUStudy.ico" }],
 };
 
@@ -29,7 +32,10 @@ export default async function ContentLayout({
     redirect("/");
   }
 
-  const isFaculty = await checkFacultyStatus(email, session.user.name ?? "User");
+  const isFaculty = await checkFacultyStatus(
+    email,
+    session.user.name ?? "User",
+  );
 
   if (isFaculty) {
     redirect("/access-restricted");
@@ -42,12 +48,10 @@ export default async function ContentLayout({
   return (
     <div className="app-shell">
       <NavBar />
-      <div className="app-content">     
+      <div className="app-content">
         <MobileNavBar />
-        <main className="app-main">
-          {children}
-        </main>
-      </div> 
+        <main className="app-main">{children}</main>
+      </div>
     </div>
   );
 }

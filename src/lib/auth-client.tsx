@@ -31,7 +31,9 @@ export const authClient = createAuthClient({
   plugins: [genericOAuthClient()],
 });
 
-function getCompatUser(session: ReturnType<typeof authClient.useSession>["data"]): CompatUser | null {
+function getCompatUser(
+  session: ReturnType<typeof authClient.useSession>["data"],
+): CompatUser | null {
   if (!session?.user) {
     return null;
   }
@@ -49,10 +51,13 @@ function getCompatUser(session: ReturnType<typeof authClient.useSession>["data"]
   };
 }
 
-function withClickHandler(children: ReactNode, onClick: () => void): ReactNode {
+function withClickHandler(
+  children: ReactNode,
+  onClick: () => void | Promise<void>,
+): ReactNode {
   if (!isValidElement(children)) {
     return (
-      <button type="button" onClick={onClick}>
+      <button type="button" onClick={() => void onClick()}>
         {children}
       </button>
     );
@@ -63,14 +68,14 @@ function withClickHandler(children: ReactNode, onClick: () => void): ReactNode {
   return cloneElement(element, {
     onClick: () => {
       element.props.onClick?.();
-      onClick();
+      void onClick();
     },
   });
 }
 
 export function useUser() {
   const session = authClient.useSession();
-  const user = useMemo(() => getCompatUser(session.data), [session.data?.user]);
+  const user = useMemo(() => getCompatUser(session.data), [session.data]);
 
   return {
     user,
@@ -99,7 +104,10 @@ export function SignedOut({ children }: ButtonProps) {
   return <>{children}</>;
 }
 
-export function SignInButton({ children, forceRedirectUrl = "/login" }: SignInButtonProps) {
+export function SignInButton({
+  children,
+  forceRedirectUrl = "/login",
+}: SignInButtonProps) {
   const handleSignIn = async () => {
     await authClient.signIn.oauth2({
       providerId: "keycloak",

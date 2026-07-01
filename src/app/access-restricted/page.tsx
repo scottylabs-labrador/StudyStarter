@@ -5,15 +5,12 @@ import Image from "next/image";
 import darkLogo from "~/image/darkLogoLarge.png";
 import lightLogo from "~/image/lightLogoLarge.png";
 import { ShieldAlert } from "lucide-react";
-import { useUser, SignOutButton } from "~/lib/auth-client";
-import { redirect } from "next/navigation";
+import { SignOutButton } from "~/lib/auth-client";
 
 export default function AccessRestrictedPage() {
-  const { user } = useUser();
   return (
     <div className="center-page">
       <div className="center-panel">
-        
         {/* Logo */}
         <div className="mb-10 flex justify-center">
           <Image
@@ -35,16 +32,14 @@ export default function AccessRestrictedPage() {
         </div>
 
         {/* Icon */}
-        <div className="flex justify-center mb-8">
+        <div className="mb-8 flex justify-center">
           <div className="avatar-icon-large">
-            <ShieldAlert className="w-10 h-10 text-black dark:text-white" />
+            <ShieldAlert className="h-10 w-10 text-black dark:text-white" />
           </div>
         </div>
 
         {/* Heading */}
-        <h1 className="access-title">
-          Access Restricted
-        </h1>
+        <h1 className="access-title">Access Restricted</h1>
 
         {/* Message */}
         <p className="access-message">
@@ -55,26 +50,21 @@ export default function AccessRestrictedPage() {
         <br />
         <div className="ml-auto">
           <SignOutButton>
-            <button
-              className="button-primary"
-            >
-              Home
-            </button>
+            <button className="button-primary">Home</button>
           </SignOutButton>
         </div>
 
         {/* Subtle footer note */}
-        <div className="mt-12 text-sm text-black dark:text-white opacity-70">
-        If you believe you reached this page in error, please contact{" "}
-        <a
-          href="mailto:cmustudy.help@gmail.com?subject=Access%20Restriction%20Issue"
-          className="inline-link"
-        >
-          cmustudy.help@gmail.com
-        </a>
-        .
+        <div className="mt-12 text-sm text-black opacity-70 dark:text-white">
+          If you believe you reached this page in error, please contact{" "}
+          <a
+            href="mailto:cmustudy.help@gmail.com?subject=Access%20Restriction%20Issue"
+            className="inline-link"
+          >
+            cmustudy.help@gmail.com
+          </a>
+          .
         </div>
-
       </div>
     </div>
   );

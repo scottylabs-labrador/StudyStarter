@@ -352,7 +352,7 @@
 }
 
 .group-details-action {
-  @apply me-5 mb-[-12px] mt-3 text-xl font-bold;
+  @apply mb-[-12px] me-5 mt-3 text-xl font-bold;
 }
 
 .group-details-text {

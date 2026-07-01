@@ -19,13 +19,21 @@ import type {
   ThemePreference,
 } from "../types";
 
+type UserProfileDocument = Partial<ProfileDetails> & {
+  theme?: unknown;
+  blocked?: BlockedUsers;
+  joinedGroups?: string[];
+};
+
 export const defaultProfileDetails: ProfileDetails = {
   year: "default",
   majors: "",
   minors: "",
 };
 
-export async function getUserProfileDetails(userId: string): Promise<ProfileDetails> {
+export async function getUserProfileDetails(
+  userId: string,
+): Promise<ProfileDetails> {
   const docRef = doc(db, "Users", userId);
   const docSnap = await getDoc(docRef);
 
@@ -33,7 +41,7 @@ export async function getUserProfileDetails(userId: string): Promise<ProfileDeta
     return defaultProfileDetails;
   }
 
-  const data = docSnap.data();
+  const data = docSnap.data() as UserProfileDocument;
   return {
     year: data.year ?? "default",
     majors: data.majors ?? "",
@@ -41,7 +49,9 @@ export async function getUserProfileDetails(userId: string): Promise<ProfileDeta
   };
 }
 
-export async function getUserProfileSummary(userId: string): Promise<ProfileSummary> {
+export async function getUserProfileSummary(
+  userId: string,
+): Promise<ProfileSummary> {
   const docRef = doc(db, "Users", userId);
   const docSnap = await getDoc(docRef);
 
@@ -49,7 +59,7 @@ export async function getUserProfileSummary(userId: string): Promise<ProfileSumm
     return {};
   }
 
-  const data = docSnap.data();
+  const data = docSnap.data() as UserProfileDocument;
   return {
     year: data.year,
     majors: data.majors,
@@ -105,13 +115,15 @@ export async function getAllCourses(): Promise<Course[]> {
   return response.data;
 }
 
-export async function getUserTheme(userId: string): Promise<ThemePreference | null> {
+export async function getUserTheme(
+  userId: string,
+): Promise<ThemePreference | null> {
   const docRef = doc(db, "Users", userId);
   const docSnap = await getDoc(docRef);
 
   if (!docSnap.exists()) return null;
 
-  const theme = docSnap.data().theme;
+  const { theme } = docSnap.data() as UserProfileDocument;
   return theme === "dark" || theme === "light" ? theme : null;
 }
 
@@ -125,7 +137,9 @@ export const defaultBlockedUsers: BlockedUsers = {
   blockedByThem: [],
 };
 
-export async function getUserBlockingState(userId: string): Promise<BlockingState> {
+export async function getUserBlockingState(
+  userId: string,
+): Promise<BlockingState> {
   const docRef = doc(db, "Users", userId);
   const docSnap = await getDoc(docRef);
 
@@ -133,7 +147,7 @@ export async function getUserBlockingState(userId: string): Promise<BlockingStat
     return { blocked: defaultBlockedUsers, joinedGroups: [] };
   }
 
-  const data = docSnap.data();
+  const data = docSnap.data() as UserProfileDocument;
   return {
     blocked: data.blocked ?? defaultBlockedUsers,
     joinedGroups: data.joinedGroups ?? [],
@@ -149,7 +163,9 @@ export async function updateUserBlockingState({
   blocked: BlockedUsers;
   joinedGroups?: string[];
 }) {
-  const updates: { blocked: BlockedUsers; joinedGroups?: string[] } = { blocked };
+  const updates: { blocked: BlockedUsers; joinedGroups?: string[] } = {
+    blocked,
+  };
 
   if (joinedGroups) {
     updates.joinedGroups = joinedGroups;
@@ -192,7 +208,9 @@ export async function removeBlockedByThem({
     userId: targetUserId,
     blocked: {
       blockedByMe: blocked.blockedByMe,
-      blockedByThem: blocked.blockedByThem.filter((user) => user !== currentUserId),
+      blockedByThem: blocked.blockedByThem.filter(
+        (user) => user !== currentUserId,
+      ),
     },
   });
 }

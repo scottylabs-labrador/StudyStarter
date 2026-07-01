@@ -15,15 +15,20 @@ import {
 } from "firebase/firestore";
 import { db } from "~/lib/api/firebaseConfig";
 import type { BlockedUsers } from "~/features/profile/types";
-import groupDetails from "~/types";
+import type { StudyGroup } from "~/types";
 
 export type UserGroupState = {
   joinedGroups: string[];
   blockedUsers: string[];
 };
 
+type UserGroupDocument = {
+  joinedGroups?: string[];
+  blocked?: BlockedUsers;
+};
+
 export function subscribeStudyGroups(
-  onGroups: (groups: groupDetails[]) => void,
+  onGroups: (groups: StudyGroup[]) => void,
   onError: (error: unknown) => void,
 ): Unsubscribe {
   const groupsRef = collection(db, "StudyGroups");
@@ -33,11 +38,12 @@ export function subscribeStudyGroups(
     groupsQuery,
     (querySnapshot) => {
       const groups = querySnapshot.docs.map((groupDoc) => ({
-        ...(groupDoc.data() as groupDetails),
+        ...(groupDoc.data() as StudyGroup),
       }));
-      groups.sort((firstGroup, secondGroup) => (
-        firstGroup.startTime.toMillis() - secondGroup.startTime.toMillis()
-      ));
+      groups.sort(
+        (firstGroup, secondGroup) =>
+          firstGroup.startTime.toMillis() - secondGroup.startTime.toMillis(),
+      );
       onGroups(groups);
     },
     onError,
@@ -56,10 +62,13 @@ export function subscribeUserGroupState(
       return;
     }
 
-    const data = docSnap.data();
-    const blocked: BlockedUsers = data.blocked || { blockedByMe: [], blockedByThem: [] };
+    const data = docSnap.data() as UserGroupDocument;
+    const blocked: BlockedUsers = data.blocked ?? {
+      blockedByMe: [],
+      blockedByThem: [],
+    };
     onUserGroupState({
-      joinedGroups: data.joinedGroups || [],
+      joinedGroups: data.joinedGroups ?? [],
       blockedUsers: blocked.blockedByMe.concat(blocked.blockedByThem),
     });
   });
@@ -67,7 +76,7 @@ export function subscribeUserGroupState(
 
 export function subscribeStudyGroup(
   groupId: string,
-  onGroup: (group: groupDetails) => void,
+  onGroup: (group: StudyGroup) => void,
   onMissing: () => void,
 ): Unsubscribe {
   const groupDocRef = doc(db, "StudyGroups", groupId);
@@ -78,12 +87,13 @@ export function subscribeStudyGroup(
       return;
     }
 
-    onGroup(docSnapshot.data() as groupDetails);
+    onGroup(docSnapshot.data() as StudyGroup);
   });
 }
 
 const generateGroupId = () => {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let id = "";
   for (let index = 0; index < 20; index++) {
     id += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -162,7 +172,7 @@ export async function updateStudyGroup({
   group,
   input,
 }: {
-  group: groupDetails;
+  group: StudyGroup;
   input: GroupFormInput;
 }) {
   const firestoreTimestamp = Timestamp.fromDate(input.date);
@@ -197,7 +207,8 @@ export async function getUserBlockedEmails(userId: string) {
 
   if (!userDoc.exists()) return [];
 
-  const blocked: BlockedUsers = userDoc.data().blocked || {
+  const data = userDoc.data() as UserGroupDocument;
+  const blocked: BlockedUsers = data.blocked ?? {
     blockedByMe: [],
     blockedByThem: [],
   };
@@ -206,7 +217,7 @@ export async function getUserBlockedEmails(userId: string) {
 
 export async function getStudyGroup(groupId: string) {
   const groupDocSnap = await getDoc(doc(db, "StudyGroups", groupId));
-  return groupDocSnap.exists() ? (groupDocSnap.data() as groupDetails) : null;
+  return groupDocSnap.exists() ? (groupDocSnap.data() as StudyGroup) : null;
 }
 
 export async function addParticipantToGroup({
@@ -233,7 +244,7 @@ export async function removeParticipantFromGroup({
   userId,
   userEmail,
 }: {
-  group: groupDetails;
+  group: StudyGroup;
   userId: string;
   userEmail: string;
 }) {
@@ -280,15 +291,18 @@ export async function removeParticipantFromSharedGroups({
     const groupDoc = await getDoc(groupDocRef);
 
     if (!groupDoc.exists()) {
-      console.warn("Missing group while removing blocked participant:", groupId);
+      console.warn(
+        "Missing group while removing blocked participant:",
+        groupId,
+      );
       continue;
     }
 
-    const groupData = groupDoc.data() as groupDetails;
+    const groupData = groupDoc.data() as StudyGroup;
     const groupParticipants = groupData.participantDetails ?? [];
-    const eventId = groupParticipants.find((participant) => (
-      participant.email === userEmail
-    ))?.eventId;
+    const eventId = groupParticipants.find(
+      (participant) => participant.email === userEmail,
+    )?.eventId;
 
     if (eventId && eventId !== "None") {
       eventIdsToDelete.push(eventId);
@@ -297,9 +311,9 @@ export async function removeParticipantFromSharedGroups({
     }
 
     await updateDoc(groupDocRef, {
-      participantDetails: groupParticipants.filter((participant) => (
-        participant.email !== userEmail
-      )),
+      participantDetails: groupParticipants.filter(
+        (participant) => participant.email !== userEmail,
+      ),
     });
   }
 
