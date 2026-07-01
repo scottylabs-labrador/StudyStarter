@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import groupDetails from "~/types";
 import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/uiSlice";
 import { useUser } from "~/lib/auth-client";
-import CreateProfilePopUp from "./CreateProfilePopUp";
+import CreateProfilePopUp from "~/features/profile/components/CreateProfilePopUp";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "~/lib/hooks";
 import {
@@ -29,7 +29,7 @@ interface Props {
 }
 import { usePostHog } from 'posthog-js/react'
 import { Pencil } from "lucide-react";
-import { BlockedUsers } from "~/components/BlockList";
+import { BlockedUsers } from "~/features/profile/components/BlockList";
 
 
 const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {

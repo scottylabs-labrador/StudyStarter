@@ -20,7 +20,7 @@ import { useUser } from "~/lib/auth-client";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { usePostHog } from 'posthog-js/react'
-import { addToCal, setupGoogleApi, isCalendarApiReady, requestCalendarAccessInteractive } from "../helpers/calendar_helper";
+import { addToCal, setupGoogleApi, isCalendarApiReady, requestCalendarAccessInteractive } from "~/helpers/calendar_helper";
 
 export default function CreateGroupModal() {
   const { user } = useUser();

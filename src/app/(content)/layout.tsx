@@ -1,8 +1,8 @@
 import "~/styles/globals.css";
 import { redirect } from "next/navigation";
-import NavBar from "~/components/NavBar";
+import NavBar from "~/components/layout/NavBar";
 import React from "react";
-import MobileNavBar from "~/components/MobileNavBar";
+import MobileNavBar from "~/components/layout/MobileNavBar";
 import { requireServerSession } from "~/lib/auth";
 import { getAdminDb } from "~/lib/firebase-admin";
 

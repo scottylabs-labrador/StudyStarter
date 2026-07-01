@@ -2,7 +2,7 @@
 import darkLogo from "~/image/darkLogo2.png"
 import lightLogo from "~/image/lightLogo2.png"
 import { Fragment, useState, useEffect, useRef } from "react";
-import CreateGroupModal from "./CreateGroupModal";
+import CreateGroupModal from "~/features/groups/components/CreateGroupModal";
 import { useDispatch } from "react-redux";
 import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import { usePathname } from "next/navigation";
