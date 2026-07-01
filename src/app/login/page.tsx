@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 
-import { checkFacultyStatus, userHasCreatedProfile } from "~/features/profile/services/serverAccountService";
+import {
+  checkFacultyStatus,
+  userHasCreatedProfile,
+} from "~/features/profile/services/serverAccountService";
 import { requireServerSession } from "~/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +21,10 @@ export default async function LoginPage() {
     redirect("/");
   }
 
-  const isFaculty = await checkFacultyStatus(email, session.user.name ?? "User");
+  const isFaculty = await checkFacultyStatus(
+    email,
+    session.user.name ?? "User",
+  );
 
   if (isFaculty) {
     redirect("/access-restricted");

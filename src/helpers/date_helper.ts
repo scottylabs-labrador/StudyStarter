@@ -1,8 +1,10 @@
-type AppDate = Date | {
-  toDate: () => Date;
-};
+type AppDate =
+  | Date
+  | {
+      toDate: () => Date;
+    };
 
-const toDate = (date: AppDate) => date instanceof Date ? date : date.toDate();
+const toDate = (date: AppDate) => (date instanceof Date ? date : date.toDate());
 
 export function formatDateTime(
   timestamp: AppDate,
@@ -21,9 +23,9 @@ export function formatDateTime(
   hours = hours % 12;
   hours = hours ? hours : 12;
   return [`${month}/${day}/${year}`, `${hours}:${minutes} ${ampm}`];
-};
+}
 export function isInThePast(timestamp: AppDate) {
   const groupDate = toDate(timestamp);
   const now = new Date();
   return groupDate.getTime() < now.getTime();
-};
+}

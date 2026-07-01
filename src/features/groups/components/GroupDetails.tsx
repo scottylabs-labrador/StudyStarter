@@ -1,14 +1,23 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import groupDetails from "~/types";
-import { setIsEditGroupModalOpen, setIsViewProfileOpen } from "~/lib/features/uiSlice";
+import type { StudyGroup } from "~/types";
+import {
+  setIsEditGroupModalOpen,
+  setIsViewProfileOpen,
+} from "~/lib/features/uiSlice";
 import { useUser } from "~/lib/auth-client";
 import CreateProfilePopUp from "~/features/profile/components/CreateProfilePopUp";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { formatDateTime } from "~/helpers/date_helper";
 import EditGroupModal from "./EditGroupModal";
-import { addToCal, deleteFromCal, isCalendarApiReady, requestCalendarAccessInteractive, setupGoogleApi } from "~/helpers/calendar_helper";
+import {
+  addToCal,
+  deleteFromCal,
+  isCalendarApiReady,
+  requestCalendarAccessInteractive,
+  setupGoogleApi,
+} from "~/helpers/calendar_helper";
 import { GroupDetailsHeader } from "./GroupDetailsHeader";
 import { JoinGroupButton } from "./JoinGroupButton";
 import { ParticipantList } from "./ParticipantList";
@@ -21,11 +30,10 @@ import {
 import { useLiveGroupDetails } from "../hooks/useLiveGroupDetails";
 interface Props {
   onClick: () => void;
-  details: groupDetails;
+  details: StudyGroup;
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
-import { usePostHog } from 'posthog-js/react'
-
+import { usePostHog } from "posthog-js/react";
 
 const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
@@ -41,15 +49,17 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   const [viewEmail, setViewEmail] = useState<string | null>(null);
 
   const dispatch = useDispatch();
-  const posthog = usePostHog()
+  const posthog = usePostHog();
 
-  const handleViewProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setViewUser(event.currentTarget.getAttribute('data-username'));
-    setViewEmail(event.currentTarget.getAttribute('data-email'));
+  const handleViewProfileClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setViewUser(event.currentTarget.getAttribute("data-username"));
+    setViewEmail(event.currentTarget.getAttribute("data-email"));
     dispatch(setIsViewProfileOpen(true));
   };
 
-useEffect(() => {
+  useEffect(() => {
     setupGoogleApi().catch((err) => {
       console.warn("Failed to initialize Google API:", err);
     });
@@ -76,17 +86,17 @@ useEffect(() => {
     };
   }, []);
 
-
-
   const joinGroup = async () => {
     let calendarAuthPromise: Promise<void> | null = null;
     if (isCalendarApiReady()) {
-      calendarAuthPromise = requestCalendarAccessInteractive({ forceRefresh: true }).catch((err) => {
+      calendarAuthPromise = requestCalendarAccessInteractive({
+        forceRefresh: true,
+      }).catch((err) => {
         console.warn("Calendar auth failed:", err);
       });
     }
     const userId = user?.emailAddresses[0]?.emailAddress;
-    let eventId:string | undefined = undefined;
+    let eventId: string | undefined = undefined;
     if (!joinedState) {
       if (
         currentDetails.participantDetails.length >= currentDetails.totalSeats
@@ -101,8 +111,9 @@ useEffect(() => {
       }
       const combinedBlocked = await getUserBlockedEmails(userId);
       if (combinedBlocked.length > 0) {
-        const hasBlockedUser = currentDetails.participantDetails.some((participant) =>
-          combinedBlocked.includes(participant.email?.toLowerCase() || "")
+        const hasBlockedUser = currentDetails.participantDetails.some(
+          (participant) =>
+            combinedBlocked.includes(participant.email?.toLowerCase() || ""),
         );
         if (hasBlockedUser) {
           toast.error("Group unavailable");
@@ -124,23 +135,32 @@ useEffect(() => {
       if (calendarAuthPromise) {
         await calendarAuthPromise;
       }
-      eventId = (await addToCal(currentDetails.title, currentDetails.course, currentDetails.purpose, currentDetails.startTime, currentDetails.location, currentDetails.details, userId)) ?? "None";
+      eventId =
+        (await addToCal(
+          currentDetails.title,
+          currentDetails.course,
+          currentDetails.purpose,
+          currentDetails.startTime,
+          currentDetails.location,
+          currentDetails.details,
+          userId,
+        )) ?? "None";
 
       // update group with new participant
       const newParticipant = {
         name: user?.fullName || "User",
         url: user?.imageUrl ?? null,
         email: user?.emailAddresses[0]?.emailAddress ?? userId,
-        eventId
-      }
+        eventId,
+      };
       await addParticipantToGroup({
         groupId: details.id,
         userId,
         participant: newParticipant,
       });
       toast.success("Joined group");
-      posthog.capture('group_joined', { group: currentDetails })
-      
+      posthog.capture("group_joined", { group: currentDetails });
+
       joinedSetState(!joinedState);
       updateJoinedGroups((prev) => {
         if (!prev) return null;
@@ -177,7 +197,7 @@ useEffect(() => {
         if (!prev) return null;
         return prev.filter((item) => item !== currentDetails.id);
       });
-      posthog.capture('group_left', { group: currentDetails })
+      posthog.capture("group_left", { group: currentDetails });
 
       if (calendarAuthPromise) {
         await calendarAuthPromise;
@@ -199,7 +219,7 @@ useEffect(() => {
       const onlyMember = remainingParticipants.length === 0;
       if (onlyMember) {
         onClick();
-        posthog.capture('group_emptied', { group: currentDetails })
+        posthog.capture("group_emptied", { group: currentDetails });
       }
     }
   };
@@ -208,7 +228,8 @@ useEffect(() => {
   const [formattedDate, formattedTime] = formatDateTime(
     currentDetails.startTime,
   );
-  const canEditGroup = joinedState && currentDetails.participantDetails.length === 1;
+  const canEditGroup =
+    joinedState && currentDetails.participantDetails.length === 1;
 
   return (
     <div ref={cardRef} style={{ maxHeight }} className="group-details-card">
@@ -237,7 +258,8 @@ useEffect(() => {
         </p>
         <p className="group-details-text">
           <strong>Participants:</strong>{" "}
-          {currentDetails.participantDetails.length} / {currentDetails.totalSeats}{" "}
+          {currentDetails.participantDetails.length} /{" "}
+          {currentDetails.totalSeats}{" "}
           <button
             onClick={() => participantsSetState(!participantsState)}
             className="text-[12px]"
@@ -255,10 +277,14 @@ useEffect(() => {
 
         <strong className="group-details-text">Details:</strong>
         <div className="group-details-freeform">
-          {currentDetails.details ? currentDetails.details : "Hope you have a good time!"}
+          {currentDetails.details
+            ? currentDetails.details
+            : "Hope you have a good time!"}
         </div>
 
-        {viewUser && <CreateProfilePopUp username={viewUser} email={viewEmail ?? ""} />}
+        {viewUser && (
+          <CreateProfilePopUp username={viewUser} email={viewEmail ?? ""} />
+        )}
       </div>
 
       <JoinGroupButton isJoined={joinedState} onClick={joinGroup} />

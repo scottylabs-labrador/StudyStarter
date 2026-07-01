@@ -31,7 +31,7 @@ export function useUserTheme(userId?: string) {
       }
     };
 
-    loadTheme();
+    void loadTheme();
   }, [userId]);
 
   const toggleTheme = async () => {

@@ -1,10 +1,9 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface UIState {
   isCreateGroupModalOpen: boolean;
   isEditGroupModalOpen: boolean;
   isViewProfileOpen: boolean;
-
 }
 
 const initialState: UIState = {
@@ -29,5 +28,9 @@ const uiSlice = createSlice({
   },
 });
 
-export const { setIsCreateGroupModalOpen, setIsEditGroupModalOpen, setIsViewProfileOpen} = uiSlice.actions;
+export const {
+  setIsCreateGroupModalOpen,
+  setIsEditGroupModalOpen,
+  setIsViewProfileOpen,
+} = uiSlice.actions;
 export default uiSlice.reducer;

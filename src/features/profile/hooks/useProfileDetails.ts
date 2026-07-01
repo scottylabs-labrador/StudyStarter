@@ -22,7 +22,7 @@ export function useProfileDetails(userId?: string) {
       }
     };
 
-    loadProfileDetails();
+    void loadProfileDetails();
   }, [userId]);
 
   const updateProfileDetails = async (updates: Partial<ProfileDetails>) => {

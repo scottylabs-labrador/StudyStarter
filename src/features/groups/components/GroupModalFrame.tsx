@@ -9,13 +9,22 @@ type GroupModalFrameProps = {
   children: ReactNode;
 };
 
-export function GroupModalFrame({ id, title, onClose, children }: GroupModalFrameProps) {
+export function GroupModalFrame({
+  id,
+  title,
+  onClose,
+  children,
+}: GroupModalFrameProps) {
   return (
     <div className="modal-overlay" id={id}>
       <div className="modal-panel">
         <div className="modal-header">
           <h2 className="modal-title">{title}</h2>
-          <button onClick={onClose} className="modal-close" aria-label="Close modal">
+          <button
+            onClick={onClose}
+            className="modal-close"
+            aria-label="Close modal"
+          >
             <big>&times;</big>
           </button>
         </div>

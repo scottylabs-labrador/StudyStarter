@@ -1,20 +1,53 @@
-declare const gapi: any;
-declare const google: any;
-
-type CalendarDate = Date | {
-  toDate: () => Date;
-  toMillis: () => number;
+type GoogleTokenResponse = {
+  error?: unknown;
+  access_token: string;
+  expires_in?: number;
 };
+
+type GoogleTokenClient = {
+  callback: (tokenResponse: GoogleTokenResponse) => void;
+  requestAccessToken: (options: { prompt: string }) => void;
+};
+
+declare const gapi: {
+  client: {
+    init: (options: { discoveryDocs: string[] }) => Promise<void>;
+    setToken: (token: { access_token: string } | null) => void;
+  };
+  load: (api: string, callback: () => void) => void;
+};
+
+declare const google: {
+  accounts: {
+    oauth2: {
+      initTokenClient: (config: {
+        client_id: string;
+        scope: string;
+        callback: (tokenResponse: GoogleTokenResponse) => void;
+      }) => GoogleTokenClient;
+    };
+  };
+};
+
+type CalendarDate =
+  | Date
+  | {
+      toDate: () => Date;
+      toMillis: () => number;
+    };
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_CALENDAR_CLIENT_ID!;
 
-const DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
-const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/calendar.freebusy";
+const DISCOVERY_DOC =
+  "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
+const SCOPES =
+  "https://www.googleapis.com/auth/calendar.events.owned https://www.googleapis.com/auth/calendar.freebusy";
 const TOKEN_STORAGE_KEY = "google_calendar_token_v1";
 const TOKEN_EXPIRY_BUFFER_MS = 60_000;
-const CALENDAR_EVENTS_URL = "https://www.googleapis.com/calendar/v3/calendars/primary/events";
+const CALENDAR_EVENTS_URL =
+  "https://www.googleapis.com/calendar/v3/calendars/primary/events";
 
-let tokenClient: any;
+let tokenClient: GoogleTokenClient | null = null;
 let gapiInited = false;
 let gisInited = false;
 let accessToken: string | null = null;
@@ -38,7 +71,7 @@ function clearCalendarToken() {
   accessToken = null;
   accessTokenExpiresAt = null;
 
-  if (typeof gapi !== "undefined" && gapi.client) {
+  if (typeof gapi !== "undefined") {
     gapi.client.setToken(null);
   }
 
@@ -54,9 +87,7 @@ function clearCalendarToken() {
 function persistToken(access_token: string, expires_in?: number) {
   accessToken = access_token;
   accessTokenExpiresAt =
-    typeof expires_in === "number"
-      ? Date.now() + expires_in * 1000
-      : null;
+    typeof expires_in === "number" ? Date.now() + expires_in * 1000 : null;
   gapi.client.setToken({ access_token: accessToken });
   if (typeof window === "undefined") return;
   try {
@@ -119,16 +150,18 @@ async function loadScript(src: string): Promise<void> {
 /** Initializes the Google API client library. */
 async function initGapiClient(): Promise<void> {
   return new Promise((resolve, reject) => {
-    gapi.load("client", async () => {
-      try {
-        await gapi.client.init({
-          discoveryDocs: [DISCOVERY_DOC],
-        });
-        gapiInited = true;
-        resolve();
-      } catch (err) {
-        reject(err);
-      }
+    gapi.load("client", () => {
+      void (async () => {
+        try {
+          await gapi.client.init({
+            discoveryDocs: [DISCOVERY_DOC],
+          });
+          gapiInited = true;
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      })();
     });
   });
 }
@@ -138,7 +171,7 @@ function initTokenClient(): void {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: (tokenResponse: any) => {
+    callback: (tokenResponse) => {
       if (tokenResponse.error) {
         console.error("Token error:", tokenResponse.error);
         return;
@@ -171,9 +204,15 @@ export async function requestCalendarAccess(): Promise<void> {
 
   if (!isAccessTokenValid()) {
     return new Promise((resolve) => {
-      tokenClient.callback = (tokenResponse: any) => {
+      if (!tokenClient) {
+        resolve();
+        return;
+      }
+
+      tokenClient.callback = (tokenResponse) => {
         if (tokenResponse.error) {
           console.error("Authorization error:", tokenResponse.error);
+          resolve();
           return;
         }
         persistToken(tokenResponse.access_token, tokenResponse.expires_in);
@@ -203,7 +242,12 @@ export function requestCalendarAccessInteractive({
   }
 
   return new Promise((resolve, reject) => {
-    tokenClient.callback = (tokenResponse: any) => {
+    if (!tokenClient) {
+      reject(new Error("Google token client not initialized"));
+      return;
+    }
+
+    tokenClient.callback = (tokenResponse) => {
       if (tokenResponse.error) {
         console.error("Authorization error:", tokenResponse.error);
         reject(tokenResponse.error);
@@ -228,7 +272,12 @@ async function requestCalendarAccessSilent(): Promise<boolean> {
   clearCalendarToken();
 
   return new Promise((resolve) => {
-    tokenClient.callback = (tokenResponse: any) => {
+    if (!tokenClient) {
+      resolve(false);
+      return;
+    }
+
+    tokenClient.callback = (tokenResponse) => {
       if (tokenResponse.error) {
         console.warn("Silent auth failed:", tokenResponse.error);
         resolve(false);
@@ -329,7 +378,7 @@ export async function addToCal(
   date: CalendarDate,
   location: string,
   details: string,
-  email: string
+  email: string,
 ) {
   const authorized = await ensureAuthorized();
   if (!authorized) return "None";
@@ -353,10 +402,13 @@ export async function addToCal(
   };
 
   try {
-    const response = await calendarRequest<{ htmlLink?: string; id?: string }>("", {
-      method: "POST",
-      body: JSON.stringify(event),
-    });
+    const response = await calendarRequest<{ htmlLink?: string; id?: string }>(
+      "",
+      {
+        method: "POST",
+        body: JSON.stringify(event),
+      },
+    );
     return response.id ?? "None";
   } catch (err) {
     const status = (err as { status?: number })?.status;
@@ -369,18 +421,16 @@ export async function addToCal(
 }
 
 /**
- * Removes `attendeeEmail` from the event with `eventId`.  
- * - If the attendee is the organizer and there are other attendees, it picks another attendee as new owner (by moving the event).  
- * - If the attendee is not the organizer, it simply removes them.  
+ * Removes `attendeeEmail` from the event with `eventId`.
+ * - If the attendee is the organizer and there are other attendees, it picks another attendee as new owner (by moving the event).
+ * - If the attendee is not the organizer, it simply removes them.
  * - If after removal there are no attendees left, it deletes the event.
  *
  * @param eventId ID of the event in the calendarId calendar.
  * @param calendarId ID of the calendar
  * @param attendeeEmail Email of the attendee to remove.
  */
-export async function deleteFromCal(
-  eventId: string,
-): Promise<void> {
+export async function deleteFromCal(eventId: string): Promise<void> {
   const authorized = await ensureAuthorized();
   if (!authorized) {
     console.warn("Calendar authorization required to delete event.");
@@ -408,8 +458,8 @@ export async function deleteFromCal(
  */
 export async function updateEvent(
   eventId: string,
-  data: Record<string, any>,
-): Promise<any> {
+  data: Record<string, unknown>,
+): Promise<unknown> {
   if (eventId === "None") {
     return null;
   }
@@ -420,10 +470,13 @@ export async function updateEvent(
   }
 
   try {
-    const response = await calendarRequest<Record<string, any>>(`/${encodeURIComponent(eventId)}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
+    const response = await calendarRequest<Record<string, unknown>>(
+      `/${encodeURIComponent(eventId)}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      },
+    );
     return response;
   } catch (err) {
     const status = (err as { status?: number })?.status;

@@ -11,10 +11,13 @@ export async function POST() {
   }
 
   try {
-    const customToken = await getAdminAuth().createCustomToken(session.user.id, {
-      email: session.user.email,
-      name: session.user.name,
-    });
+    const customToken = await getAdminAuth().createCustomToken(
+      session.user.id,
+      {
+        email: session.user.email,
+        name: session.user.name,
+      },
+    );
 
     return NextResponse.json({ token: customToken });
   } catch (error) {

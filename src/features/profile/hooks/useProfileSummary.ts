@@ -22,7 +22,7 @@ export function useProfileSummary(userId?: string, enabled = true) {
       }
     };
 
-    loadProfileSummary();
+    void loadProfileSummary();
   }, [enabled, userId]);
 
   return profileSummary;

@@ -2,6 +2,10 @@ import "server-only";
 
 import { getAdminDb } from "~/lib/firebase-admin";
 
+type FacultyCheckResponse = {
+  success?: boolean;
+};
+
 export async function checkFacultyStatus(email: string, firstName: string) {
   try {
     const response = await fetch("https://updateuser-jmpi7y54bq-uc.a.run.app", {
@@ -17,18 +21,22 @@ export async function checkFacultyStatus(email: string, firstName: string) {
     });
 
     if (!response.ok) {
-      console.warn(`Faculty check failed: ${response.status} ${response.statusText}`);
+      console.warn(
+        `Faculty check failed: ${response.status} ${response.statusText}`,
+      );
       return false;
     }
 
     const contentType = response.headers.get("content-type");
 
     if (!contentType?.includes("application/json")) {
-      console.warn(`Faculty check returned non-JSON response: ${contentType ?? "unknown"}`);
+      console.warn(
+        `Faculty check returned non-JSON response: ${contentType ?? "unknown"}`,
+      );
       return false;
     }
 
-    const result = await response.json();
+    const result = (await response.json()) as FacultyCheckResponse;
     return result?.success === true;
   } catch (error) {
     console.warn("Faculty check failed:", error);

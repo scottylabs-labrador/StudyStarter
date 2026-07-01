@@ -6,7 +6,7 @@ type ConfirmOptions = {
 };
 
 const ConfirmContext = createContext<(msg: string) => Promise<boolean>>(
-  async () => false
+  async () => false,
 );
 
 export const useConfirm = () => useContext(ConfirmContext);

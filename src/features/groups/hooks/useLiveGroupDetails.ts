@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import groupDetails from "~/types";
+import type { StudyGroup } from "~/types";
 import { subscribeStudyGroup } from "../services/groupService";
 
-export function useLiveGroupDetails(details: groupDetails, userEmail?: string) {
+export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
   const [currentDetails, setCurrentDetails] = useState(details);
   const [isJoined, setIsJoined] = useState(false);
   const [eventId, setEventId] = useState("None");

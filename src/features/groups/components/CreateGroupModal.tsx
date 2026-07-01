@@ -5,8 +5,13 @@ import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUser } from "~/lib/auth-client";
-import { usePostHog } from 'posthog-js/react'
-import { addToCal, setupGoogleApi, isCalendarApiReady, requestCalendarAccessInteractive } from "~/helpers/calendar_helper";
+import { usePostHog } from "posthog-js/react";
+import {
+  addToCal,
+  setupGoogleApi,
+  isCalendarApiReady,
+  requestCalendarAccessInteractive,
+} from "~/helpers/calendar_helper";
 import { GroupModalFrame } from "./GroupModalFrame";
 import { GroupModalFields } from "./GroupModalFields";
 import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
@@ -27,7 +32,7 @@ export default function CreateGroupModal() {
 
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isCreateGroupModalOpen);
-  const posthog = usePostHog()
+  const posthog = usePostHog();
 
   const handleClose = () => {
     dispatch(setIsCreateGroupModalOpen(false));
@@ -40,7 +45,9 @@ export default function CreateGroupModal() {
 
     let calendarAuthPromise: Promise<void> | null = null;
     if (isCalendarApiReady()) {
-      calendarAuthPromise = requestCalendarAccessInteractive({ forceRefresh: true }).catch((err) => {
+      calendarAuthPromise = requestCalendarAccessInteractive({
+        forceRefresh: true,
+      }).catch((err) => {
         console.warn("Calendar auth failed:", err);
       });
     }
@@ -66,7 +73,16 @@ export default function CreateGroupModal() {
     if (calendarAuthPromise) {
       await calendarAuthPromise;
     }
-    const eventId = (await addToCal(title, course, purpose, date, location, details, userEmail)) ?? "None";
+    const eventId =
+      (await addToCal(
+        title,
+        course,
+        purpose,
+        date,
+        location,
+        details,
+        userEmail,
+      )) ?? "None";
     const participant = {
       name: user?.fullName || "User",
       url: user?.imageUrl ?? null,
@@ -104,17 +120,19 @@ export default function CreateGroupModal() {
         color: "#fff",
       },
     });
-    posthog.capture('group_created', { group: {
-      id: group.id,
-      title,
-      course,
-      purpose,
-      startTime: group.startTime,
-      location,
-      totalSeats: Number(seats),
-      participantDetails: [participant],
-      details,
-    }})
+    posthog.capture("group_created", {
+      group: {
+        id: group.id,
+        title,
+        course,
+        purpose,
+        startTime: group.startTime,
+        location,
+        totalSeats: Number(seats),
+        participantDetails: [participant],
+        details,
+      },
+    });
   };
 
   useEffect(() => {
@@ -140,33 +158,30 @@ export default function CreateGroupModal() {
       title="Create New Study Group"
       onClose={handleClose}
     >
-        <form onSubmit={handleSubmit}>
-          <GroupModalFields
-            title={title}
-            setTitle={setTitle}
-            titleMaxLength={27}
-            course={course}
-            setCourse={setCourse}
-            classes={classOptions}
-            purpose={purpose}
-            setPurpose={setPurpose}
-            date={date}
-            setDate={setDate}
-            location={location}
-            setLocation={setLocation}
-            locationMaxLength={40}
-            seats={seats}
-            setSeats={setSeats}
-            details={details}
-            setDetails={setDetails}
-          />
-          <button
-            type="submit"
-            className="modal-submit-button"
-          >
-            Create Group
-          </button>
-        </form>
+      <form onSubmit={handleSubmit}>
+        <GroupModalFields
+          title={title}
+          setTitle={setTitle}
+          titleMaxLength={27}
+          course={course}
+          setCourse={setCourse}
+          classes={classOptions}
+          purpose={purpose}
+          setPurpose={setPurpose}
+          date={date}
+          setDate={setDate}
+          location={location}
+          setLocation={setLocation}
+          locationMaxLength={40}
+          seats={seats}
+          setSeats={setSeats}
+          details={details}
+          setDetails={setDetails}
+        />
+        <button type="submit" className="modal-submit-button">
+          Create Group
+        </button>
+      </form>
     </GroupModalFrame>
   );
 }

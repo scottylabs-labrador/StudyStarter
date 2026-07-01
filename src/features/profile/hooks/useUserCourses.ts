@@ -14,10 +14,8 @@ export function useUserCourses(userId?: string) {
   useEffect(() => {
     if (!userId) return;
 
-    return subscribeUserCourses(
-      userId,
-      setClasses,
-      (error) => console.error("Error getting documents: ", error),
+    return subscribeUserCourses(userId, setClasses, (error) =>
+      console.error("Error getting documents: ", error),
     );
   }, [userId]);
 

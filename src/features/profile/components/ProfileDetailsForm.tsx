@@ -30,7 +30,9 @@ export function ProfileDetailsForm({
           id="yearSelect"
           name="yearSelect"
           value={profileDetails.year}
-          onChange={(event) => updateProfileDetails({ year: event.target.value })}
+          onChange={(event) =>
+            updateProfileDetails({ year: event.target.value })
+          }
           className={selectClassName}
         >
           <option disabled value="default">
@@ -48,25 +50,33 @@ export function ProfileDetailsForm({
       <br />
       <hr className="text-darkbg dark:text-lightbg" />
       <br />
-      <h1 className="text-l mb-1 font-bold text-black dark:text-white">Majors:</h1>
+      <h1 className="mb-1 text-lg font-bold text-black dark:text-white">
+        Majors:
+      </h1>
       <input
         id="majorInput"
         className={inputClassName}
         type="text"
         value={profileDetails.majors}
-        onChange={(event) => updateProfileDetails({ majors: event.target.value })}
+        onChange={(event) =>
+          updateProfileDetails({ majors: event.target.value })
+        }
         placeholder="Add your major(s) here"
         required
       />
       <br />
       <br />
-      <h1 className="text-l mb-1 font-bold text-black dark:text-white">Minors:</h1>
+      <h1 className="mb-1 text-lg font-bold text-black dark:text-white">
+        Minors:
+      </h1>
       <input
         id="minorInput"
         className={`${inputClassName} mb-3`}
         type="text"
         value={profileDetails.minors}
-        onChange={(event) => updateProfileDetails({ minors: event.target.value })}
+        onChange={(event) =>
+          updateProfileDetails({ minors: event.target.value })
+        }
         placeholder="Add any minors or concentrations here"
       />
       <br />
