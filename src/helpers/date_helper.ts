@@ -25,14 +25,5 @@ export function formatDateTime(
 export function isInThePast(timestamp: Timestamp) {
   const groupDate = timestamp.toDate();
   const now = new Date();
-  if (groupDate.getFullYear() > now.getFullYear()) {
-    return false;
-  } else if (groupDate.getFullYear() === now.getFullYear()) {
-    if (groupDate.getMonth() > now.getMonth()) {
-      return false;
-    } else if (groupDate.getMonth() === now.getMonth()) {
-      return !(groupDate.getDate() >= now.getDate());
-    }
-  }
-  return true;
+  return groupDate.getTime() < now.getTime();
 };

@@ -1,37 +1,8 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SignOutButton, useUser } from "~/lib/auth-client";
 import Select, { MultiValue } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { ClearIndicator } from "node_modules/react-select/dist/declarations/src/components/indicators";
-
-interface CustomInputProps {
-  value?: string;
-  onClick?: () => void;
-  onClear?: () => void;
-}
-
-const CustomDateInput: React.FC<CustomInputProps> = ({ value, onClick, onClear }) => {
-  return (
-    <div className="relative w-full">
-      <input
-        type="text"
-        value={value || ""}
-        onClick={onClick}
-        readOnly
-        placeholder="Date"
-        className="rounded-md border px-2 py-1.5"
-      />
-      {value && (
-        <button
-          onClick={onClear}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
-        >&times;
-        </button>
-      )}
-    </div>
-  );
-};
 
 const customSelectComponents = {
   ClearIndicator: () => null, // Do not render the remove icon ("x")
