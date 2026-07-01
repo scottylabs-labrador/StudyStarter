@@ -2,7 +2,7 @@
 import "~/styles/globals.css";
 import { useUser, SignOutButton } from "~/lib/auth-client";
 import { useState } from "react";
-import { ClassList } from "~/components/ClassList";
+import { ClassList } from "~/features/profile/components/ClassList";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 import { redirect } from "next/navigation";

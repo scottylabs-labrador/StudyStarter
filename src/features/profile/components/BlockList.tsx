@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { useUser } from "~/lib/auth-client";
-import { useConfirm } from './ConfirmContext';
+import { useConfirm } from '~/components/ui/ConfirmContext';
 import { deleteFromCal, setupGoogleApi, isCalendarApiReady, hasCalendarAccess, requestCalendarAccessInteractive } from '~/helpers/calendar_helper';
 
 export interface BlockedUsers {

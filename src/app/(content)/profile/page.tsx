@@ -3,11 +3,11 @@ import "~/styles/globals.css";
 import { redirect } from "next/navigation";
 import { useUser, SignOutButton } from "~/lib/auth-client";
 import { useState } from "react";
-import { ClassList } from "~/components/ClassList";
-import { BlockList } from "~/components/BlockList";
+import { ClassList } from "~/features/profile/components/ClassList";
+import { BlockList } from "~/features/profile/components/BlockList";
 import { db } from '~/lib/api/firebaseConfig';
 import { setDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
-import { ConfirmProvider } from "~/components/ConfirmContext";
+import { ConfirmProvider } from "~/components/ui/ConfirmContext";
 
 function ContinueButton() {
   return (

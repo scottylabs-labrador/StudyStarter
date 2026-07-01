@@ -6,7 +6,7 @@ import { Timestamp } from "firebase/firestore";
  */
 export function formatDateTime(
   timestamp: Timestamp,
-): [String | null, String | null] {
+): [string | null, string | null] {
   if (!timestamp) {
     return [null, null];
   }

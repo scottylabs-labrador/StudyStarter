@@ -1,5 +1,5 @@
 "use client";
-import GroupDetails from "~/components/GroupDetails";
+import GroupDetails from "~/features/groups/components/GroupDetails";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
@@ -7,8 +7,8 @@ import { collection, query, onSnapshot, doc } from "firebase/firestore";
 import { useUser } from "~/lib/auth-client";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
-import TopFilterBar from "~/components/FilterBar";
-import Card from "~/components/Card";
+import TopFilterBar from "~/features/groups/components/FilterBar";
+import Card from "~/features/groups/components/Card";
 
 export default function FeedPage() {
   const [groups, setGroups] = useState<any[]>([]);

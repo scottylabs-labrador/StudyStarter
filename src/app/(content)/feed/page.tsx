@@ -1,5 +1,5 @@
 "use client";
-import GroupDetails from "~/components/GroupDetails";
+import GroupDetails from "~/features/groups/components/GroupDetails";
 import groupDetails from "~/types";
 import React, { useEffect, useState } from "react";
 import { db } from "~/lib/api/firebaseConfig";
@@ -7,15 +7,15 @@ import { collection, query, onSnapshot, doc } from "firebase/firestore";
 import { useUser } from "~/lib/auth-client";
 import { formatDateTime, isInThePast } from "~/helpers/date_helper";
 import { MultiValue } from "react-select";
-import TopFilterBar from "~/components/FilterBar";
+import TopFilterBar from "~/features/groups/components/FilterBar";
 import { useDispatch } from "react-redux";
 import {
   setIsCreateGroupModalOpen,
 } from "~/lib/features/uiSlice";
 import { usePostHog } from 'posthog-js/react'
 
-import { BlockedUsers } from "~/components/BlockList";
-import Card from "~/components/Card";
+import { BlockedUsers } from "~/features/profile/components/BlockList";
+import Card from "~/features/groups/components/Card";
 
 
 export default function FeedPage() {

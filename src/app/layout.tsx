@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
 import { PostHogProvider } from './providers'
-import { FirebaseAuthBridge } from "~/components/FirebaseAuthBridge";
+import { FirebaseAuthBridge } from "~/components/providers/FirebaseAuthBridge";
 
 
 export const metadata = {
