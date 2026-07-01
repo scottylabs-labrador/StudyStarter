@@ -1,22 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { doc, getDoc } from "firebase/firestore";
+import { useProfileSummary } from "~/features/profile/hooks/useProfileSummary";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsViewProfileOpen } from "~/lib/features/uiSlice";
-import { db } from "~/lib/api/firebaseConfig";
 
 interface CreateProfilePopUpProps {
   username: string;
   email: string;
 }
-
-type ProfileSummary = {
-  year?: string;
-  majors?: string;
-  minors?: string;
-};
 
 const formatYear = (year?: string) => {
   if (!year) return "";
@@ -26,36 +18,8 @@ const formatYear = (year?: string) => {
 const CreateProfilePopUp: React.FC<CreateProfilePopUpProps> = ({ username, email }) => {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) => state.ui.isViewProfileOpen);
-  const [profile, setProfile] = useState<ProfileSummary>({});
+  const profile = useProfileSummary(email, isOpen);
   const firstName = username.split(" ")[0] || username;
-
-  useEffect(() => {
-    if (!isOpen || !email) return;
-
-    const loadProfile = async () => {
-      try {
-        const docRef = doc(db, "Users", email);
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
-          console.warn("No such document!");
-          setProfile({});
-          return;
-        }
-
-        const data = docSnap.data();
-        setProfile({
-          year: data.year,
-          majors: data.majors,
-          minors: data.minors,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    loadProfile();
-  }, [email, isOpen]);
 
   const handleClose = () => {
     dispatch(setIsViewProfileOpen(false));

@@ -1,15 +1,14 @@
 "use client";
 import darkLogo from "~/image/darkLogo2.png"
 import lightLogo from "~/image/lightLogo2.png"
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState } from "react";
 import CreateGroupModal from "~/features/groups/components/CreateGroupModal";
 import { usePathname } from "next/navigation";
 import { useUser } from "~/lib/auth-client";
-import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import { ProfileMenu } from "~/components/ui/ProfileMenu";
+import { useUserTheme } from "~/features/profile/hooks/useUserTheme";
 
 
 export default function NavBar() {
@@ -18,58 +17,7 @@ export default function NavBar() {
   const pathname = usePathname();
   const page = pathname.split("/")[1];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
-  // Read theme from localStorage immediately to prevent flickering
-  const getInitialTheme = () => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "light";
-    }
-    return "light"; // Default when rendering server-side
-  };
-
-  const [theme, setTheme] = useState(getInitialTheme);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      document.documentElement.classList.toggle("dark", theme === "dark");
-      localStorage.setItem("theme", theme);
-    }
-  }, [theme]);
-
-  useEffect(() => {
-    async function fetchThemeFromDB() {
-      if (!userId) return;
-
-      try {
-        const docRef = doc(db, "Users", userId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const savedTheme = docSnap.data().theme;
-          if (savedTheme && savedTheme !== theme) {
-            setTheme(savedTheme);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching theme:", err);
-      }
-    }
-
-    fetchThemeFromDB();
-  }, [userId]);
-
-  const toggleTheme = async () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-
-    if (userId) {
-      try {
-        const usersDocRef = doc(db, "Users", userId);
-        await setDoc(usersDocRef, { theme: newTheme }, { merge: true });
-      } catch (err) {
-        console.error("Error saving theme to DB:", err);
-      }
-    }
-  };
+  const { theme, toggleTheme } = useUserTheme(userId);
   
 
   return (

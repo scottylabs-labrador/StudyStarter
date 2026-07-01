@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { db } from '~/lib/api/firebaseConfig';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { useUser } from "~/lib/auth-client";
 import { useConfirm } from '~/components/ui/ConfirmContext';
+import { removeParticipantFromSharedGroups } from '~/features/groups/services/groupService';
+import {
+  addBlockedByThem,
+  defaultBlockedUsers,
+  getUserBlockingState,
+  removeBlockedByThem,
+  updateUserBlockingState,
+} from '~/features/profile/services/profileService';
+import type { BlockedUsers } from '~/features/profile/types';
 import { deleteFromCal, setupGoogleApi, isCalendarApiReady, hasCalendarAccess, requestCalendarAccessInteractive } from '~/helpers/calendar_helper';
-
-export interface BlockedUsers {
-  blockedByMe: string[]
-  blockedByThem: string[]
-}
-
-type GroupParticipant = {
-  email: string;
-  eventId?: string;
-};
 
 export function BlockList() {
   const { user } = useUser();
-  const [blocked, setBlocked] = useState<BlockedUsers>({blockedByMe: [], blockedByThem:[]});
+  const [blocked, setBlocked] = useState<BlockedUsers>(defaultBlockedUsers);
   const [groups, setGroups] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const confirm = useConfirm();
@@ -29,29 +26,12 @@ export function BlockList() {
       if (!userId) {
         return;
       }
-      const docRef = doc(db, "Users", userId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data()
-        const blockedData = data.blocked;
-        if (blockedData) {
-          setBlocked(blockedData as BlockedUsers);
-        } else {
-          setBlocked({blockedByMe: [], blockedByThem:[]});
-        }
-        const userGroups = data.joinedGroups;
-        if (userGroups) {
-          setGroups(userGroups);
-        } else {
-          setGroups([])
-        }
-      } else {
-        console.warn("No such document!");
-        setBlocked({blockedByMe: [], blockedByThem:[]});
-      }
+      const blockingState = await getUserBlockingState(userId);
+      setBlocked(blockingState.blocked);
+      setGroups(blockingState.joinedGroups);
     } catch (err) {
       console.error(err);
-      setBlocked({blockedByMe: [], blockedByThem:[]});
+      setBlocked(defaultBlockedUsers);
     }
   }
 
@@ -84,7 +64,6 @@ export function BlockList() {
     const userId = user?.emailAddresses[0]?.emailAddress;
     if (!userId) return;
 
-    // Check if user is already in the blockedByMe list
     const alreadyBlockedByMe = blocked.blockedByMe.some((b) => b === userToBlock);
     if (alreadyBlockedByMe) {
       setInputValue('');
@@ -92,11 +71,8 @@ export function BlockList() {
     }
 
     try {
-      // Check if the other user already has current user blocked
-      const blockedUserDocRef = doc(db, "Users", userToBlock);
-      const blockedUserDoc = await getDoc(blockedUserDocRef);
-      let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
-      let newGroups: string[] = [];
+      const blockedUserState = await getUserBlockingState(userToBlock);
+      let updatedGroups = groups;
       let calendarAuthPromise: Promise<void> | null = null;
       if (isCalendarApiReady() && !hasCalendarAccess()) {
         calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
@@ -104,73 +80,45 @@ export function BlockList() {
         });
       }
 
-      if (blockedUserDoc.exists()) {
-        // if blocked user already a user, update blocked and check shared groups
-        const data = blockedUserDoc.data();
-        const theirBlockedData = data.blocked;
-        const theirGroups: string[] = data.joinedGroups;
-        const sharedGroups = groups.filter(g => theirGroups.includes(g));
-        const numShared = sharedGroups.length;
-        if (numShared > 0) {
-          const ok = await confirm(`You are currently in ${numShared} group${numShared == 1 ? "" : "s"} with ${userToBlock}. You will be removed from ${numShared == 1 ? "this group" : "these groups"} if you continue.`);
-          if (!ok) {
-            return;
-          }
-          if (calendarAuthPromise) {
-            await calendarAuthPromise;
-          }
-          for (const g of groups) {
-            if (theirGroups.includes(g)) {
-              const toRemoveDocRef = doc(db, "StudyGroups", g);
-              const toRemoveDoc = await getDoc(toRemoveDocRef);
-              if (toRemoveDoc.exists()) {
-                const groupData = toRemoveDoc.data();
-                const groupParticipants = groupData.participantDetails as GroupParticipant[];
-                const eventId = groupParticipants.find((p) => p.email === userId)?.eventId;
-                if (eventId && eventId !== "None") {
-                  deleteFromCal(eventId);
-                } else {
-                  console.warn("No calendar event found to delete for group", g);
-                }
-                let newParticipants = groupParticipants.filter((p) => p.email != userId);
-                await setDoc(toRemoveDocRef, { participantDetails: newParticipants }, { merge: true });
-              } else {
-                console.warn("broken");
-              }
-            } else {
-              newGroups.push(g);
-            }
-          }
+      const sharedGroups = groups.filter((groupId) => (
+        blockedUserState.joinedGroups.includes(groupId)
+      ));
+      const numShared = sharedGroups.length;
+      if (numShared > 0) {
+        const ok = await confirm(`You are currently in ${numShared} group${numShared === 1 ? "" : "s"} with ${userToBlock}. You will be removed from ${numShared === 1 ? "this group" : "these groups"} if you continue.`);
+        if (!ok) {
+          return;
         }
-
-        if (theirBlockedData) {
-          theirBlocked = theirBlockedData as BlockedUsers;
-        } else {
-          theirBlocked = {blockedByMe: [], blockedByThem: []}
+        if (calendarAuthPromise) {
+          await calendarAuthPromise;
         }
-        theirBlocked.blockedByThem.push(userId)
-        let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: theirBlocked.blockedByThem};
-        // Update the blocked user's document
-        await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
-      } else {
-        // not a user yet, create a user to add blocking
-        let newTheirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: [userId]};
-        await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
+        const removal = await removeParticipantFromSharedGroups({
+          currentGroupIds: groups,
+          targetGroupIds: blockedUserState.joinedGroups,
+          userEmail: userId,
+        });
+        updatedGroups = removal.remainingGroupIds;
+        await Promise.all(removal.eventIdsToDelete.map(deleteFromCal));
       }
 
-      let newBlockedByMe = blocked.blockedByMe.concat([userToBlock])
+      await addBlockedByThem({ targetUserId: userToBlock, currentUserId: userId });
 
-      let newBlocked: BlockedUsers = {blockedByMe: newBlockedByMe, blockedByThem: blocked.blockedByThem};
+      const newBlocked: BlockedUsers = {
+        blockedByMe: blocked.blockedByMe.concat([userToBlock]),
+        blockedByThem: blocked.blockedByThem,
+      };
       
       setBlocked(newBlocked);
-      setGroups(newGroups);
+      setGroups(updatedGroups);
       setInputValue('');
-      
-      const usersDocRef = doc(db, "Users", userId);
-      await setDoc(usersDocRef, { blocked: newBlocked, joinedGroups: newGroups }, { merge: true });
+
+      await updateUserBlockingState({
+        userId,
+        blocked: newBlocked,
+        joinedGroups: updatedGroups,
+      });
     } catch (err) {
       console.error(err);
-      // Revert state on error
       getBlocked();
     }
   };
@@ -181,36 +129,19 @@ export function BlockList() {
     if (!userId) return;
 
     try {
-      // Check if the other user already has current user blocked
-      const blockedUserDocRef = doc(db, "Users", userToUnblock);
-      const blockedUserDoc = await getDoc(blockedUserDocRef);
-      let theirBlocked: BlockedUsers = {blockedByMe: [], blockedByThem: []};
+      await removeBlockedByThem({ targetUserId: userToUnblock, currentUserId: userId });
 
-      if (blockedUserDoc.exists()) {
-        const theirBlockedData = blockedUserDoc.data().blocked;
-        if (theirBlockedData) {
-          theirBlocked = theirBlockedData as BlockedUsers;
-        } else {
-          theirBlocked = {blockedByMe: [], blockedByThem: []}
-        }
-        let newTheirBlockedByThem = theirBlocked.blockedByThem.filter((u) => u != userId)
-        let newTheirBlocked: BlockedUsers = {blockedByMe: theirBlocked.blockedByMe, blockedByThem: newTheirBlockedByThem};
-        // Update the blocked user's document
-        await setDoc(blockedUserDocRef, { blocked: newTheirBlocked }, { merge: true });
-      }
-
-      let newBlockedByMe = blocked.blockedByMe.filter((u) => u != userToUnblock)
-
-      let newBlocked: BlockedUsers = {blockedByMe: newBlockedByMe, blockedByThem: blocked.blockedByThem};
+      const newBlocked: BlockedUsers = {
+        blockedByMe: blocked.blockedByMe.filter((u) => u !== userToUnblock),
+        blockedByThem: blocked.blockedByThem,
+      };
       
       setBlocked(newBlocked);
       setInputValue('');
-      
-      const usersDocRef = doc(db, "Users", userId);
-      await setDoc(usersDocRef, { blocked: newBlocked }, { merge: true });
+
+      await updateUserBlockingState({ userId, blocked: newBlocked });
     } catch (err) {
       console.error(err);
-      // Revert state on error
       getBlocked();
     }
   };

@@ -1,17 +1,17 @@
-import { Timestamp } from "firebase/firestore";
-/**
- * Formats timestamp into correct string format for our app.
- * @param {Timestamp} Timestamp - Firestore Timestamp Object.
- * @returns {string} [Date, Time].
- */
+type AppDate = Date | {
+  toDate: () => Date;
+};
+
+const toDate = (date: AppDate) => date instanceof Date ? date : date.toDate();
+
 export function formatDateTime(
-  timestamp: Timestamp,
+  timestamp: AppDate,
 ): [string | null, string | null] {
   if (!timestamp) {
     return [null, null];
   }
-  const date = timestamp.toDate();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() is 0-indexed (January is 0)
+  const date = toDate(timestamp);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   const year = String(date.getFullYear()).slice(-2);
   let hours = date.getHours();
@@ -19,11 +19,11 @@ export function formatDateTime(
 
   const ampm = hours >= 12 ? "PM" : "AM";
   hours = hours % 12;
-  hours = hours ? hours : 12; // '0' hour should be '12'
+  hours = hours ? hours : 12;
   return [`${month}/${day}/${year}`, `${hours}:${minutes} ${ampm}`];
 };
-export function isInThePast(timestamp: Timestamp) {
-  const groupDate = timestamp.toDate();
+export function isInThePast(timestamp: AppDate) {
+  const groupDate = toDate(timestamp);
   const now = new Date();
   return groupDate.getTime() < now.getTime();
 };

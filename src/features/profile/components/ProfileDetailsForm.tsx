@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "~/lib/api/firebaseConfig";
+import { useMemo } from "react";
+import { useProfileDetails } from "../hooks/useProfileDetails";
 
 type ProfileDetailsFormProps = {
   userId?: string;
@@ -10,24 +9,12 @@ type ProfileDetailsFormProps = {
   mastersValue?: string;
 };
 
-type ProfileDetails = {
-  year: string;
-  majors: string;
-  minors: string;
-};
-
-const defaultProfileDetails: ProfileDetails = {
-  year: "default",
-  majors: "",
-  minors: "",
-};
-
 export function ProfileDetailsForm({
   userId,
   compact = false,
   mastersValue = "Masters Student",
 }: ProfileDetailsFormProps) {
-  const [profileDetails, setProfileDetails] = useState(defaultProfileDetails);
+  const { profileDetails, updateProfileDetails } = useProfileDetails(userId);
   const startYear = new Date().getFullYear();
   const years = useMemo(
     () => Array.from({ length: 6 }, (_, index) => String(startYear + index)),
@@ -35,43 +22,6 @@ export function ProfileDetailsForm({
   );
   const selectClassName = compact ? "profile-select-compact" : "profile-select";
   const inputClassName = compact ? "profile-input-compact" : "profile-input";
-
-  useEffect(() => {
-    if (!userId) return;
-
-    const loadProfileDetails = async () => {
-      try {
-        const docRef = doc(db, "Users", userId);
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) return;
-
-        const data = docSnap.data();
-        setProfileDetails({
-          year: data.year ?? "default",
-          majors: data.majors ?? "",
-          minors: data.minors ?? "",
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    loadProfileDetails();
-  }, [userId]);
-
-  const updateProfileDetails = async (updates: Partial<ProfileDetails>) => {
-    setProfileDetails((currentDetails) => ({ ...currentDetails, ...updates }));
-
-    if (!userId) return;
-
-    try {
-      const usersDocRef = doc(db, "Users", userId);
-      await setDoc(usersDocRef, updates, { merge: true });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <>

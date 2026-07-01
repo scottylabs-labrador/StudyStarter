@@ -1,7 +1,10 @@
-import { Timestamp } from "firebase/firestore";
-
 declare const gapi: any;
 declare const google: any;
+
+type CalendarDate = Date | {
+  toDate: () => Date;
+  toMillis: () => number;
+};
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_CALENDAR_CLIENT_ID!;
 
@@ -123,7 +126,6 @@ async function initGapiClient(): Promise<void> {
           discoveryDocs: [DISCOVERY_DOC],
         });
         gapiInited = true;
-        maybeEnableActions();
         resolve();
       } catch (err) {
         reject(err);
@@ -143,18 +145,9 @@ function initTokenClient(): void {
         return;
       }
       persistToken(tokenResponse.access_token, tokenResponse.expires_in);
-      console.log("Access token granted and stored.");
     },
   });
   gisInited = true;
-  maybeEnableActions();
-}
-
-/** Helper: only enable actions once both gapi and gis are initialized. */
-function maybeEnableActions(): void {
-  if (gapiInited && gisInited) {
-    console.log("Google API client and OAuth ready.");
-  }
 }
 
 /** Ensures scripts are loaded, gapi initialized, and OAuth client set up. */
@@ -190,7 +183,6 @@ export async function requestCalendarAccess(): Promise<void> {
           return;
         }
         persistToken(tokenResponse.access_token, tokenResponse.expires_in);
-        console.log("Calendar access granted.");
         resolve();
       };
 
@@ -227,7 +219,6 @@ export function requestCalendarAccessInteractive({
         return;
       }
       persistToken(tokenResponse.access_token, tokenResponse.expires_in);
-      console.log("Calendar access granted.");
       resolve();
     };
 
@@ -276,6 +267,16 @@ async function ensureAuthorized(): Promise<boolean> {
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getCalendarDateRange(date: CalendarDate) {
+  const startDate = date instanceof Date ? date : date.toDate();
+  const startMs = date instanceof Date ? date.getTime() : date.toMillis();
+
+  return {
+    start: startDate.toISOString(),
+    end: new Date(startMs + 3600000).toISOString(),
+  };
 }
 
 async function calendarRequest<T>(
@@ -337,7 +338,7 @@ export async function addToCal(
   title: string,
   course: string,
   purpose: string,
-  date: Timestamp,
+  date: CalendarDate,
   location: string,
   details: string,
   email: string
@@ -345,8 +346,7 @@ export async function addToCal(
   const authorized = await ensureAuthorized();
   if (!authorized) return "None";
 
-  const start = date.toDate().toISOString();
-  const end = new Date(date.toMillis() + 3600000).toISOString();
+  const { start, end } = getCalendarDateRange(date);
 
   const event = {
     summary: `Study Group: ${title}`,
@@ -369,7 +369,6 @@ export async function addToCal(
       method: "POST",
       body: JSON.stringify(event),
     });
-    console.log("Event created:", response.htmlLink);
     return response.id ?? "None";
   } catch (err) {
     const status = (err as { status?: number })?.status;
@@ -404,7 +403,6 @@ export async function deleteFromCal(
     await calendarRequest<void>(`/${encodeURIComponent(eventId)}`, {
       method: "DELETE",
     });
-    console.log(`Event ${eventId} deleted.`);
   } catch (err) {
     const status = (err as { status?: number })?.status;
     if (status === 401) {
@@ -424,7 +422,7 @@ export async function updateEvent(
   eventId: string,
   data: Record<string, any>,
 ): Promise<any> {
-  if (eventId == "None") {
+  if (eventId === "None") {
     return null;
   }
   const authorized = await ensureAuthorized();
@@ -438,7 +436,6 @@ export async function updateEvent(
       method: "PATCH",
       body: JSON.stringify(data),
     });
-    console.log(`Event ${eventId} updated.`);
     return response;
   } catch (err) {
     const status = (err as { status?: number })?.status;
