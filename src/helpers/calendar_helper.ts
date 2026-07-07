@@ -10,6 +10,7 @@ const SCOPES = "https://www.googleapis.com/auth/calendar.events.owned https://ww
 const TOKEN_STORAGE_KEY = "google_calendar_token_v1";
 const TOKEN_EXPIRY_BUFFER_MS = 60_000;
 const CALENDAR_EVENTS_URL = "https://www.googleapis.com/calendar/v3/calendars/primary/events";
+const INTERACTIVE_AUTH_PROMPT = "consent";
 
 let tokenClient: any;
 let gapiInited = false;
@@ -177,10 +178,15 @@ export async function requestCalendarAccess(): Promise<void> {
   await setupGoogleApi();
 
   if (!isAccessTokenValid()) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       tokenClient.callback = (tokenResponse: any) => {
         if (tokenResponse.error) {
           console.error("Authorization error:", tokenResponse.error);
+          reject(tokenResponse.error);
+          return;
+        }
+        if (!tokenResponse.access_token) {
+          reject(new Error("Google Calendar authorization did not return an access token"));
           return;
         }
         persistToken(tokenResponse.access_token, tokenResponse.expires_in);
@@ -188,8 +194,7 @@ export async function requestCalendarAccess(): Promise<void> {
         resolve();
       };
 
-      // Default behavior (may show consent if needed)
-      tokenClient.requestAccessToken({ prompt: "" });
+      tokenClient.requestAccessToken({ prompt: INTERACTIVE_AUTH_PROMPT });
     });
   }
 }
@@ -217,13 +222,16 @@ export function requestCalendarAccessInteractive({
         reject(tokenResponse.error);
         return;
       }
+      if (!tokenResponse.access_token) {
+        reject(new Error("Google Calendar authorization did not return an access token"));
+        return;
+      }
       persistToken(tokenResponse.access_token, tokenResponse.expires_in);
       console.log("Calendar access granted.");
       resolve();
     };
 
-    // Avoid forcing consent if already granted
-    tokenClient.requestAccessToken({ prompt: "" });
+    tokenClient.requestAccessToken({ prompt: INTERACTIVE_AUTH_PROMPT });
   });
 }
 
@@ -240,6 +248,10 @@ async function requestCalendarAccessSilent(): Promise<boolean> {
     tokenClient.callback = (tokenResponse: any) => {
       if (tokenResponse.error) {
         console.warn("Silent auth failed:", tokenResponse.error);
+        resolve(false);
+        return;
+      }
+      if (!tokenResponse.access_token) {
         resolve(false);
         return;
       }

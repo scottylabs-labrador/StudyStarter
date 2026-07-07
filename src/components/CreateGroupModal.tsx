@@ -55,7 +55,7 @@ export default function CreateGroupModal() {
 
     let calendarAuthPromise: Promise<void> | null = null;
     if (isCalendarApiReady()) {
-      calendarAuthPromise = requestCalendarAccessInteractive({ forceRefresh: true }).catch((err) => {
+      calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
         console.warn("Calendar auth failed:", err);
       });
     }
