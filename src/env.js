@@ -6,7 +6,10 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])
     .default("development"),
-  PRISMA_QUERY_LOG: z.coerce.boolean().default(false),
+  PRISMA_QUERY_LOG: z
+    .enum(["true", "false", "1", "0"])
+    .optional()
+    .transform((value) => value === "true" || value === "1"),
   SERVER_URL: z.string().url(),
   SERVER_PORT: z.coerce.number().default(80),
 

@@ -2,14 +2,14 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
-  deleteDoc,
   doc,
   getDoc,
   onSnapshot,
   query,
-  setDoc,
+  runTransaction,
   Timestamp,
   updateDoc,
+  writeBatch,
   type DocumentReference,
   type Unsubscribe,
 } from "firebase/firestore";
@@ -69,7 +69,9 @@ export function subscribeUserGroupState(
     };
     onUserGroupState({
       joinedGroups: data.joinedGroups ?? [],
-      blockedUsers: blocked.blockedByMe.concat(blocked.blockedByThem),
+      blockedUsers: blocked.blockedByMe
+        .concat(blocked.blockedByThem)
+        .map((email) => email.toLowerCase()),
     });
   });
 }
@@ -158,12 +160,14 @@ export async function createStudyGroup({
     details: input.details,
   };
 
-  await setDoc(groupDocRef, group);
-  await setDoc(
+  const batch = writeBatch(db);
+  batch.set(groupDocRef, group);
+  batch.set(
     doc(db, "Users", participant.email),
     { joinedGroups: arrayUnion(id) },
     { merge: true },
   );
+  await batch.commit();
 
   return group;
 }
@@ -212,7 +216,9 @@ export async function getUserBlockedEmails(userId: string) {
     blockedByMe: [],
     blockedByThem: [],
   };
-  return blocked.blockedByMe.concat(blocked.blockedByThem);
+  return blocked.blockedByMe
+    .concat(blocked.blockedByThem)
+    .map((email) => email.toLowerCase());
 }
 
 export async function getStudyGroup(groupId: string) {
@@ -229,14 +235,44 @@ export async function addParticipantToGroup({
   userId: string;
   participant: GroupParticipant;
 }) {
-  await updateDoc(doc(db, "StudyGroups", groupId), {
-    participantDetails: arrayUnion(participant),
+  const groupDocRef = doc(db, "StudyGroups", groupId);
+  const userDocRef = doc(db, "Users", userId);
+
+  return runTransaction(db, async (transaction) => {
+    const groupDoc = await transaction.get(groupDocRef);
+
+    if (!groupDoc.exists()) {
+      throw new Error("Group unavailable");
+    }
+
+    const groupData = groupDoc.data() as StudyGroup;
+    const participantDetails = groupData.participantDetails ?? [];
+    const isAlreadyParticipant = participantDetails.some(
+      (existingParticipant) => existingParticipant.email === participant.email,
+    );
+
+    if (
+      !isAlreadyParticipant &&
+      participantDetails.length >= groupData.totalSeats
+    ) {
+      throw new Error("Group is full");
+    }
+
+    const updatedParticipants = isAlreadyParticipant
+      ? participantDetails
+      : participantDetails.concat(participant);
+
+    transaction.update(groupDocRef, {
+      participantDetails: updatedParticipants,
+    });
+    transaction.set(
+      userDocRef,
+      { joinedGroups: arrayUnion(groupId) },
+      { merge: true },
+    );
+
+    return updatedParticipants;
   });
-  await setDoc(
-    doc(db, "Users", userId),
-    { joinedGroups: arrayUnion(groupId) },
-    { merge: true },
-  );
 }
 
 export async function removeParticipantFromGroup({
@@ -248,25 +284,37 @@ export async function removeParticipantFromGroup({
   userId: string;
   userEmail: string;
 }) {
-  const remainingParticipants = group.participantDetails.filter(
-    (participantDetail) => participantDetail.email !== userEmail,
-  );
-
   const groupDocRef = doc(db, "StudyGroups", group.id);
-  await updateDoc(groupDocRef, {
-    participantDetails: remainingParticipants,
+  const userDocRef = doc(db, "Users", userId);
+
+  return runTransaction(db, async (transaction) => {
+    const groupDoc = await transaction.get(groupDocRef);
+
+    transaction.set(
+      userDocRef,
+      { joinedGroups: arrayRemove(group.id) },
+      { merge: true },
+    );
+
+    if (!groupDoc.exists()) {
+      return [];
+    }
+
+    const groupData = groupDoc.data() as StudyGroup;
+    const remainingParticipants = groupData.participantDetails.filter(
+      (participantDetail) => participantDetail.email !== userEmail,
+    );
+
+    if (remainingParticipants.length === 0) {
+      transaction.delete(groupDocRef);
+    } else {
+      transaction.update(groupDocRef, {
+        participantDetails: remainingParticipants,
+      });
+    }
+
+    return remainingParticipants;
   });
-  await setDoc(
-    doc(db, "Users", userId),
-    { joinedGroups: arrayRemove(group.id) },
-    { merge: true },
-  );
-
-  if (remainingParticipants.length === 0) {
-    await deleteDoc(groupDocRef);
-  }
-
-  return remainingParticipants;
 }
 
 export async function removeParticipantFromSharedGroups({

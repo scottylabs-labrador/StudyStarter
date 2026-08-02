@@ -81,15 +81,6 @@ export function BlockList() {
     try {
       const blockedUserState = await getUserBlockingState(userToBlock);
       let updatedGroups = groups;
-      let calendarAuthPromise: Promise<void> | null = null;
-      if (isCalendarApiReady() && !hasCalendarAccess()) {
-        calendarAuthPromise = requestCalendarAccessInteractive().catch(
-          (err) => {
-            console.warn("Calendar auth failed:", err);
-          },
-        );
-      }
-
       const sharedGroups = groups.filter((groupId) =>
         blockedUserState.joinedGroups.includes(groupId),
       );
@@ -101,8 +92,11 @@ export function BlockList() {
         if (!ok) {
           return;
         }
-        if (calendarAuthPromise) {
-          await calendarAuthPromise;
+        await setupGoogleApi();
+        if (isCalendarApiReady() && !hasCalendarAccess()) {
+          await requestCalendarAccessInteractive().catch((err) => {
+            console.warn("Calendar auth failed:", err);
+          });
         }
         const removal = await removeParticipantFromSharedGroups({
           currentGroupIds: groups,
@@ -173,7 +167,7 @@ export function BlockList() {
             id="blockInput"
             className="course-search-input"
             type="text"
-            pattern="[A-Za-z]*@andrew.cmu.edu"
+            pattern="[A-Za-z0-9]+@andrew\.cmu\.edu"
             title='"<id>@andrew.cmu.edu"'
             value={inputValue}
             onChange={handleBlock}

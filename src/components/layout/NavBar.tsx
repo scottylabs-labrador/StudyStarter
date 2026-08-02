@@ -28,6 +28,14 @@ export default function NavBar() {
               <button
                 onClick={() => setIsDrawerOpen(!isDrawerOpen)}
                 className="mr-auto md:hidden"
+                type="button"
+                aria-label={
+                  isDrawerOpen
+                    ? "Close navigation menu"
+                    : "Open navigation menu"
+                }
+                aria-expanded={isDrawerOpen}
+                aria-controls="mobile-navigation-menu"
               >
                 {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -103,6 +111,7 @@ export default function NavBar() {
           onClick={() => setIsDrawerOpen(false)}
         >
           <div
+            id="mobile-navigation-menu"
             className="mobile-drawer-panel"
             onClick={(e) => e.stopPropagation()}
           >
@@ -110,6 +119,8 @@ export default function NavBar() {
               <button
                 onClick={() => setIsDrawerOpen(false)}
                 className="mb-4 text-black dark:text-white"
+                type="button"
+                aria-label="Close navigation menu"
               >
                 <X size={24} />
               </button>

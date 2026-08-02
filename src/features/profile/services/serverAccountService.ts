@@ -18,6 +18,7 @@ export async function checkFacultyStatus(email: string, firstName: string) {
         firstName,
       }),
       cache: "no-store",
+      signal: AbortSignal.timeout(8000),
     });
 
     if (!response.ok) {

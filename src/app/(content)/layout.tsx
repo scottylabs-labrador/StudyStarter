@@ -2,7 +2,6 @@ import "~/styles/globals.css";
 import { redirect } from "next/navigation";
 import NavBar from "~/components/layout/NavBar";
 import React from "react";
-import MobileNavBar from "~/components/layout/MobileNavBar";
 import {
   checkFacultyStatus,
   userHasCreatedProfile,
@@ -49,7 +48,6 @@ export default async function ContentLayout({
     <div className="app-shell">
       <NavBar />
       <div className="app-content">
-        <MobileNavBar />
         <main className="app-main">{children}</main>
       </div>
     </div>

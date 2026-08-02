@@ -26,6 +26,7 @@ export function useProfileDetails(userId?: string) {
   }, [userId]);
 
   const updateProfileDetails = async (updates: Partial<ProfileDetails>) => {
+    const previousDetails = profileDetails;
     setProfileDetails((currentDetails) => ({ ...currentDetails, ...updates }));
 
     if (!userId) return;
@@ -34,6 +35,7 @@ export function useProfileDetails(userId?: string) {
       await updateUserProfileDetails(userId, updates);
     } catch (error) {
       console.error(error);
+      setProfileDetails(previousDetails);
     }
   };
 

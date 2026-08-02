@@ -43,13 +43,6 @@ export default function CreateGroupModal() {
   ): Promise<void> => {
     e.preventDefault();
 
-    let calendarAuthPromise: Promise<void> | null = null;
-    if (isCalendarApiReady()) {
-      calendarAuthPromise = requestCalendarAccessInteractive().catch((err) => {
-        console.warn("Calendar auth failed:", err);
-      });
-    }
-
     if (!date) {
       toast.error("Invalid Date Input!");
       return;
@@ -68,38 +61,60 @@ export default function CreateGroupModal() {
       });
       return;
     }
-    if (calendarAuthPromise) {
-      await calendarAuthPromise;
-    }
-    const eventId =
-      (await addToCal(
-        title,
-        course,
-        purpose,
-        date,
-        location,
-        details,
-        userEmail,
-      )) ?? "None";
-    const participant = {
-      name: user?.fullName || "User",
-      url: user?.imageUrl ?? null,
-      email: userEmail,
-      eventId,
-    };
 
-    const group = await createStudyGroup({
-      input: {
-        title,
-        course,
-        purpose,
-        date,
-        location,
-        seats,
-        details,
-      },
-      participant,
-    });
+    try {
+      if (isCalendarApiReady()) {
+        await requestCalendarAccessInteractive().catch((err) => {
+          console.warn("Calendar auth failed:", err);
+        });
+      }
+
+      const eventId =
+        (await addToCal(
+          title,
+          course,
+          purpose,
+          date,
+          location,
+          details,
+          userEmail,
+        )) ?? "None";
+      const participant = {
+        name: user?.fullName || "User",
+        url: user?.imageUrl ?? null,
+        email: userEmail,
+        eventId,
+      };
+
+      const group = await createStudyGroup({
+        input: {
+          title,
+          course,
+          purpose,
+          date,
+          location,
+          seats,
+          details,
+        },
+        participant,
+      });
+
+      posthog.capture("group_created", {
+        group: {
+          id: group.id,
+          course,
+          purpose,
+          startTime: group.startTime,
+          totalSeats: Number(seats),
+          participantCount: 1,
+          hasDetails: Boolean(details),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Error creating study group");
+      return;
+    }
 
     setTitle("");
     setCourse("");
@@ -118,34 +133,13 @@ export default function CreateGroupModal() {
         color: "#fff",
       },
     });
-    posthog.capture("group_created", {
-      group: {
-        id: group.id,
-        title,
-        course,
-        purpose,
-        startTime: group.startTime,
-        location,
-        totalSeats: Number(seats),
-        participantDetails: [participant],
-        details,
-      },
-    });
   };
 
   useEffect(() => {
     if (!isOpen) return;
-    let cancelled = false;
-    setupGoogleApi()
-      .then(() => {
-        if (cancelled) return;
-      })
-      .catch((err) => {
-        console.error("Failed to initialize Google API:", err);
-      });
-    return () => {
-      cancelled = true;
-    };
+    void setupGoogleApi().catch((err) => {
+      console.error("Failed to initialize Google API:", err);
+    });
   }, [isOpen]);
 
   if (!isOpen) return null;

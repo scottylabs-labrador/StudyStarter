@@ -85,9 +85,15 @@ export default function FeedPage() {
     );
   });
   displayScheduled.unshift(
-    <div key="create-group" className="create-card" onClick={handleCreateGroup}>
+    <button
+      key="create-group"
+      className="create-card"
+      onClick={handleCreateGroup}
+      type="button"
+      aria-label="Create study group"
+    >
       <p className="text-6xl leading-none">+</p>
-    </div>,
+    </button>,
   );
 
   const showNone = displayScheduled.every((group) => group === undefined);

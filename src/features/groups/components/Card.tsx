@@ -29,6 +29,14 @@ const Card = ({
     <div
       className={`study-card ${colorClassName}`}
       onClick={() => onClick(group)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onClick(group);
+        }
+      }}
     >
       <div className="study-card-title">{group.title}</div>
       <ul className="study-card-row">

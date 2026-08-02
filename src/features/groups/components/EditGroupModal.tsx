@@ -137,17 +137,9 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
 
   useEffect(() => {
     if (!isOpen) return;
-    let cancelled = false;
-    setupGoogleApi()
-      .then(() => {
-        if (cancelled) return;
-      })
-      .catch((err) => {
-        console.error("Failed to initialize Google API:", err);
-      });
-    return () => {
-      cancelled = true;
-    };
+    void setupGoogleApi().catch((err) => {
+      console.error("Failed to initialize Google API:", err);
+    });
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -162,7 +154,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
         <GroupModalFields
           title={title}
           setTitle={setTitle}
-          titleMaxLength={30}
+          titleMaxLength={27}
           course={course}
           setCourse={setCourse}
           classes={classOptions}
@@ -172,7 +164,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
           setDate={setDate}
           location={location}
           setLocation={setLocation}
-          locationMaxLength={100}
+          locationMaxLength={40}
           seats={seats}
           setSeats={setSeats}
           details={details}

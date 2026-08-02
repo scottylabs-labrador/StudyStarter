@@ -8,6 +8,7 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
   const [currentDetails, setCurrentDetails] = useState(details);
   const [isJoined, setIsJoined] = useState(false);
   const [eventId, setEventId] = useState("None");
+  const [isDeleted, setIsDeleted] = useState(false);
 
   useEffect(() => {
     setCurrentDetails(details);
@@ -19,6 +20,7 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
     return subscribeStudyGroup(
       details.id,
       (group) => {
+        setIsDeleted(false);
         setCurrentDetails(group);
         const participant = group.participantDetails.find(
           (participantDetail) => participantDetail.email === userEmail,
@@ -26,7 +28,11 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
         setIsJoined(Boolean(participant));
         setEventId(participant?.eventId ?? "None");
       },
-      () => undefined,
+      () => {
+        setIsDeleted(true);
+        setIsJoined(false);
+        setEventId("None");
+      },
     );
   }, [details.id, userEmail]);
 
@@ -36,5 +42,6 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
     isJoined,
     setIsJoined,
     eventId,
+    isDeleted,
   };
 }

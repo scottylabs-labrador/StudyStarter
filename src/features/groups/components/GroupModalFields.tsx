@@ -49,6 +49,7 @@ export function GroupModalFields({
       <input
         className="form-control-accent"
         type="text"
+        aria-label="Group title"
         placeholder="Title"
         value={title}
         onChange={(event) => setTitle(event.target.value)}
@@ -58,6 +59,7 @@ export function GroupModalFields({
       <select
         className="form-control"
         id="classSelect"
+        aria-label="Course"
         value={course}
         onChange={(event) => setCourse(event.target.value)}
         required
@@ -74,6 +76,7 @@ export function GroupModalFields({
       <input
         className="form-control"
         type="text"
+        aria-label="Purpose"
         placeholder="Purpose"
         value={purpose}
         onChange={(event) => setPurpose(event.target.value)}
@@ -83,6 +86,7 @@ export function GroupModalFields({
       <DatePicker
         selected={date}
         onChange={(selectedDate) => setDate(selectedDate)}
+        ariaLabelledBy="Date and time"
         showTimeSelect
         dateFormat="Pp"
         placeholderText="Date/Time"
@@ -96,6 +100,7 @@ export function GroupModalFields({
       <input
         className="form-control"
         type="text"
+        aria-label="Location"
         placeholder="Location"
         value={location}
         onChange={(event) => setLocation(event.target.value)}
@@ -105,6 +110,7 @@ export function GroupModalFields({
       <input
         className="form-control"
         type="number"
+        aria-label="Maximum seats"
         placeholder="Max Seats"
         value={seats}
         onChange={(event) => setSeats(event.target.value)}
@@ -115,6 +121,7 @@ export function GroupModalFields({
       <input
         className="form-control"
         type="text"
+        aria-label="Details"
         placeholder="Details"
         value={details}
         maxLength={200}

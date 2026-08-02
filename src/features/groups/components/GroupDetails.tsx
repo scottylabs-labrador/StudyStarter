@@ -44,6 +44,7 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
     isJoined: joinedState,
     setIsJoined: joinedSetState,
     eventId: eventIdState,
+    isDeleted,
   } = useLiveGroupDetails(details, userEmail);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewEmail, setViewEmail] = useState<string | null>(null);
@@ -64,6 +65,12 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
       console.warn("Failed to initialize Google API:", err);
     });
   }, []);
+
+  useEffect(() => {
+    if (!isDeleted) return;
+    toast.error("Group unavailable");
+    onClick();
+  }, [isDeleted, onClick]);
 
   /* Dynamic size for the info popup */
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -107,7 +114,9 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
         toast.error("Group unavailable");
         return;
       }
-      const combinedBlocked = await getUserBlockedEmails(userId);
+      const combinedBlocked = (await getUserBlockedEmails(userId)).map(
+        (email) => email.toLowerCase(),
+      );
       if (combinedBlocked.length > 0) {
         const hasBlockedUser = currentDetails.participantDetails.some(
           (participant) =>
@@ -151,11 +160,20 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
         email: user?.emailAddresses[0]?.emailAddress ?? userId,
         eventId,
       };
-      await addParticipantToGroup({
-        groupId: details.id,
-        userId,
-        participant: newParticipant,
-      });
+      try {
+        await addParticipantToGroup({
+          groupId: details.id,
+          userId,
+          participant: newParticipant,
+        });
+      } catch (error) {
+        console.error(error);
+        if (eventId && eventId !== "None") {
+          await deleteFromCal(eventId);
+        }
+        toast.error("Could not join group");
+        return;
+      }
       toast.success("Joined group");
       posthog.capture("group_joined", { group: currentDetails });
 

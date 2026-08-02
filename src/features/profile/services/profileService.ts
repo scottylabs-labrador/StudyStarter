@@ -1,5 +1,7 @@
 import axios from "axios";
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -181,18 +183,11 @@ export async function addBlockedByThem({
   targetUserId: string;
   currentUserId: string;
 }) {
-  const { blocked } = await getUserBlockingState(targetUserId);
-  const blockedByThem = blocked.blockedByThem.includes(currentUserId)
-    ? blocked.blockedByThem
-    : blocked.blockedByThem.concat(currentUserId);
-
-  await updateUserBlockingState({
-    userId: targetUserId,
-    blocked: {
-      blockedByMe: blocked.blockedByMe,
-      blockedByThem,
-    },
-  });
+  await setDoc(
+    doc(db, "Users", targetUserId),
+    { blocked: { blockedByThem: arrayUnion(currentUserId) } },
+    { merge: true },
+  );
 }
 
 export async function removeBlockedByThem({
@@ -202,15 +197,9 @@ export async function removeBlockedByThem({
   targetUserId: string;
   currentUserId: string;
 }) {
-  const { blocked } = await getUserBlockingState(targetUserId);
-
-  await updateUserBlockingState({
-    userId: targetUserId,
-    blocked: {
-      blockedByMe: blocked.blockedByMe,
-      blockedByThem: blocked.blockedByThem.filter(
-        (user) => user !== currentUserId,
-      ),
-    },
-  });
+  await setDoc(
+    doc(db, "Users", targetUserId),
+    { blocked: { blockedByThem: arrayRemove(currentUserId) } },
+    { merge: true },
+  );
 }

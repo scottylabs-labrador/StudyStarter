@@ -55,9 +55,15 @@ function withClickHandler(
   children: ReactNode,
   onClick: () => void | Promise<void>,
 ): ReactNode {
+  const runClickHandler = () => {
+    void Promise.resolve(onClick()).catch((error) => {
+      console.error("Auth click handler failed:", error);
+    });
+  };
+
   if (!isValidElement(children)) {
     return (
-      <button type="button" onClick={() => void onClick()}>
+      <button type="button" onClick={runClickHandler}>
         {children}
       </button>
     );
@@ -68,7 +74,7 @@ function withClickHandler(
   return cloneElement(element, {
     onClick: () => {
       element.props.onClick?.();
-      void onClick();
+      runClickHandler();
     },
   });
 }

@@ -273,6 +273,7 @@
 
 .privacy-title {
   @apply mb-4 text-center text-5xl font-extrabold tracking-tight;
+
   background-image: linear-gradient(to right, #0cacf0, #3b82f6);
   background-clip: text;
   color: transparent;
@@ -344,6 +345,7 @@
 
 .group-details-header {
   @apply sticky top-0 flex items-start justify-between bg-lightAccent py-4 text-[35px] dark:bg-darkAccent;
+
   font-family: Verdana, sans-serif;
 }
 
@@ -357,6 +359,7 @@
 
 .group-details-text {
   @apply whitespace-normal break-words text-[20px];
+
   font-family: Verdana, sans-serif;
 }
 
@@ -374,6 +377,7 @@
 
 .participant-name {
   @apply indent-[0.5rem] text-[16px];
+
   font-family: Verdana, sans-serif;
 }
 
