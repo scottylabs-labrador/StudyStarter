@@ -10,7 +10,7 @@ import type { StudyGroup } from "~/types";
 import { GroupModalFrame } from "./GroupModalFrame";
 import { GroupModalFields } from "./GroupModalFields";
 import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
-import { updateStudyGroup } from "../services/groupService";
+import { updateGroup } from "../services/groupApi";
 import {
   updateEvent,
   setupGoogleApi,
@@ -60,7 +60,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
         console.warn("Calendar auth failed:", err);
       });
     }
-    const updatedGroup = await updateStudyGroup({
+    const updatedGroup = await updateGroup({
       group,
       input: {
         title,
@@ -80,10 +80,8 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
       (p) => p.email === userEmail,
     );
     const eventId = participant?.eventId ?? participant?.event ?? "None";
-    const start = updatedGroup.startTime.toDate().toISOString();
-    const end = new Date(
-      updatedGroup.startTime.toMillis() + 3600000,
-    ).toISOString();
+    const start = date.toISOString();
+    const end = new Date(date.getTime() + 3600000).toISOString();
     await updateEvent(eventId, {
       summary: `Study Group: ${title}`,
       location,
@@ -115,7 +113,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
         title,
         course,
         purpose,
-        startTime: updatedGroup.startTime,
+        startTime: date,
         location,
         totalSeats: Number(seats),
         participantDetails: group.participantDetails,
@@ -129,7 +127,7 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     setTitle(group.title || "");
     setCourse(group.course || "");
     setPurpose(group.purpose || "");
-    setDate(group.startTime?.toDate ? group.startTime.toDate() : null);
+    setDate(group.startTime ?? null);
     setLocation(group.location || "");
     setSeats(group.totalSeats ? String(group.totalSeats) : "");
     setDetails(group.details || "");

@@ -40,10 +40,7 @@ export function shouldHideBySharedFilters({
 }: GroupFilterInput) {
   if (isInThePast(group.startTime)) return true;
 
-  if (
-    selectedDate &&
-    !isSameCalendarDate(group.startTime.toDate(), selectedDate)
-  ) {
+  if (selectedDate && !isSameCalendarDate(group.startTime, selectedDate)) {
     return true;
   }
 

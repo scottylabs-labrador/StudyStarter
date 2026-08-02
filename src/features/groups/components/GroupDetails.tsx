@@ -22,11 +22,9 @@ import { GroupDetailsHeader } from "./GroupDetailsHeader";
 import { JoinGroupButton } from "./JoinGroupButton";
 import { ParticipantList } from "./ParticipantList";
 import {
-  addParticipantToGroup,
-  getStudyGroup,
-  getUserBlockedEmails,
-  removeParticipantFromGroup,
-} from "../services/groupService";
+  joinGroup as joinGroupApi,
+  leaveGroup as leaveGroupApi,
+} from "../services/groupApi";
 import { useLiveGroupDetails } from "../hooks/useLiveGroupDetails";
 interface Props {
   onClick: () => void;
@@ -109,35 +107,14 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
         toast.error("Group unavailable");
         return;
       }
-      // check that no participants blocked
       if (!userId) {
         toast.error("Group unavailable");
         return;
       }
-      const combinedBlocked = (await getUserBlockedEmails(userId)).map(
-        (email) => email.toLowerCase(),
-      );
-      if (combinedBlocked.length > 0) {
-        const hasBlockedUser = currentDetails.participantDetails.some(
-          (participant) =>
-            combinedBlocked.includes(participant.email?.toLowerCase() || ""),
-        );
-        if (hasBlockedUser) {
-          toast.error("Group unavailable");
-          return;
-        }
-      }
 
-      // check that group still exists
       if (!details.id) {
         return;
       }
-      const existingGroup = await getStudyGroup(details.id);
-      if (!existingGroup) {
-        toast.error("Group unavailable");
-        return;
-      }
-
       // add group to calendar
       if (calendarAuthPromise) {
         await calendarAuthPromise;
@@ -161,9 +138,8 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
         eventId,
       };
       try {
-        await addParticipantToGroup({
+        await joinGroupApi({
           groupId: details.id,
-          userId,
           participant: newParticipant,
         });
       } catch (error) {
@@ -187,26 +163,16 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
       if (!details.id) {
         return;
       }
-      const groupData = await getStudyGroup(details.id);
-      if (!groupData) {
-        toast.error("Group unavailable");
-        return;
-      }
-
       const userEmail = user?.emailAddresses[0]?.emailAddress ?? userId;
       if (!userId || !userEmail) {
         toast.error("Group unavailable");
         return;
       }
-      const participant = groupData.participantDetails.find(
+      const participant = currentDetails.participantDetails.find(
         (participantDetail) => participantDetail.email === userEmail,
       );
       const eventIdToDelete = participant?.eventId ?? eventIdState;
-      const remainingParticipants = await removeParticipantFromGroup({
-        group: groupData,
-        userId,
-        userEmail,
-      });
+      await leaveGroupApi(details.id);
       toast.success("Left group");
       joinedSetState(!joinedState);
       updateJoinedGroups((prev) => {
@@ -232,7 +198,7 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
         });
       }
 
-      const onlyMember = remainingParticipants.length === 0;
+      const onlyMember = currentDetails.participantDetails.length <= 1;
       if (onlyMember) {
         onClick();
         posthog.capture("group_emptied", { group: currentDetails });

@@ -57,14 +57,16 @@ model GroupMembership {
 }
 
 model Block {
-  blockerId String
-  blockedId String
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
-  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  blockerId   String
+  blockedEmail String @db.Citext
+  blockedId   String?
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  blocker     User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked     User?    @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
 
-  @@id([blockerId, blockedId])
+  @@id([blockerId, blockedEmail])
   @@index([blockedId])
+  @@index([blockedEmail])
 }
 
 model Session {

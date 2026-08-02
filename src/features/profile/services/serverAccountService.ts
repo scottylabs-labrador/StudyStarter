@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getAdminDb } from "~/lib/firebase-admin";
+import { db } from "~/server/db";
 
 type FacultyCheckResponse = {
   success?: boolean;
@@ -46,11 +46,10 @@ export async function checkFacultyStatus(email: string, firstName: string) {
 }
 
 export async function userHasCreatedProfile(email: string) {
-  const classesSnap = await getAdminDb()
-    .collection("Users")
-    .doc(email)
-    .collection("Classes")
-    .get();
+  const user = await db.user.findUnique({
+    where: { email },
+    select: { courseCodes: true },
+  });
 
-  return !classesSnap.empty;
+  return (user?.courseCodes.length ?? 0) > 0;
 }

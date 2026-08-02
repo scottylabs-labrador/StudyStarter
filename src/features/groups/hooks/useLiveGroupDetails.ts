@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { StudyGroup } from "~/types";
-import { subscribeStudyGroup } from "../services/groupService";
+import { fetchGroup } from "../services/groupApi";
 
 export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
   const [currentDetails, setCurrentDetails] = useState(details);
@@ -17,9 +17,11 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
   useEffect(() => {
     if (!details.id || !userEmail) return;
 
-    return subscribeStudyGroup(
-      details.id,
-      (group) => {
+    let cancelled = false;
+
+    void fetchGroup(details.id)
+      .then((group) => {
+        if (cancelled) return;
         setIsDeleted(false);
         setCurrentDetails(group);
         const participant = group.participantDetails.find(
@@ -27,13 +29,17 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
         );
         setIsJoined(Boolean(participant));
         setEventId(participant?.eventId ?? "None");
-      },
-      () => {
+      })
+      .catch(() => {
+        if (cancelled) return;
         setIsDeleted(true);
         setIsJoined(false);
         setEventId("None");
-      },
-    );
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [details.id, userEmail]);
 
   return {

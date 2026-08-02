@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import {
-  addUserCourse,
-  deleteUserCourse,
-  subscribeUserCourses,
-} from "../services/profileService";
+  addCourseCode,
+  deleteCourseCode,
+  fetchCourseCodes,
+} from "../services/profileApi";
+import { getAllCourses } from "../services/profileService";
 import type { Course } from "../types";
 
 export function useUserCourses(userId?: string) {
@@ -14,19 +15,43 @@ export function useUserCourses(userId?: string) {
   useEffect(() => {
     if (!userId) return;
 
-    return subscribeUserCourses(userId, setClasses, (error) =>
-      console.error("Error getting documents: ", error),
-    );
+    let cancelled = false;
+
+    void Promise.all([fetchCourseCodes(), getAllCourses()])
+      .then(([courseCodes, catalog]) => {
+        if (cancelled) return;
+        const catalogByCode = new Map(
+          catalog.map((course) => [course.courseID, course]),
+        );
+        setClasses(
+          courseCodes.map(
+            (courseCode) =>
+              catalogByCode.get(courseCode) ?? {
+                id: courseCode,
+                name: "",
+                courseID: courseCode,
+              },
+          ),
+        );
+      })
+      .catch((error) => console.error("Error getting courses:", error));
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   const addCourse = async (course: Course) => {
     if (!userId) return;
-    await addUserCourse(userId, course);
+    await addCourseCode(course.courseID);
   };
 
   const deleteCourse = async (courseID: string) => {
     if (!userId) return;
-    await deleteUserCourse(userId, courseID);
+    await deleteCourseCode(courseID);
+    setClasses((currentClasses) =>
+      currentClasses.filter((course) => course.courseID !== courseID),
+    );
   };
 
   return { classes, setClasses, addCourse, deleteCourse };

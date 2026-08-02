@@ -1,18 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getUserTheme, updateUserTheme } from "../services/profileService";
 import type { ThemePreference } from "../types";
 
-const getInitialTheme = (): ThemePreference => {
-  if (typeof window === "undefined") return "light";
-  return localStorage.getItem("theme") === "dark" ? "dark" : "light";
-};
-
 export function useUserTheme(userId?: string) {
-  const [theme, setTheme] = useState<ThemePreference>(getInitialTheme);
+  const [theme, setTheme] = useState<ThemePreference>("light");
+  const hasHydratedTheme = useRef(false);
+  const hasMountedThemeEffect = useRef(false);
 
   useEffect(() => {
+    const savedTheme: ThemePreference =
+      localStorage.getItem("theme") === "dark" ? "dark" : "light";
+
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    hasHydratedTheme.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydratedTheme.current) return;
+    if (!hasMountedThemeEffect.current) {
+      hasMountedThemeEffect.current = true;
+      return;
+    }
+
     document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("theme", theme);
   }, [theme]);
