@@ -11,6 +11,7 @@ import {
   setupGoogleApi,
   isCalendarApiReady,
   requestCalendarAccessInteractive,
+  deleteFromCal,
 } from "~/helpers/calendar_helper";
 import { GroupModalFrame } from "./GroupModalFrame";
 import { GroupModalFields } from "./GroupModalFields";
@@ -62,6 +63,8 @@ export default function CreateGroupModal() {
       return;
     }
 
+    let group;
+    let eventId = "None";
     try {
       if (isCalendarApiReady()) {
         await requestCalendarAccessInteractive().catch((err) => {
@@ -69,7 +72,7 @@ export default function CreateGroupModal() {
         });
       }
 
-      const eventId =
+      eventId =
         (await addToCal(
           title,
           course,
@@ -86,7 +89,7 @@ export default function CreateGroupModal() {
         eventId,
       };
 
-      const group = await createStudyGroup({
+      group = await createStudyGroup({
         input: {
           title,
           course,
@@ -98,23 +101,28 @@ export default function CreateGroupModal() {
         },
         participant,
       });
-
-      posthog.capture("group_created", {
-        group: {
-          id: group.id,
-          course,
-          purpose,
-          startTime: group.startTime,
-          totalSeats: Number(seats),
-          participantCount: 1,
-          hasDetails: Boolean(details),
-        },
-      });
     } catch (error) {
       console.error(error);
+      if (eventId !== "None") {
+        await deleteFromCal(eventId).catch((err) =>
+          console.error("Failed to roll back calendar event:", err)
+        );
+      }
       toast.error("Error creating study group");
       return;
     }
+
+    posthog.capture("group_created", {
+      group: {
+        id: group.id,
+        course,
+        purpose,
+        startTime: group.startTime,
+        totalSeats: Number(seats),
+        participantCount: 1,
+        hasDetails: Boolean(details),
+      },
+    });
 
     setTitle("");
     setCourse("");

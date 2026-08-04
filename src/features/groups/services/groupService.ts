@@ -301,7 +301,7 @@ export async function removeParticipantFromGroup({
     }
 
     const groupData = groupDoc.data() as StudyGroup;
-    const remainingParticipants = groupData.participantDetails.filter(
+    const remainingParticipants = (groupData.participantDetails ?? []).filter(
       (participantDetail) => participantDetail.email !== userEmail,
     );
 
