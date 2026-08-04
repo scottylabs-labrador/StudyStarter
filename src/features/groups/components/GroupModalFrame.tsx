@@ -1,0 +1,94 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import type { KeyboardEvent, ReactNode } from "react";
+
+type GroupModalFrameProps = {
+  id: string;
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+};
+
+export function GroupModalFrame({
+  id,
+  title,
+  onClose,
+  children,
+}: GroupModalFrameProps) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = `${id}-title`;
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const firstFocusable = panel.querySelector<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    firstFocusable?.focus();
+  }, []);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      onClose();
+      return;
+    }
+
+    if (event.key !== "Tab") return;
+
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const focusableElements = Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((element) => !element.hasAttribute("disabled"));
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0]!;
+    const lastElement = focusableElements[focusableElements.length - 1]!;
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  };
+
+  return (
+    <div className="modal-overlay" id={id} onClick={onClose}>
+      <div
+        ref={panelRef}
+        className="modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleKeyDown}
+      >
+        <div className="modal-header">
+          <h2 id={titleId} className="modal-title">
+            {title}
+          </h2>
+          <button
+            onClick={onClose}
+            className="modal-close"
+            aria-label="Close modal"
+          >
+            <big>&times;</big>
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}

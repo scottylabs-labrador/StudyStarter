@@ -32,7 +32,7 @@ export const auth = betterAuth({
 
 export async function getServerSession() {
   return auth.api.getSession({
-    headers: await headers(),
+    headers: headers(),
   });
 }
 
