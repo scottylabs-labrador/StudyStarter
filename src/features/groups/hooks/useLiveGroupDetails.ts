@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { StudyGroup } from "~/types";
+import { ApiRequestError } from "~/lib/api/client";
 import { fetchGroup, subscribeToGroupChanges } from "../services/groupApi";
 
 export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
@@ -33,11 +34,17 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
           setIsJoined(Boolean(participant));
           setEventId(participant?.eventId ?? "None");
         })
-        .catch(() => {
+        .catch((error: unknown) => {
           if (cancelled || currentRequest !== requestVersion) return;
-          setIsDeleted(true);
-          setIsJoined(false);
-          setEventId("None");
+
+          if (error instanceof ApiRequestError && error.status === 404) {
+            setIsDeleted(true);
+            setIsJoined(false);
+            setEventId("None");
+            return;
+          }
+
+          console.error("Error getting group details:", error);
         });
     };
 

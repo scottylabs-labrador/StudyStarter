@@ -26,16 +26,23 @@ export function useUserTheme(userId?: string) {
 
   useEffect(() => {
     if (!userId) return;
+    let ignored = false;
 
     const loadTheme = async () => {
       try {
-        setTheme(await getUserTheme());
+        const loadedTheme = await getUserTheme();
+        if (!ignored) {
+          setTheme(loadedTheme);
+        }
       } catch (error) {
         console.error("Error fetching theme:", error);
       }
     };
 
     void loadTheme();
+    return () => {
+      ignored = true;
+    };
   }, [userId]);
 
   const toggleTheme = async () => {
