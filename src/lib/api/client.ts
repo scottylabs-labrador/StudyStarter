@@ -2,13 +2,13 @@ export async function apiRequest<T>(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<T> {
-  const response = await fetch(input, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
-  });
+  const headers = new Headers(init?.headers);
+  headers.set("Content-Type", "application/json");
+  const timeoutSignal = AbortSignal.timeout(10_000);
+  const signal = init?.signal
+    ? AbortSignal.any([init.signal, timeoutSignal])
+    : timeoutSignal;
+  const response = await fetch(input, { ...init, headers, signal });
 
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as {

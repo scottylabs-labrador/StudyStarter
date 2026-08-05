@@ -19,10 +19,7 @@ export const defaultProfileDetails: ProfileDetails = {
   minors: "",
 };
 
-export async function getUserProfileDetails(
-  userId: string,
-): Promise<ProfileDetails> {
-  void userId;
+export async function getUserProfileDetails(): Promise<ProfileDetails> {
   const profile = await fetchProfile();
   return {
     year: profile.year,
@@ -31,11 +28,8 @@ export async function getUserProfileDetails(
   };
 }
 
-export async function getUserProfileSummary(
-  userId: string,
-): Promise<ProfileSummary> {
-  void userId;
-  const profile = await fetchProfile();
+export async function getUserProfileSummary(): Promise<ProfileSummary> {
+  const profile = await getUserProfileDetails();
   return {
     year: profile.year,
     majors: profile.majors,
@@ -44,10 +38,8 @@ export async function getUserProfileSummary(
 }
 
 export async function updateUserProfileDetails(
-  userId: string,
   updates: Partial<ProfileDetails>,
 ) {
-  void userId;
   await updateProfile(updates);
 }
 
@@ -58,14 +50,10 @@ export async function getAllCourses(): Promise<Course[]> {
   return response.data;
 }
 
-export async function getUserTheme(
-  userId: string,
-): Promise<ThemePreference | null> {
-  void userId;
+export async function getUserTheme(): Promise<ThemePreference> {
   return fetchTheme();
 }
 
-export async function updateUserTheme(userId: string, theme: ThemePreference) {
-  void userId;
+export async function updateUserTheme(theme: ThemePreference) {
   await updateTheme(theme);
 }

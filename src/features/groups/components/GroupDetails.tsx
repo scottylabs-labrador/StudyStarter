@@ -186,7 +186,20 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
       }
 
       if (eventIdToDelete && eventIdToDelete !== "None") {
-        await deleteFromCal(eventIdToDelete);
+        const calendarDeleted = await deleteFromCal(eventIdToDelete);
+        if (!calendarDeleted) {
+          toast(
+            "You left the group, but its calendar event could not be removed. Remove it from Google Calendar or retry later.",
+            {
+              icon: "⚠️",
+              style: {
+                borderRadius: "10px",
+                background: "#333",
+                color: "#fff",
+              },
+            },
+          );
+        }
       } else {
         toast("Could not delete from calendar", {
           icon: "❌",

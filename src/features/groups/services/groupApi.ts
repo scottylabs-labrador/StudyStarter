@@ -2,11 +2,37 @@ import type { StudyGroup } from "~/types";
 import { apiRequest } from "~/lib/api/client";
 
 export const GROUPS_CHANGED_EVENT = "study-groups-changed";
+const GROUPS_CHANNEL_NAME = "study-groups";
+let groupsChannel: BroadcastChannel | null = null;
 
-function notifyGroupsChanged() {
+function getGroupsChannel() {
+  if (typeof window === "undefined" || !window.BroadcastChannel) {
+    return null;
+  }
+
+  groupsChannel ??= new BroadcastChannel(GROUPS_CHANNEL_NAME);
+  return groupsChannel;
+}
+
+export function notifyGroupsChanged() {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event(GROUPS_CHANGED_EVENT));
+    getGroupsChannel()?.postMessage({ type: GROUPS_CHANGED_EVENT });
   }
+}
+
+export function subscribeToGroupChanges(listener: () => void) {
+  if (typeof window === "undefined") return () => undefined;
+
+  const handleMessage = () => listener();
+  const channel = getGroupsChannel();
+  window.addEventListener(GROUPS_CHANGED_EVENT, listener);
+  channel?.addEventListener("message", handleMessage);
+
+  return () => {
+    window.removeEventListener(GROUPS_CHANGED_EVENT, listener);
+    channel?.removeEventListener("message", handleMessage);
+  };
 }
 
 export type GroupParticipant = {

@@ -1,4 +1,5 @@
 import { apiRequest } from "~/lib/api/client";
+import { notifyGroupsChanged } from "~/features/groups/services/groupApi";
 import type { ProfileDetails, ThemePreference } from "../types";
 
 type ProfileResponse = {
@@ -6,9 +7,14 @@ type ProfileResponse = {
 };
 
 export async function fetchProfile() {
-  const response = await apiRequest<ProfileResponse>("/api/v1/me/profile", {
-    cache: "no-store",
-  });
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BETTER_AUTH_URL ??
+    process.env.BETTER_AUTH_URL ??
+    "http://localhost:3000";
+  const response = await apiRequest<ProfileResponse>(
+    new URL("/api/v1/me/profile", baseUrl),
+    { cache: "no-store" },
+  );
   return response.profile;
 }
 
@@ -69,10 +75,15 @@ export async function fetchBlockImpact(email: string) {
 }
 
 export async function blockEmail(email: string) {
-  return apiRequest<{ calendarEventIds: string[] }>("/api/v1/me/blocks", {
+  const response = await apiRequest<{ calendarEventIds: string[] }>(
+    "/api/v1/me/blocks",
+    {
     method: "POST",
     body: JSON.stringify({ email }),
-  });
+    },
+  );
+  notifyGroupsChanged();
+  return response;
 }
 
 export async function unblockEmail(email: string) {

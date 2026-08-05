@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { StudyGroup } from "~/types";
-import { fetchGroups, GROUPS_CHANGED_EVENT } from "../services/groupApi";
+import { fetchGroups, subscribeToGroupChanges } from "../services/groupApi";
 
 export function useStudyGroups(enabled: boolean) {
   const [groups, setGroups] = useState<StudyGroup[]>([]);
@@ -11,20 +11,26 @@ export function useStudyGroups(enabled: boolean) {
     if (!enabled) return;
 
     let cancelled = false;
+    let requestVersion = 0;
     const loadGroups = () => {
+      const currentRequest = ++requestVersion;
       void fetchGroups()
         .then((nextGroups) => {
-          if (!cancelled) setGroups(nextGroups);
+          if (!cancelled && currentRequest === requestVersion) {
+            setGroups(nextGroups);
+          }
         })
         .catch((error) => console.error("Error getting groups:", error));
     };
 
     loadGroups();
-    window.addEventListener(GROUPS_CHANGED_EVENT, loadGroups);
+    const unsubscribe = subscribeToGroupChanges(loadGroups);
+    const refreshInterval = window.setInterval(loadGroups, 30_000);
 
     return () => {
       cancelled = true;
-      window.removeEventListener(GROUPS_CHANGED_EVENT, loadGroups);
+      unsubscribe();
+      window.clearInterval(refreshInterval);
     };
   }, [enabled]);
 

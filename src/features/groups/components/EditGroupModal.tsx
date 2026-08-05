@@ -82,13 +82,15 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     const eventId = participant?.eventId ?? participant?.event ?? "None";
     const start = date.toISOString();
     const end = new Date(date.getTime() + 3600000).toISOString();
-    await updateEvent(eventId, {
+    const calendarUpdate = await updateEvent(eventId, {
       summary: `Study Group: ${title}`,
       location,
       description: `Course: ${course}\nPurpose: ${purpose}\nDetails: ${details}`,
       start: { dateTime: start, timeZone: "America/New_York" },
       end: { dateTime: end, timeZone: "America/New_York" },
     });
+
+    const calendarSyncFailed = eventId !== "None" && calendarUpdate === null;
 
     setTitle("");
     setCourse("");
@@ -99,14 +101,19 @@ export default function EditGroupModal({ group }: EditGroupModalProps) {
     setDetails("");
     handleClose();
 
-    toast("Study group edited successfully!", {
-      icon: "👏",
-      style: {
-        borderRadius: "10px",
-        background: "#333",
-        color: "#fff",
+    toast(
+      calendarSyncFailed
+        ? "Study group saved, but the calendar event was not updated. Reopen Edit to retry."
+        : "Study group edited successfully!",
+      {
+        icon: "👏",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
       },
-    });
+    );
     posthog.capture("group_edited", {
       group: {
         id: group.id,

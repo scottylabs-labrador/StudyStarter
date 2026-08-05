@@ -1,7 +1,11 @@
+import { Prisma } from "@prisma/client";
 import { Hono } from "hono";
 import { z } from "zod";
 
-import { requireSession } from "~/server/api/auth-middleware";
+import {
+  requireSession,
+  type ApiEnvironment,
+} from "~/server/api/auth-middleware";
 import {
   createGroup,
   getGroup,
@@ -23,7 +27,23 @@ import {
   updateTheme,
 } from "~/server/api/profile";
 
-export const api = new Hono().basePath("/api/v1");
+export const api = new Hono<ApiEnvironment>().basePath("/api/v1");
+
+api.onError((error, context) => {
+  console.error("API request failed", {
+    path: context.req.path,
+    error,
+  });
+
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2034"
+  ) {
+    return context.json({ error: "Please retry the request" }, 409);
+  }
+
+  return context.json({ error: "Internal server error" }, 500);
+});
 
 api.get("/health", (context) =>
   context.json({
@@ -215,6 +235,10 @@ api.post("/me/blocks", requireSession, async (context) => {
 
   const result = await blockUser(context.var.userId, input.data.email);
 
+  if (result.kind === "missing_blocker") {
+    return context.json({ error: "Unauthorized" }, 401);
+  }
+
   if (result.kind === "self") {
     return context.json({ error: "Cannot block yourself" }, 400);
   }
@@ -225,11 +249,11 @@ api.post("/me/blocks", requireSession, async (context) => {
 api.delete("/me/blocks/:email", requireSession, async (context) => {
   const deleted = await unblockUser(
     context.var.userId,
-    decodeURIComponent(context.req.param("email")),
+    context.req.param("email"),
   );
 
   if (!deleted) {
-    return context.json({ error: "User not found" }, 404);
+    return context.json({ error: "Block not found" }, 404);
   }
 
   return context.json({ deleted: true });
@@ -238,7 +262,7 @@ api.delete("/me/blocks/:email", requireSession, async (context) => {
 api.get("/me/blocks/:email/impact", requireSession, async (context) => {
   const impact = await getBlockImpact(
     context.var.userId,
-    decodeURIComponent(context.req.param("email")),
+    context.req.param("email"),
   );
 
   return context.json(impact);

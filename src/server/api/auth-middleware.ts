@@ -2,7 +2,7 @@ import { createMiddleware } from "hono/factory";
 
 import { auth } from "~/lib/auth";
 
-type ApiEnvironment = {
+export type ApiEnvironment = {
   Variables: {
     userId: string;
   };

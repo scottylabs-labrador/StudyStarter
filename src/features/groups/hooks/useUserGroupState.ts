@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchBlockingState } from "~/features/profile/services/profileApi";
-import { GROUPS_CHANGED_EVENT } from "~/features/groups/services/groupApi";
+import { subscribeToGroupChanges } from "~/features/groups/services/groupApi";
 
 export function useUserGroupState(userId?: string) {
   const [joinedGroups, setJoinedGroups] = useState<string[] | null>(null);
@@ -12,10 +12,12 @@ export function useUserGroupState(userId?: string) {
     if (!userId) return;
 
     let cancelled = false;
+    let requestVersion = 0;
     const loadState = () => {
+      const currentRequest = ++requestVersion;
       void fetchBlockingState()
         .then(({ joinedGroups, blockedByMe, blockedByThem }) => {
-          if (cancelled) return;
+          if (cancelled || currentRequest !== requestVersion) return;
           setJoinedGroups(joinedGroups);
           setBlockedUsers(
             blockedByMe
@@ -29,11 +31,13 @@ export function useUserGroupState(userId?: string) {
     };
 
     loadState();
-    window.addEventListener(GROUPS_CHANGED_EVENT, loadState);
+    const unsubscribe = subscribeToGroupChanges(loadState);
+    const refreshInterval = window.setInterval(loadState, 30_000);
 
     return () => {
       cancelled = true;
-      window.removeEventListener(GROUPS_CHANGED_EVENT, loadState);
+      unsubscribe();
+      window.clearInterval(refreshInterval);
     };
   }, [userId]);
 

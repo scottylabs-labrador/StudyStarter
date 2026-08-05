@@ -105,13 +105,11 @@ export function BlockList() {
       const result = await blockEmail(userToBlock);
       await Promise.all(result.calendarEventIds.map(deleteFromCal));
 
-      const newBlocked: BlockedUsers = {
-        blockedByMe: blocked.blockedByMe.concat([userToBlock]),
-        blockedByThem: blocked.blockedByThem,
-      };
-
-      setBlocked(newBlocked);
       const updatedState = await fetchBlockingState();
+      setBlocked({
+        blockedByMe: updatedState.blockedByMe,
+        blockedByThem: updatedState.blockedByThem,
+      });
       setGroups(updatedState.joinedGroups);
       setInputValue("");
     } catch (err) {
