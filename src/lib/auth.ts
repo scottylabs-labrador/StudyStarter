@@ -6,15 +6,25 @@ import { headers } from "next/headers";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
+import { attachPendingBlocks } from "~/server/api/profile";
 
 const baseURL = env.BETTER_AUTH_URL ?? env.SERVER_URL;
 const fallbackSecret = "development-secret-change-me-1234567890";
 
 export const auth = betterAuth({
-  database: prismaAdapter(db, { provider: "sqlite" }),
+  database: prismaAdapter(db, { provider: "postgresql" }),
   baseURL,
   secret: env.BETTER_AUTH_SECRET ?? fallbackSecret,
   trustedOrigins: [baseURL],
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          await attachPendingBlocks(user.id, user.email);
+        },
+      },
+    },
+  },
   plugins: [
     nextCookies(),
     genericOAuth({

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import type { StudyGroup } from "~/types";
-import { subscribeStudyGroup } from "../services/groupService";
+import { ApiRequestError } from "~/lib/api/client";
+import { fetchGroup, subscribeToGroupChanges } from "../services/groupApi";
 
 export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
   const [currentDetails, setCurrentDetails] = useState(details);
@@ -17,23 +18,45 @@ export function useLiveGroupDetails(details: StudyGroup, userEmail?: string) {
   useEffect(() => {
     if (!details.id || !userEmail) return;
 
-    return subscribeStudyGroup(
-      details.id,
-      (group) => {
-        setIsDeleted(false);
-        setCurrentDetails(group);
-        const participant = group.participantDetails.find(
-          (participantDetail) => participantDetail.email === userEmail,
-        );
-        setIsJoined(Boolean(participant));
-        setEventId(participant?.eventId ?? "None");
-      },
-      () => {
-        setIsDeleted(true);
-        setIsJoined(false);
-        setEventId("None");
-      },
-    );
+    let cancelled = false;
+    let requestVersion = 0;
+
+    const loadDetails = () => {
+      const currentRequest = ++requestVersion;
+      void fetchGroup(details.id)
+        .then((group) => {
+          if (cancelled || currentRequest !== requestVersion) return;
+          setIsDeleted(false);
+          setCurrentDetails(group);
+          const participant = group.participantDetails.find(
+            (participantDetail) => participantDetail.email === userEmail,
+          );
+          setIsJoined(Boolean(participant));
+          setEventId(participant?.eventId ?? "None");
+        })
+        .catch((error: unknown) => {
+          if (cancelled || currentRequest !== requestVersion) return;
+
+          if (error instanceof ApiRequestError && error.status === 404) {
+            setIsDeleted(true);
+            setIsJoined(false);
+            setEventId("None");
+            return;
+          }
+
+          console.error("Error getting group details:", error);
+        });
+    };
+
+    loadDetails();
+    const unsubscribe = subscribeToGroupChanges(loadDetails);
+    const refreshInterval = window.setInterval(loadDetails, 30_000);
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      window.clearInterval(refreshInterval);
+    };
   }, [details.id, userEmail]);
 
   return {

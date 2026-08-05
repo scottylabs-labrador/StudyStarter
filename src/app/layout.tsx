@@ -4,7 +4,6 @@ import "~/styles/components.css";
 import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
 import { PostHogProvider } from "./providers";
-import { FirebaseAuthBridge } from "~/components/providers/FirebaseAuthBridge";
 
 export const metadata = {
   title: "CMU Study",
@@ -45,7 +44,7 @@ export default function RootLayout({
           </head>
           <body className="bg">
             <main>
-              <FirebaseAuthBridge>{children}</FirebaseAuthBridge>
+              {children}
               <Toaster />
             </main>
           </body>

@@ -1,5 +1,3 @@
-import type { Timestamp } from "firebase/firestore";
-
 export type StudyGroupParticipant = {
   name: string;
   url: string | null;
@@ -14,7 +12,7 @@ export interface StudyGroup {
   totalSeats: number;
   location: string;
   purpose: string;
-  startTime: Timestamp;
+  startTime: Date;
   course: string;
   participantDetails: StudyGroupParticipant[];
   details: string;

@@ -453,23 +453,25 @@ export async function addToCal(
  * @param calendarId ID of the calendar
  * @param attendeeEmail Email of the attendee to remove.
  */
-export async function deleteFromCal(eventId: string): Promise<void> {
+export async function deleteFromCal(eventId: string): Promise<boolean> {
   const authorized = await ensureAuthorized();
   if (!authorized) {
     console.warn("Calendar authorization required to delete event.");
-    return;
+    return false;
   }
 
   try {
     await calendarRequest<void>(`/${encodeURIComponent(eventId)}`, {
       method: "DELETE",
     });
+    return true;
   } catch (err) {
     const status = (err as { status?: number })?.status;
     if (status === 401) {
       clearCalendarToken();
     }
     console.warn("Failed to delete calendar event:", err);
+    return false;
   }
 }
 

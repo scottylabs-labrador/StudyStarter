@@ -4,27 +4,35 @@ import { useEffect, useState } from "react";
 import { getUserTheme, updateUserTheme } from "../services/profileService";
 import type { ThemePreference } from "../types";
 
-const getInitialTheme = (): ThemePreference => {
-  if (typeof window === "undefined") return "light";
-  return localStorage.getItem("theme") === "dark" ? "dark" : "light";
-};
-
 export function useUserTheme(userId?: string) {
-  const [theme, setTheme] = useState<ThemePreference>(getInitialTheme);
+  const [theme, setTheme] = useState<ThemePreference>("light");
+  const [hasHydratedTheme, setHasHydratedTheme] = useState(false);
 
   useEffect(() => {
+    const savedTheme: ThemePreference =
+      localStorage.getItem("theme") === "dark" ? "dark" : "light";
+
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    setHasHydratedTheme(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydratedTheme) return;
+
     document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("theme", theme);
-  }, [theme]);
+  }, [hasHydratedTheme, theme]);
 
   useEffect(() => {
     if (!userId) return;
+    let ignored = false;
 
     const loadTheme = async () => {
       try {
-        const savedTheme = await getUserTheme(userId);
-        if (savedTheme) {
-          setTheme(savedTheme);
+        const loadedTheme = await getUserTheme();
+        if (!ignored) {
+          setTheme(loadedTheme);
         }
       } catch (error) {
         console.error("Error fetching theme:", error);
@@ -32,6 +40,9 @@ export function useUserTheme(userId?: string) {
     };
 
     void loadTheme();
+    return () => {
+      ignored = true;
+    };
   }, [userId]);
 
   const toggleTheme = async () => {
@@ -41,7 +52,7 @@ export function useUserTheme(userId?: string) {
     if (!userId) return;
 
     try {
-      await updateUserTheme(userId, nextTheme);
+      await updateUserTheme(nextTheme);
     } catch (error) {
       console.error("Error saving theme to DB:", error);
     }

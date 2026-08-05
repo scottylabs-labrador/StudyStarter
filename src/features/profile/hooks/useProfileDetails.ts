@@ -16,7 +16,7 @@ export function useProfileDetails(userId?: string) {
 
     const loadProfileDetails = async () => {
       try {
-        setProfileDetails(await getUserProfileDetails(userId));
+        setProfileDetails(await getUserProfileDetails());
       } catch (error) {
         console.error(error);
       }
@@ -32,7 +32,7 @@ export function useProfileDetails(userId?: string) {
     if (!userId) return;
 
     try {
-      await updateUserProfileDetails(userId, updates);
+      await updateUserProfileDetails(updates);
     } catch (error) {
       console.error(error);
       setProfileDetails(previousDetails);

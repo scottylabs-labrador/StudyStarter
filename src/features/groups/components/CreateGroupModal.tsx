@@ -16,7 +16,7 @@ import {
 import { GroupModalFrame } from "./GroupModalFrame";
 import { GroupModalFields } from "./GroupModalFields";
 import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
-import { createStudyGroup } from "../services/groupService";
+import { createGroup } from "../services/groupApi";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -89,7 +89,7 @@ export default function CreateGroupModal() {
         eventId,
       };
 
-      group = await createStudyGroup({
+      group = await createGroup({
         input: {
           title,
           course,

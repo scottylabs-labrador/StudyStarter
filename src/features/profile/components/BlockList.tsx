@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useUser } from "~/lib/auth-client";
 import { useConfirm } from "~/components/ui/ConfirmContext";
-import { removeParticipantFromSharedGroups } from "~/features/groups/services/groupService";
 import {
-  addBlockedByThem,
-  defaultBlockedUsers,
-  getUserBlockingState,
-  removeBlockedByThem,
-  updateUserBlockingState,
-} from "~/features/profile/services/profileService";
+  blockEmail,
+  fetchBlockImpact,
+  fetchBlockingState,
+  unblockEmail,
+} from "~/features/profile/services/profileApi";
 import type { BlockedUsers } from "~/features/profile/types";
 import {
   deleteFromCal,
@@ -17,6 +15,11 @@ import {
   hasCalendarAccess,
   requestCalendarAccessInteractive,
 } from "~/helpers/calendar_helper";
+
+const defaultBlockedUsers: BlockedUsers = {
+  blockedByMe: [],
+  blockedByThem: [],
+};
 
 export function BlockList() {
   const { user } = useUser();
@@ -32,8 +35,11 @@ export function BlockList() {
       if (!userId) {
         return;
       }
-      const blockingState = await getUserBlockingState(userId);
-      setBlocked(blockingState.blocked);
+      const blockingState = await fetchBlockingState();
+      setBlocked({
+        blockedByMe: blockingState.blockedByMe,
+        blockedByThem: blockingState.blockedByThem,
+      });
       setGroups(blockingState.joinedGroups);
     } catch (err) {
       console.error(err);
@@ -79,12 +85,8 @@ export function BlockList() {
     }
 
     try {
-      const blockedUserState = await getUserBlockingState(userToBlock);
-      let updatedGroups = groups;
-      const sharedGroups = groups.filter((groupId) =>
-        blockedUserState.joinedGroups.includes(groupId),
-      );
-      const numShared = sharedGroups.length;
+      const { sharedGroupCount: numShared } =
+        await fetchBlockImpact(userToBlock);
       if (numShared > 0) {
         const ok = await confirm(
           `You are currently in ${numShared} group${numShared === 1 ? "" : "s"} with ${userToBlock}. You will be removed from ${numShared === 1 ? "this group" : "these groups"} if you continue.`,
@@ -98,34 +100,18 @@ export function BlockList() {
             console.warn("Calendar auth failed:", err);
           });
         }
-        const removal = await removeParticipantFromSharedGroups({
-          currentGroupIds: groups,
-          targetGroupIds: blockedUserState.joinedGroups,
-          userEmail: userId,
-        });
-        updatedGroups = removal.remainingGroupIds;
-        await Promise.all(removal.eventIdsToDelete.map(deleteFromCal));
       }
 
-      await addBlockedByThem({
-        targetUserId: userToBlock,
-        currentUserId: userId,
+      const result = await blockEmail(userToBlock);
+      await Promise.all(result.calendarEventIds.map(deleteFromCal));
+
+      const updatedState = await fetchBlockingState();
+      setBlocked({
+        blockedByMe: updatedState.blockedByMe,
+        blockedByThem: updatedState.blockedByThem,
       });
-
-      const newBlocked: BlockedUsers = {
-        blockedByMe: blocked.blockedByMe.concat([userToBlock]),
-        blockedByThem: blocked.blockedByThem,
-      };
-
-      setBlocked(newBlocked);
-      setGroups(updatedGroups);
+      setGroups(updatedState.joinedGroups);
       setInputValue("");
-
-      await updateUserBlockingState({
-        userId,
-        blocked: newBlocked,
-        joinedGroups: updatedGroups,
-      });
     } catch (err) {
       console.error(err);
       void getBlocked();
@@ -138,10 +124,7 @@ export function BlockList() {
     if (!userId) return;
 
     try {
-      await removeBlockedByThem({
-        targetUserId: userToUnblock,
-        currentUserId: userId,
-      });
+      await unblockEmail(userToUnblock);
 
       const newBlocked: BlockedUsers = {
         blockedByMe: blocked.blockedByMe.filter((u) => u !== userToUnblock),
@@ -150,8 +133,6 @@ export function BlockList() {
 
       setBlocked(newBlocked);
       setInputValue("");
-
-      await updateUserBlockingState({ userId, blocked: newBlocked });
     } catch (err) {
       console.error(err);
       void getBlocked();

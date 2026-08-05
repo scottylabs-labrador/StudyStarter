@@ -15,7 +15,7 @@ export function useProfileSummary(userId?: string, enabled = true) {
 
     const loadProfileSummary = async () => {
       try {
-        setProfileSummary(await getUserProfileSummary(userId));
+        setProfileSummary(await getUserProfileSummary());
       } catch (error) {
         console.error(error);
         setProfileSummary({});
