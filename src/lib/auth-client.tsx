@@ -1,9 +1,10 @@
 "use client";
 
 import type { ReactElement, ReactNode } from "react";
-import { cloneElement, isValidElement, useMemo } from "react";
+import { cloneElement, isValidElement, useMemo, useState } from "react";
 import { createAuthClient } from "better-auth/react";
 import { genericOAuthClient } from "better-auth/client/plugins";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type CompatUser = {
@@ -21,6 +22,14 @@ type ButtonProps = {
 
 type SignInButtonProps = ButtonProps & {
   forceRedirectUrl?: string;
+};
+
+type SignInElementProps = {
+  "aria-busy"?: boolean;
+  "aria-label"?: string;
+  children?: ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
 };
 
 export const authClient = createAuthClient({
@@ -114,14 +123,54 @@ export function SignInButton({
   children,
   forceRedirectUrl = "/login",
 }: SignInButtonProps) {
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
   const handleSignIn = async () => {
-    await authClient.signIn.oauth2({
-      providerId: "keycloak",
-      callbackURL: forceRedirectUrl,
-    });
+    if (isSigningIn) return;
+
+    setIsSigningIn(true);
+    try {
+      await authClient.signIn.oauth2({
+        providerId: "keycloak",
+        callbackURL: forceRedirectUrl,
+      });
+    } catch (error) {
+      console.error("Auth click handler failed:", error);
+      setIsSigningIn(false);
+    }
   };
 
-  return <>{withClickHandler(children, handleSignIn)}</>;
+  const spinner = (
+    <LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" />
+  );
+
+  if (!isValidElement(children)) {
+    return (
+      <button
+        type="button"
+        onClick={() => void handleSignIn()}
+        disabled={isSigningIn}
+        aria-busy={isSigningIn}
+        aria-label={isSigningIn ? "Signing in" : undefined}
+      >
+        {isSigningIn ? spinner : children}
+      </button>
+    );
+  }
+
+  const element = children as ReactElement<SignInElementProps>;
+
+  return cloneElement(element, {
+    "aria-busy": isSigningIn,
+    "aria-label": isSigningIn ? "Signing in" : undefined,
+    disabled: element.props.disabled || isSigningIn,
+    onClick: () => {
+      if (isSigningIn) return;
+      element.props.onClick?.();
+      void handleSignIn();
+    },
+    children: isSigningIn ? spinner : element.props.children,
+  });
 }
 
 export function SignOutButton({ children }: ButtonProps) {
