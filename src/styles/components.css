@@ -111,7 +111,12 @@
 }
 
 .filter-select {
+  --filter-input-background: #f0f5f7;
   @apply mb-2 flex-1 rounded;
+}
+
+.dark .filter-select {
+  --filter-input-background: #DDEAF0;
 }
 
 .filter-controls .react-datepicker-wrapper {

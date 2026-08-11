@@ -16,7 +16,7 @@ const customSelectStyles: StylesConfig<FilterOption, true> = {
   }),
   control: (provided, state) => ({
     ...provided,
-    backgroundColor: state.isFocused ? "#f0f5f7" : "#f0f5f7",
+    backgroundColor: "var(--filter-input-background)",
     borderColor: "#d1d5db",
     boxShadow: state.isFocused ? "0 0 0 1px #1a73e8" : "none",
     borderRadius: "4px",
