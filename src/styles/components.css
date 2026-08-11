@@ -7,7 +7,7 @@
 }
 
 .app-main {
-  @apply container mx-auto bg-lightbg px-4 dark:bg-darkbg;
+  @apply w-full bg-lightbg dark:bg-darkbg;
 }
 
 .app-main-padded {
@@ -116,16 +116,15 @@
 .filter-course-select {
   --filter-input-background: #f0f5f7;
   min-width: 0;
-  @apply mb-2 rounded;
+  @apply rounded;
 }
 
 .dark .filter-course-select {
-  --filter-input-background: #DDEAF0;
+  --filter-input-background: #ddeaf0;
 }
 
 .filter-date-control {
   min-width: 0;
-  @apply mb-2;
 }
 
 .filter-date-control .react-datepicker-wrapper {

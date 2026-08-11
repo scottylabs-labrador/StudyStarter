@@ -48,7 +48,7 @@ export default async function ContentLayout({
     <div className="app-shell">
       <NavBar />
       <div className="app-content">
-        <main className="app-main">{children}</main>
+        <div className="app-main">{children}</div>
       </div>
     </div>
   );

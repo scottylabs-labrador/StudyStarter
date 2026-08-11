@@ -57,7 +57,7 @@ export default function MyGroupsPage() {
   const showNone = displayScheduled.every((group) => group === undefined);
 
   return (
-    <main className="container relative h-screen">
+    <>
       <TopFilterBar
         courseOptions={classOptions}
         selectedCourses={selectedCourses}
@@ -66,45 +66,49 @@ export default function MyGroupsPage() {
         setSelectedDate={setSelectedDate}
       />
 
-      <div className="pt-[20px]">
-        <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
-          {/* Display Scheduled Section */}
-          <div className={`${showDetails ? "md:col-span-2" : "md:col-span-3"}`}>
+      <main className="container relative mx-auto h-screen px-4">
+        <div className="pt-[20px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
+            {/* Display Scheduled Section */}
             <div
-              className={`grid gap-5 ${
-                showNone ? "justify-center" : "md:grid-cols-2 lg:grid-cols-3"
-              }`}
-            >
-              {showNone ? (
-                <p className="text-black dark:text-white">No groups found</p>
-              ) : (
-                displayScheduled
-              )}
-            </div>
-          </div>
-
-          {/* GroupDetails Section */}
-          {showDetails && (
-            <div
-              className="details-overlay"
-              onClick={(e) =>
-                e.target === e.currentTarget && setShowDetails(null)
-              }
+              className={`${showDetails ? "md:col-span-2" : "md:col-span-3"}`}
             >
               <div
-                className="details-overlay-inner"
-                onClick={(e) => e.stopPropagation()}
+                className={`grid gap-5 ${
+                  showNone ? "justify-center" : "md:grid-cols-2 lg:grid-cols-3"
+                }`}
               >
-                <GroupDetails
-                  details={showDetails}
-                  onClick={() => setShowDetails(null)}
-                  updateJoinedGroups={setJoinedGroups}
-                />
+                {showNone ? (
+                  <p className="text-black dark:text-white">No groups found</p>
+                ) : (
+                  displayScheduled
+                )}
               </div>
             </div>
-          )}
+
+            {/* GroupDetails Section */}
+            {showDetails && (
+              <div
+                className="details-overlay"
+                onClick={(e) =>
+                  e.target === e.currentTarget && setShowDetails(null)
+                }
+              >
+                <div
+                  className="details-overlay-inner"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <GroupDetails
+                    details={showDetails}
+                    onClick={() => setShowDetails(null)}
+                    updateJoinedGroups={setJoinedGroups}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
