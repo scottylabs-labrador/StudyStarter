@@ -104,6 +104,9 @@ function Courses({ userId, classes, setClasses, addCourse }: CoursesProps) {
   return (
     <div className="p-0">
       <h1 className="section-heading">Search Courses</h1>
+      <p className="mb-3 text-black dark:text-white">
+        You must add at least one course to continue
+      </p>
 
       <input
         type="search"
