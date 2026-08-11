@@ -16,11 +16,13 @@ const customSelectStyles: StylesConfig<FilterOption, true> = {
   }),
   control: (provided, state) => ({
     ...provided,
+    height: "46px",
+    minHeight: "46px",
     backgroundColor: "var(--filter-input-background)",
     borderColor: "#d1d5db",
     boxShadow: state.isFocused ? "0 0 0 1px #1a73e8" : "none",
     borderRadius: "4px",
-    padding: "4px",
+    padding: "0 4px",
   }),
   multiValue: (provided, state) => ({
     ...provided,
@@ -66,20 +68,23 @@ function TopFilterBar({
           value={selectedCourses}
           onChange={setSelectedCourses}
           classNamePrefix="react-select"
-          className="filter-select"
+          className="filter-course-select"
           placeholder="Courses"
           styles={customSelectStyles}
           components={customSelectComponents}
         />
 
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          customInput={<input className="filter-date-input" />}
-          popperClassName="custom-popper"
-          placeholderText="Date"
-          className="filter-select"
-        />
+        <div className="filter-date-control">
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            customInput={<input />}
+            popperClassName="custom-popper"
+            wrapperClassName="filter-date-wrapper"
+            placeholderText="Date"
+            className="filter-date-input"
+          />
+        </div>
 
         <ProfileMenu />
       </div>

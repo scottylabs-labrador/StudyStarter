@@ -107,20 +107,31 @@
 }
 
 .filter-controls {
-  @apply flex w-full justify-between space-x-4;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 1rem;
 }
 
-.filter-select {
+.filter-course-select {
   --filter-input-background: #f0f5f7;
-  @apply mb-2 flex-1 rounded;
+  min-width: 0;
+  @apply mb-2 rounded;
 }
 
-.dark .filter-select {
+.dark .filter-course-select {
   --filter-input-background: #DDEAF0;
 }
 
-.filter-controls .react-datepicker-wrapper {
-  @apply mb-2 flex-1;
+.filter-date-control {
+  min-width: 0;
+  @apply mb-2;
+}
+
+.filter-date-control .react-datepicker-wrapper {
+  display: block;
+  min-width: 0;
+  width: 100%;
 }
 
 .filter-controls .react-datepicker__input-container {
@@ -136,16 +147,28 @@
 
 .profile-menu-container {
   z-index: 1000;
-  @apply relative hidden items-center md:flex;
+  @apply relative hidden h-[46px] w-[46px] items-center justify-center md:flex;
 }
 
 .drawer-profile-menu-container {
   z-index: 1000;
-  @apply fixed right-6 top-4 flex items-center;
+  @apply fixed right-6 top-4 flex h-[46px] w-[46px] items-center justify-center;
 }
 
 .avatar-button {
-  @apply flex h-10 w-10 items-center justify-center rounded-full bg-lightButton text-xl text-black shadow-lg ring-1 ring-black/5 transition hover:ring-black/10 dark:bg-darkAccent dark:text-white dark:ring-white/10 dark:hover:ring-white/20;
+  @apply flex h-[46px] w-[46px] items-center justify-center rounded-full bg-lightButton text-xl text-black shadow-lg ring-1 ring-black/5 transition hover:ring-black/10 dark:bg-darkAccent dark:text-white dark:ring-white/10 dark:hover:ring-white/20;
+}
+
+.avatar-button > .avatar-small,
+.avatar-button > .avatar-fallback,
+.avatar-button > .avatar-label {
+  @apply h-full w-full;
+}
+
+@media (min-width: 768px) {
+  .filter-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) 46px;
+  }
 }
 
 .avatar-small {
