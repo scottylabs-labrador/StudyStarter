@@ -31,15 +31,21 @@
 }
 
 .nav-link {
-  @apply w-full rounded-lg py-2 text-center;
+  width: calc(100% + 1rem);
+  @apply block rounded-lg px-4 py-3 text-left font-medium text-black transition-colors hover:bg-lightAccent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white dark:hover:bg-darkAccent dark:focus-visible:ring-darkSelected;
 }
 
 .nav-link-active {
-  @apply font-bold text-lightSelected dark:text-darkSelected;
+  border-radius: 0.5rem 0 0 0.5rem;
+  @apply bg-lightbg font-semibold dark:bg-darkbg;
 }
 
 .button-primary {
   @apply rounded bg-lightButton px-4 py-2 font-bold text-black transition-colors hover:bg-lightSelected dark:bg-darkButton dark:text-white dark:hover:bg-darkSelected;
+}
+
+.feedback-button {
+  @apply rounded-lg;
 }
 
 .button-large {

@@ -73,22 +73,22 @@ export default function NavBar() {
             >
               My Groups
             </a>
-            <button
-              onClick={toggleTheme}
-              className="button-inverse modeButton w-full"
-              id="mode"
-            >
-              {theme === "light" ? "Dark Mode" : "Light Mode"}
-            </button>
           </div>
 
           {/* Bottom Section (Feedback Button) - Hidden on small screens */}
           <div className="hidden pb-4 md:block">
+            <button
+              onClick={toggleTheme}
+              className="button-inverse modeButton mb-4 w-full"
+              id="mode"
+            >
+              {theme === "light" ? "Dark Mode" : "Light Mode"}
+            </button>
             <a
               href="https://forms.gle/MEQ7miCZCrC48P6y8"
               target="_blank"
               rel="noopener noreferrer"
-              className="button-primary block w-full text-center"
+              className="button-primary feedback-button block w-full text-center"
             >
               Feedback
             </a>
