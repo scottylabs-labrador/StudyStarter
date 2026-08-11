@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 import "~/styles/components.css";
 
+import { GeistSans } from "geist/font/sans";
 import ReduxProvider from "./StoreProvider";
 import { Toaster } from "react-hot-toast";
 import { PostHogProvider } from "./providers";
@@ -19,7 +20,7 @@ export default function RootLayout({
   return (
     <ReduxProvider>
       <PostHogProvider>
-        <html lang="en">
+        <html lang="en" className={GeistSans.variable}>
           <head>
             <script
               dangerouslySetInnerHTML={{
