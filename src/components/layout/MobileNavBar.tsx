@@ -18,7 +18,7 @@ export default function MobileNavBar() {
 
   return (
     <Fragment>
-        <nav className="mobile-nav-bar md:hidden">
+        <nav className="mobile-nav-bar">
             <a href="/feed" className="flex items-center">
                 <Image
                   className="hidden dark:block h-8 w-auto"

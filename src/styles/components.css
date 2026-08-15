@@ -32,7 +32,7 @@
 
 .mobile-nav-bar {
   width: calc(100% + 1rem);
-  @apply sticky top-0 z-10 flex items-center justify-between px-6 py-3  px-4 py-3 text-left font-medium text-black transition-colors bg-lightSidebar dark:bg-darkSidebar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white dark:focus-visible:ring-darkSelected w-full;
+  @apply sticky top-0 z-10 md:hidden sm:flex items-center justify-between px-6 py-3  px-4 py-3 text-left font-medium text-black transition-colors bg-lightSidebar dark:bg-darkSidebar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white dark:focus-visible:ring-darkSelected w-full;
 }
 
 .mobile-nav-list {
