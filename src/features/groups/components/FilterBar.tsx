@@ -2,6 +2,7 @@ import Select, { type MultiValue, type StylesConfig } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ProfileMenu } from "~/components/ui/ProfileMenu";
+import MobileNavBar from "~/components/layout/MobileNavBar";
 
 type FilterOption = { value: string; label: string };
 
@@ -60,33 +61,36 @@ function TopFilterBar({
   setSelectedDate,
 }: TopFilterBarProps) {
   return (
-    <div className="filter-bar">
-      <div className="filter-controls">
-        <Select
-          isMulti
-          options={courseOptions}
-          value={selectedCourses}
-          onChange={setSelectedCourses}
-          classNamePrefix="react-select"
-          className="filter-course-select"
-          placeholder="Courses"
-          styles={customSelectStyles}
-          components={customSelectComponents}
-        />
-
-        <div className="filter-date-control">
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            customInput={<input />}
-            popperClassName="custom-popper"
-            wrapperClassName="filter-date-wrapper"
-            placeholderText="Date"
-            className="filter-date-input"
+    <div className="top-bar">
+      <MobileNavBar />
+      <div className="filter-bar">      
+        <div className="filter-controls">
+          <Select
+            isMulti
+            options={courseOptions}
+            value={selectedCourses}
+            onChange={setSelectedCourses}
+            classNamePrefix="react-select"
+            className="filter-course-select"
+            placeholder="Courses"
+            styles={customSelectStyles}
+            components={customSelectComponents}
           />
-        </div>
 
-        <ProfileMenu />
+          <div className="filter-date-control">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              customInput={<input />}
+              popperClassName="custom-popper"
+              wrapperClassName="filter-date-wrapper"
+              placeholderText="Date"
+              className="filter-date-input"
+            />
+          </div>
+
+          <ProfileMenu />
+        </div>
       </div>
     </div>
   );

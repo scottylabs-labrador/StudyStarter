@@ -30,6 +30,15 @@
   @apply grid h-screen grid-rows-[auto,1fr,auto] gap-y-6 overflow-hidden bg-lightbg px-4 pt-[50px] text-black dark:bg-darkbg dark:text-white md:bg-lightSidebar md:dark:bg-darkSidebar;
 }
 
+.mobile-nav-bar {
+  width: calc(100% + 1rem);
+  @apply sticky top-0 z-10 flex items-center justify-between px-6 py-3  px-4 py-3 text-left font-medium text-black transition-colors bg-lightSidebar dark:bg-darkSidebar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white dark:focus-visible:ring-darkSelected w-full;
+}
+
+.mobile-nav-list {
+  @apply md:hidden overflow-hidden transition-all duration-300 ease-in-out transform bg-lightSidebar dark:bg-darkSidebar;
+}
+
 .nav-link {
   width: calc(100% + 1rem);
   @apply block rounded-lg px-4 py-3 text-left font-medium text-black transition-colors hover:bg-lightAccent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white dark:hover:bg-darkAccent dark:focus-visible:ring-darkSelected;
@@ -108,8 +117,12 @@
   @apply truncate;
 }
 
+.top-bar {
+  @apply sticky top-0 z-10;
+}
+
 .filter-bar {
-  @apply sticky top-0 z-10 w-full border-b border-b-darkbg bg-lightbg px-6 pb-4 pt-6 dark:border-b-lightbg dark:bg-darkbg;
+  @apply  w-full border-b border-b-darkbg bg-lightbg px-6 pb-4 pt-6 dark:border-b-lightbg dark:bg-darkbg;
 }
 
 .filter-controls {
