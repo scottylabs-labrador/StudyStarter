@@ -1,16 +1,14 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
-
 export default {
-
   content: ["./src/**/*.tsx"],
-  darkMode: 'class',
+  darkMode: "class",
   safelist: [
-    'bg-lightAccent',
-    'dark:bg-darkAccent',
-    'bg-lightSidebar',
-    'dark:bg-darkSidebar',
+    "bg-lightAccent",
+    "dark:bg-darkAccent",
+    "bg-lightSidebar",
+    "dark:bg-darkSidebar",
   ],
   theme: {
     extend: {
@@ -19,33 +17,32 @@ export default {
       },
     },
     colors: {
-      'white': '#FFFFFF',
-      'black': '#000000',
-      'lightText': '#000000', // black
-      'darkText': '#FFFFFF', // white
+      transparent: "transparent",
+      white: "#FFFFFF",
+      black: "#000000",
+      lightText: "#111827",
+      darkText: "#F9FAFB",
 
       // light mode
-      'lightbg': '#f0f9fc',
-      'lightSidebar': '#DDEAF0', // sidebar, unselected cards
-      'lightAccent': '#95d1f0',  // selected card, details, createGroup bg
-      'lightSelected': '#0cacf0', // selected page, joined button
-      'lightButton': '#84cff0', // logout and create buttons
-      'lightInput': '#f0f5f7', // profile input boxes
+      lightbg: "#F6F6F4",
+      lightSidebar: "#FFFFFF",
+      lightAccent: "#F9ECEF",
+      lightSelected: "#C41230",
+      lightButton: "#C41230",
+      lightInput: "#FFFFFF",
 
       //dark mode
-      'darkbg': '#171717',
-      'darkSidebar': '#2f3e45', // sidebar, unselected cards
-      'darkAccent': '#326880', // selected card, details, profile create and logout buttons, createGroup bg
-      'darkSelected': '#5ec6f2', // selected page, joined button
-      'darkButton': '#3c7d99', // logout and create buttons
-      'darkInput': '#DDEAF0', // profile input boxes
+      darkbg: "#111214",
+      darkSidebar: "#191B1F",
+      darkAccent: "#3A2027",
+      darkSelected: "#FF6B7D",
+      darkButton: "#E33A52",
+      darkInput: "#202328",
 
       // green joined label
-      'joined':'#E8FEF0', 
-      'joinedText':'#74A385'
-    }
+      joined: "#ECFDF3",
+      joinedText: "#067647",
+    },
   },
-  plugins: [
-    require('@tailwindcss/aspect-ratio'),
-  ],
+  plugins: [require("@tailwindcss/aspect-ratio")],
 } satisfies Config;

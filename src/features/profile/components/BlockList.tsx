@@ -15,6 +15,7 @@ import {
   hasCalendarAccess,
   requestCalendarAccessInteractive,
 } from "~/helpers/calendar_helper";
+import { ShieldCheck, UserMinus } from "lucide-react";
 
 const defaultBlockedUsers: BlockedUsers = {
   blockedByMe: [],
@@ -140,9 +141,8 @@ export function BlockList() {
   };
 
   return (
-    <div className="mt-8">
-      <div className="p-0">
-        <h1 className="section-heading">Block Users</h1>
+    <div className="block-list">
+      <div>
         <form onSubmit={handleBlockSubmit}>
           <input
             id="blockInput"
@@ -152,28 +152,31 @@ export function BlockList() {
             title='"<id>@andrew.cmu.edu"'
             value={inputValue}
             onChange={handleBlock}
-            placeholder="Emails added here will not see groups you're in"
+            placeholder="student@andrew.cmu.edu"
             required
           />
-          <button type="submit" className="button-primary mt-2 w-full">
+          <button type="submit" className="button-outline mt-2 w-full">
             Block User
           </button>
         </form>
       </div>
-      <br />
-      <h2 className="mb-1 text-lg font-bold text-black dark:text-white">
-        {blocked.blockedByMe.length > 0 ? "Blocked Students" : ""}
-      </h2>
-      <ul className="mt-2 space-y-2">
+      {blocked.blockedByMe.length === 0 && (
+        <div className="blocked-empty">
+          <ShieldCheck size={30} />
+          <strong>No blocked users</strong>
+          <span>People you block will appear here.</span>
+        </div>
+      )}
+      <ul className="class-list-items">
         {blocked.blockedByMe.map((blockedUser) => (
           <li key={blockedUser} className="class-list-item">
             <div className="class-list-text">{blockedUser}</div>
             <button
               onClick={() => handleUnblock(blockedUser)}
-              className="unblock-button"
+              className="unblock-text-button"
               aria-label={`Unblock ${blockedUser}`}
             >
-              <strong>&times;</strong>
+              <UserMinus size={16} /> Unblock
             </button>
           </li>
         ))}

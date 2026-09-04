@@ -2,6 +2,8 @@
 
 import { SignOutButton } from "~/lib/auth-client";
 import { UserAvatar } from "~/components/ui/UserAvatar";
+import { CalendarDays, GraduationCap, Pencil } from "lucide-react";
+import { useProfileSummary } from "~/features/profile/hooks/useProfileSummary";
 
 type ProfileHeaderProps = {
   user?: {
@@ -13,25 +15,51 @@ type ProfileHeaderProps = {
     emailAddresses?: { emailAddress?: string }[];
   } | null;
   showLogout?: boolean;
+  onEdit?: () => void;
 };
 
 export function ProfileHeader({
   user,
   showLogout = false,
+  onEdit,
 }: ProfileHeaderProps) {
   const displayName =
     user?.fullName ?? user?.firstName ?? user?.username ?? "User";
   const emailAddress = user?.emailAddresses?.[0]?.emailAddress;
+  const profile = useProfileSummary(emailAddress);
 
   return (
-    <div className="mb-4 flex items-center">
+    <section className="profile-header">
       <UserAvatar user={user} size="lg" />
-      <div className="ml-4">
-        <h1 className="text-2xl font-bold text-black dark:text-white">
-          {displayName}
-        </h1>
-        <p className="text-black dark:text-white">{emailAddress}</p>
+      <div className="profile-header-meta">
+        <h1 className="profile-header-title">{displayName}</h1>
+        <div className="profile-header-details">
+          {profile.majors && (
+            <span>
+              <GraduationCap size={17} /> {profile.majors}
+            </span>
+          )}
+          {profile.year && (
+            <span>
+              <CalendarDays size={17} />{" "}
+              {profile.year === "Masters Student" ||
+              profile.year === "PhD Student"
+                ? profile.year
+                : `Class of ${profile.year}`}
+            </span>
+          )}
+        </div>
+        <p className="profile-header-email">{emailAddress}</p>
       </div>
+      {onEdit && (
+        <button
+          type="button"
+          className="button-outline profile-edit-button"
+          onClick={onEdit}
+        >
+          <Pencil size={17} /> Edit profile
+        </button>
+      )}
       {showLogout && (
         <div className="ml-auto">
           <SignOutButton>
@@ -39,6 +67,6 @@ export function ProfileHeader({
           </SignOutButton>
         </div>
       )}
-    </div>
+    </section>
   );
 }

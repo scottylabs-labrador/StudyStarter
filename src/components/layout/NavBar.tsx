@@ -1,92 +1,119 @@
 "use client";
-import darkLogo from "~/image/darkLogo2.png";
-import lightLogo from "~/image/lightLogo2.png";
+
 import { Fragment } from "react";
-import CreateGroupModal from "~/features/groups/components/CreateGroupModal";
 import { usePathname } from "next/navigation";
-import { useUser } from "~/lib/auth-client";
-import Image from "next/image";
+import { useDispatch } from "react-redux";
+import {
+  FileText,
+  LogOut,
+  MessageSquare,
+  Moon,
+  Plus,
+  Search,
+  Sun,
+  User,
+  Users,
+} from "lucide-react";
+import { SignOutButton, useUser } from "~/lib/auth-client";
+import { UserAvatar } from "~/components/ui/UserAvatar";
+import MobileNavBar from "~/components/layout/MobileNavBar";
+import CreateGroupModal from "~/features/groups/components/CreateGroupModal";
 import { useUserTheme } from "~/features/profile/hooks/useUserTheme";
+import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
+
+const navItems = [
+  { href: "/feed", label: "Group Finder", page: "feed", icon: Search },
+  { href: "/my-groups", label: "My Groups", page: "my-groups", icon: Users },
+  { href: "/profile", label: "Profile", page: "profile", icon: User },
+];
 
 export default function NavBar() {
   const { user } = useUser();
   const userId = user?.emailAddresses[0]?.emailAddress;
-  const pathname = usePathname();
-  const page = pathname.split("/")[1];
+  const page = usePathname().split("/")[1];
   const { theme, toggleTheme } = useUserTheme(userId);
+  const dispatch = useDispatch();
+  const displayName = user?.fullName ?? user?.firstName ?? "CMU student";
 
   return (
     <Fragment>
-      <div className="sidebar-shell">
+      <aside className="sidebar-shell" aria-label="Primary navigation">
         <div className="sidebar-content">
-          {/* Top Section */}
           <div>
-            <div className="flex w-full flex-row items-center">
-              {/* Hide content after first button on small screens */}
-              <a href="/feed" className="hidden h-[50px] items-center md:flex">
-                <Image
-                  className="hidden dark:block"
-                  src={darkLogo}
-                  alt="dark-mode-logo"
-                  width={400}
-                  height={200}
-                />
-                <Image
-                  className="block dark:hidden"
-                  src={lightLogo}
-                  alt="light-mode-logo"
-                  width={400}
-                  height={200}
-                />
-              </a>
-            </div>
-          </div>
-
-          {/* Middle Section (Navigation Buttons) - Hidden on small screens */}
-          <div className="hidden flex-col gap-y-4 md:flex">
             <a
               href="/feed"
-              className={`nav-link ${page === "feed" ? "nav-link-active" : ""}`}
+              className="sidebar-brand"
+              aria-label="CMU Study home"
             >
-              Group Finder
+              <span>CMU</span> Study
             </a>
-            <a
-              href="/my-groups"
-              className={`nav-link ${page === "my-groups" ? "nav-link-active" : ""}`}
+            <button
+              type="button"
+              className="sidebar-create-button"
+              onClick={() => dispatch(setIsCreateGroupModalOpen(true))}
             >
-              My Groups
-            </a>
+              <Plus size={19} /> New group
+            </button>
+            <nav className="sidebar-nav">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className={`nav-link ${page === item.page ? "nav-link-active" : ""}`}
+                    aria-current={page === item.page ? "page" : undefined}
+                  >
+                    <Icon className="nav-link-icon" /> {item.label}
+                  </a>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* Bottom Section (Feedback Button) - Hidden on small screens */}
-          <div className="hidden pb-4 md:block">
-            <button
-              onClick={toggleTheme}
-              className="button-inverse modeButton mb-4 w-full"
-              id="mode"
-            >
-              {theme === "light" ? "Dark Mode" : "Light Mode"}
-            </button>
-            <a
-              href="https://forms.gle/MEQ7miCZCrC48P6y8"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button-primary feedback-button block w-full text-center"
-            >
-              Feedback
+          <div className="sidebar-bottom">
+            <nav className="sidebar-utilities" aria-label="Utility navigation">
+              <a
+                href="https://forms.gle/MEQ7miCZCrC48P6y8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link"
+              >
+                <MessageSquare className="nav-link-icon" /> Feedback
+              </a>
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link"
+              >
+                <FileText className="nav-link-icon" /> Privacy
+              </a>
+              <button type="button" onClick={toggleTheme} className="nav-link">
+                {theme === "light" ? (
+                  <Moon className="nav-link-icon" />
+                ) : (
+                  <Sun className="nav-link-icon" />
+                )}
+                {theme === "light" ? "Dark mode" : "Light mode"}
+              </button>
+            </nav>
+            <a href="/profile" className="sidebar-account">
+              <UserAvatar user={user} />
+              <span className="sidebar-account-copy">
+                <strong>{displayName}</strong>
+                <small>{userId}</small>
+              </span>
             </a>
-            <a
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`w-full rounded-lg pb-2 text-center text-xs underline ${page === "privacy" ? "font-bold text-lightSelected dark:text-darkSelected" : " text-black dark:text-white"}`}
-            >
-              Privacy Policy
-            </a>
+            <SignOutButton>
+              <button type="button" className="sidebar-logout">
+                <LogOut size={18} /> Log out
+              </button>
+            </SignOutButton>
           </div>
         </div>
-      </div>
-
+      </aside>
+      <MobileNavBar />
       <CreateGroupModal />
     </Fragment>
   );

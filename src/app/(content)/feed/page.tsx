@@ -16,6 +16,7 @@ import { useStudyGroups } from "~/features/groups/hooks/useStudyGroups";
 import { useUserGroupState } from "~/features/groups/hooks/useUserGroupState";
 import { shouldHideFeedGroup } from "~/features/groups/utils/groupFilters";
 import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
+import { Plus, Search } from "lucide-react";
 
 export default function FeedPage() {
   const { user } = useUser();
@@ -32,6 +33,7 @@ export default function FeedPage() {
     MultiValue<{ value: string; label: string }>
   >([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState<StudyGroup | null>(null);
   const showFullFilter = false;
@@ -53,15 +55,16 @@ export default function FeedPage() {
     dispatch(setIsCreateGroupModalOpen(true));
   };
 
-  const displayScheduled = groups.map((group) => {
-    const [formattedDate, formattedTime] = formatDateTime(group.startTime);
-    const isInGroup = joinedGroups ? joinedGroups.includes(group.id) : false;
-    const cardColors =
-      group.id === selectedGroup
-        ? groupCardColors.selected
-        : groupCardColors.default;
-    if (
-      shouldHideFeedGroup({
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const visibleGroups = groups.filter((group) => {
+    const matchesSearch =
+      !normalizedSearch ||
+      [group.course, group.title, group.purpose, group.location].some((value) =>
+        value.toLowerCase().includes(normalizedSearch),
+      );
+    return (
+      matchesSearch &&
+      !shouldHideFeedGroup({
         group,
         joinedGroups,
         blockedUsers,
@@ -69,8 +72,18 @@ export default function FeedPage() {
         selectedDate,
         selectedCourseValues: selectedCourses.map((course) => course.value),
       })
-    )
-      return;
+    );
+  });
+  const joinedCount = joinedGroups?.length ?? 0;
+
+  const displayScheduled = visibleGroups.map((group) => {
+    const [formattedDate, formattedTime] = formatDateTime(group.startTime);
+    const isInGroup = joinedGroups ? joinedGroups.includes(group.id) : false;
+    const cardColors =
+      group.id === selectedGroup
+        ? groupCardColors.selected
+        : groupCardColors.default;
+
     return (
       <Card
         key={group.id}
@@ -84,19 +97,6 @@ export default function FeedPage() {
       />
     );
   });
-  displayScheduled.unshift(
-    <button
-      key="create-group"
-      className="create-card"
-      onClick={handleCreateGroup}
-      type="button"
-      aria-label="Create study group"
-    >
-      <p className="text-6xl leading-none">+</p>
-    </button>,
-  );
-
-  const showNone = displayScheduled.every((group) => group === undefined);
 
   return (
     <>
@@ -106,32 +106,62 @@ export default function FeedPage() {
         setSelectedCourses={setSelectedCourses}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
-      <main className="container relative mx-auto h-screen px-4">
-        <div className="pt-[20px]">
-          <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
-            {/* Display Scheduled Section */}
+      <main className="content-page">
+        <div className="workspace-page">
+          <section className="workspace-header">
+            <div>
+              <h1 className="workspace-title">Group Finder</h1>
+              <p className="workspace-subtitle">
+                Find an upcoming study session that fits your course and
+                schedule.
+              </p>
+            </div>
+            <div className="workspace-actions">
+              <div className="workspace-stat">
+                <div className="workspace-stat-value">
+                  {visibleGroups.length}
+                </div>
+                <div className="workspace-stat-label">Available</div>
+              </div>
+              <div className="workspace-stat">
+                <div className="workspace-stat-value">{joinedCount}</div>
+                <div className="workspace-stat-label">Joined</div>
+              </div>
+              <button
+                className="button-primary"
+                onClick={handleCreateGroup}
+                type="button"
+              >
+                <Plus className="nav-link-icon" />
+                New group
+              </button>
+            </div>
+          </section>
+
+          <div className="workspace-layout">
             <div
-              className={`${showDetails ? "md:col-span-2" : "md:col-span-3"}`}
+              className={`workspace-results ${showDetails ? "" : "xl:col-span-2"}`}
             >
               <div
-                className={`grid gap-5 ${
-                  showNone ? "justify-center" : "md:grid-cols-2 lg:grid-cols-3"
-                }`}
+                className={`${showDetails ? "group-grid" : "group-grid-wide"}`}
               >
-                {showNone ? (
-                  <p className="text-black dark:text-white">No groups found</p>
-                ) : (
-                  displayScheduled
+                {displayScheduled}
+                {visibleGroups.length === 0 && (
+                  <div className="app-empty">
+                    <Search className="h-6 w-6 text-black/35 dark:text-white/35" />
+                    <p>No groups found</p>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* GroupDetails Section: on mobile */}
             {showDetails && (
               <div
-                className="details-overlay"
+                className="details-overlay workspace-detail"
                 onClick={(e) =>
                   e.target === e.currentTarget && closeDetailsPopUp()
                 }

@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useProfileSummary } from "~/features/profile/hooks/useProfileSummary";
 import { useAppSelector } from "~/lib/hooks";
 import { setIsViewProfileOpen } from "~/lib/features/uiSlice";
+import { X } from "lucide-react";
 
 interface CreateProfilePopUpProps {
   username: string;
@@ -31,11 +32,9 @@ function CreateProfilePopUp({ username, email }: CreateProfilePopUpProps) {
     <div className="profile-popup-overlay">
       <div className="profile-popup-panel">
         <div className="profile-popup-header">
-          <div className="text-black dark:text-white">
-            <h2 className="text-xl font-bold">
-              <big>{firstName}</big>
-            </h2>
-            <p className="text-lg">{email}</p>
+          <div className="text-default">
+            <h2 className="text-xl font-bold">{firstName}</h2>
+            <p className="text-sm text-black/60 dark:text-white/60">{email}</p>
             {profile.year && (
               <p className="font-bold">{formatYear(profile.year)}</p>
             )}
@@ -52,8 +51,12 @@ function CreateProfilePopUp({ username, email }: CreateProfilePopUpProps) {
               </p>
             )}
           </div>
-          <button onClick={handleClose} className="profile-popup-close">
-            <big>&times;</big>
+          <button
+            onClick={handleClose}
+            className="profile-popup-close"
+            aria-label="Close profile"
+          >
+            <X size={18} />
           </button>
         </div>
       </div>

@@ -8,7 +8,7 @@ import { useUser } from "~/lib/auth-client";
 
 function ContinueButton() {
   return (
-    <a href="/feed" className="button-outline bg-lightbg dark:bg-darkbg">
+    <a href="/feed" className="button-primary">
       Continue
     </a>
   );
@@ -21,11 +21,32 @@ export default function CreateAccountPage() {
 
   return (
     <div className="profile-page-panel">
-      <ProfileHeader user={user} showLogout />
-      <ProfileDetailsForm userId={userId} mastersValue="Masters" />
-      <ClassList />
-      <br />
-      <ContinueButton />
+      <section className="workspace-header mb-5">
+        <div>
+          <div className="workspace-kicker">Welcome</div>
+          <h1 className="workspace-title">Set up CMU Study</h1>
+          <p className="workspace-subtitle">
+            Add your profile details and at least one course to start finding
+            useful study groups.
+          </p>
+        </div>
+        <div className="workspace-actions">
+          <ContinueButton />
+        </div>
+      </section>
+      <div className="profile-workspace">
+        <div className="profile-column">
+          <ProfileHeader user={user} showLogout />
+          <div className="settings-panel">
+            <ProfileDetailsForm userId={userId} mastersValue="Masters" />
+          </div>
+        </div>
+        <div className="profile-column">
+          <div className="settings-panel">
+            <ClassList />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

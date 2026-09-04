@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
+import { X } from "lucide-react";
 
 type GroupModalFrameProps = {
   id: string;
@@ -84,7 +85,7 @@ export function GroupModalFrame({
             className="modal-close"
             aria-label="Close modal"
           >
-            <big>&times;</big>
+            <X size={18} />
           </button>
         </div>
         {children}

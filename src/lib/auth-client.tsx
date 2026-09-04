@@ -163,7 +163,7 @@ export function SignInButton({
   return cloneElement(element, {
     "aria-busy": isSigningIn,
     "aria-label": isSigningIn ? "Signing in" : undefined,
-    disabled: element.props.disabled || isSigningIn,
+    disabled: Boolean(element.props.disabled) || isSigningIn,
     onClick: () => {
       if (isSigningIn) return;
       element.props.onClick?.();

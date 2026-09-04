@@ -11,6 +11,7 @@ import { useStudyGroups } from "~/features/groups/hooks/useStudyGroups";
 import { useUserGroupState } from "~/features/groups/hooks/useUserGroupState";
 import { shouldHideBySharedFilters } from "~/features/groups/utils/groupFilters";
 import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
+import { CalendarCheck } from "lucide-react";
 
 export default function MyGroupsPage() {
   const { user } = useUser();
@@ -26,20 +27,30 @@ export default function MyGroupsPage() {
     MultiValue<{ value: string; label: string }>
   >([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showDetails, setShowDetails] = useState<StudyGroup | null>(null);
 
-  const displayScheduled = groups.map((group) => {
-    const [formattedDate, formattedTime] = formatDateTime(group.startTime);
+  const visibleGroups = groups.filter((group) => {
     const isParticipant = joinedGroups?.includes(group.id);
-    if (!isParticipant) return;
-    if (
-      shouldHideBySharedFilters({
+    if (!isParticipant) return false;
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+    const matchesSearch =
+      !normalizedSearch ||
+      [group.course, group.title, group.purpose, group.location].some((value) =>
+        value.toLowerCase().includes(normalizedSearch),
+      );
+    return (
+      matchesSearch &&
+      !shouldHideBySharedFilters({
         group,
         selectedDate,
         selectedCourseValues: selectedCourses.map((course) => course.value),
       })
-    )
-      return;
+    );
+  });
+
+  const displayScheduled = visibleGroups.map((group) => {
+    const [formattedDate, formattedTime] = formatDateTime(group.startTime);
     return (
       <Card
         key={group.id}
@@ -54,8 +65,6 @@ export default function MyGroupsPage() {
     );
   });
 
-  const showNone = displayScheduled.every((group) => group === undefined);
-
   return (
     <>
       <TopFilterBar
@@ -64,32 +73,58 @@ export default function MyGroupsPage() {
         setSelectedCourses={setSelectedCourses}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
-      <main className="container relative mx-auto h-screen px-4">
-        <div className="pt-[20px]">
-          <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
-            {/* Display Scheduled Section */}
+      <main className="content-page">
+        <div className="workspace-page">
+          <section className="workspace-header">
+            <div>
+              <h1 className="workspace-title">My Groups</h1>
+              <p className="workspace-subtitle">
+                Keep track of the sessions you have joined.
+              </p>
+            </div>
+            <div className="workspace-actions">
+              <div className="workspace-stat">
+                <div className="workspace-stat-value">
+                  {visibleGroups.length}
+                </div>
+                <div className="workspace-stat-label">Showing</div>
+              </div>
+              <div className="workspace-stat">
+                <div className="workspace-stat-value">
+                  {joinedGroups?.length ?? 0}
+                </div>
+                <div className="workspace-stat-label">Joined</div>
+              </div>
+            </div>
+          </section>
+
+          <div className="workspace-layout">
             <div
-              className={`${showDetails ? "md:col-span-2" : "md:col-span-3"}`}
+              className={`workspace-results ${showDetails ? "" : "xl:col-span-2"}`}
             >
               <div
-                className={`grid gap-5 ${
-                  showNone ? "justify-center" : "md:grid-cols-2 lg:grid-cols-3"
-                }`}
+                className={`${showDetails ? "group-grid" : "group-grid-wide"}`}
               >
-                {showNone ? (
-                  <p className="text-black dark:text-white">No groups found</p>
-                ) : (
-                  displayScheduled
+                {displayScheduled}
+                {visibleGroups.length === 0 && (
+                  <div className="app-empty">
+                    <CalendarCheck className="h-6 w-6 text-black/35 dark:text-white/35" />
+                    <p>No joined groups found</p>
+                    <p className="max-w-sm text-xs font-normal">
+                      Try changing the filters or join a group from the finder.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* GroupDetails Section */}
             {showDetails && (
               <div
-                className="details-overlay"
+                className="details-overlay workspace-detail"
                 onClick={(e) =>
                   e.target === e.currentTarget && setShowDetails(null)
                 }

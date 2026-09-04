@@ -12,7 +12,7 @@ export function JoinGroupButton({ isJoined, onClick }: JoinGroupButtonProps) {
       className={`join-button ${isJoined ? "join-button-active" : "join-button-inactive"}`}
       onClick={onClick}
     >
-      {isJoined ? "Leave" : "Join"}
+      {isJoined ? "Leave group" : "Join group"}
     </button>
   );
 }

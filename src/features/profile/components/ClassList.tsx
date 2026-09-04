@@ -8,6 +8,7 @@ import { useUser } from "~/lib/auth-client";
 import { getAllCourses } from "../services/profileService";
 import { useUserCourses } from "../hooks/useUserCourses";
 import type { Course } from "../types";
+import { Plus, Search, Trash2 } from "lucide-react";
 
 type CoursesProps = {
   userId?: string;
@@ -99,24 +100,22 @@ function Courses({ userId, classes, setClasses, addCourse }: CoursesProps) {
     }
   };
 
-  if (loading) return <p className="text-white">Loading...</p>;
+  if (loading) return <p className="text-default">Loading...</p>;
 
   return (
-    <div className="p-0">
-      <h1 className="section-heading">Search Courses</h1>
-      <p className="mb-3 text-black dark:text-white">
-        You must add at least one course to continue
-      </p>
-
-      <input
-        type="search"
-        placeholder="Search courses..."
-        value={searchQuery}
-        onChange={handleSearch}
-        onKeyDown={handleSearchKeyDown}
-        className="course-search-input"
-        id="searchBar"
-      />
+    <div className="course-picker">
+      <label className="course-search-wrap">
+        <Search size={18} />
+        <input
+          type="search"
+          placeholder="Search courses..."
+          value={searchQuery}
+          onChange={handleSearch}
+          onKeyDown={handleSearchKeyDown}
+          className="course-search-input"
+          id="searchBar"
+        />
+      </label>
 
       {filteredCourses.length > 0 ? (
         <ul className="list-none pl-0 text-black dark:text-white">
@@ -126,7 +125,7 @@ function Courses({ userId, classes, setClasses, addCourse }: CoursesProps) {
                 onClick={async () => await addClass(course)}
                 className="course-search-result"
               >
-                <span className="mr-2 flex-shrink-0 text-xl">+</span>
+                <Plus className="h-4 w-4 flex-shrink-0" />
 
                 <span
                   className="course-search-text"
@@ -139,9 +138,7 @@ function Courses({ userId, classes, setClasses, addCourse }: CoursesProps) {
           ))}
         </ul>
       ) : (
-        searchQuery && (
-          <p className="text-black dark:text-white">No courses found.</p>
-        )
+        searchQuery && <p className="form-empty-copy">No courses found.</p>
       )}
     </div>
   );
@@ -154,28 +151,26 @@ export function ClassList() {
     useUserCourses(userId);
 
   return (
-    <div className="mt-8">
+    <div className="class-list">
       <Courses
         userId={userId}
         classes={classes}
         setClasses={setClasses}
         addCourse={addCourse}
       />
-      <br />
-      <h2 className="mb-1 text-lg font-bold text-black dark:text-white">
-        {classes.length === 0 ? "" : "My Classes"}
-      </h2>
-      <ul className="mt-2 space-y-2">
+      <ul className="class-list-items">
         {classes.map((cls) => (
           <li key={cls.courseID} className="class-list-item">
             <div className="class-list-text">
-              <strong>{cls.courseID}</strong> - {cls.name}
+              <strong>{cls.courseID}</strong>
+              <span>{cls.name}</span>
             </div>
             <button
               onClick={async () => await deleteCourse(cls.courseID)}
-              className="text-lightgray-500 text-xl"
+              className="row-icon-button"
+              aria-label={`Remove ${cls.courseID}`}
             >
-              <strong>&times;</strong>
+              <Trash2 size={17} />
             </button>
           </li>
         ))}

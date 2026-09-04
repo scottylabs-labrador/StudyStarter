@@ -20,21 +20,20 @@ export function ParticipantList({
   return (
     <div className="participant-list">
       {participants.map((participant) => (
-        <div key={participant.email} className="participant-row">
-          <button
-            onClick={onViewProfile}
-            className="participant-row"
-            data-username={participant.name}
-            data-email={participant.email}
-          >
-            <AvatarImage
-              src={participant.url}
-              alt={participant.name}
-              fallbackText={participant.name}
-            />
-            <p className="participant-name">{participant.name.split(" ")[0]}</p>
-          </button>
-        </div>
+        <button
+          key={participant.email}
+          onClick={onViewProfile}
+          className="participant-row"
+          data-username={participant.name}
+          data-email={participant.email}
+        >
+          <AvatarImage
+            src={participant.url}
+            alt={participant.name}
+            fallbackText={participant.name}
+          />
+          <span className="participant-name">{participant.name}</span>
+        </button>
       ))}
     </div>
   );
