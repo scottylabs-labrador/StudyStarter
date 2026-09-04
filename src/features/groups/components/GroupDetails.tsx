@@ -32,6 +32,7 @@ interface Props {
   updateJoinedGroups: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 import { usePostHog } from "posthog-js/react";
+import { CalendarDays, Clock3, MapPin, Users } from "lucide-react";
 
 const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
   const { user } = useUser();
@@ -235,47 +236,19 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
         onClose={onClick}
       />
 
-      <div id="group_info_popup_body" className="pb-20">
-        <p className="group-details-text">
-          <strong>Course:</strong> {currentDetails.course}
-        </p>
-        <p className="group-details-text">
-          <strong>Purpose</strong>: {currentDetails.purpose}
-        </p>
-        <p className="group-details-text">
-          <strong>Time</strong>: {formattedTime}
-        </p>
-        <p className="group-details-text">
-          <strong>Date</strong>: {formattedDate}
-        </p>
-        <p className="group-details-text">
-          <strong>Location:</strong> {currentDetails.location}
-        </p>
-        <p className="group-details-text">
-          <strong>Participants:</strong>{" "}
-          {currentDetails.participantDetails.length} /{" "}
-          {currentDetails.totalSeats}{" "}
-          <button
-            onClick={() => participantsSetState(!participantsState)}
-            className="text-[12px]"
-          >
-            {participantsState ? "▼" : "▲"}
-          </button>
-        </p>
-
-        {participantsState && (
-          <ParticipantList
-            participants={currentDetails.participantDetails}
-            onViewProfile={handleViewProfileClick}
-          />
-        )}
-
-        <strong className="group-details-text">Details:</strong>
-        <div className="group-details-freeform">
-          {currentDetails.details
-            ? currentDetails.details
-            : "Hope you have a good time!"}
+      <div id="group_info_popup_body" className="details-body">
+        <p className="details-course">{currentDetails.course} <span>·</span> {currentDetails.purpose}</p>
+        <p className="details-intro">{currentDetails.purpose}</p>
+        <div className="details-meta-list">
+          <p><CalendarDays size={15} /> {formattedDate}</p>
+          <p><Clock3 size={15} /> {formattedTime}</p>
+          <p><MapPin size={15} /> {currentDetails.location}</p>
+          <p><Users size={15} /> {currentDetails.participantDetails.length} / {currentDetails.totalSeats} participants</p>
         </div>
+        <section className="details-section"><h3>Details</h3><div className="group-details-freeform">{currentDetails.details ? currentDetails.details : "Hope you have a good time!"}</div></section>
+        <section className="details-section participants-section"><h3>Participants ({currentDetails.participantDetails.length}) <button onClick={() => participantsSetState(!participantsState)} aria-label="Toggle participants">{participantsState ? "⌃" : "⌄"}</button></h3>
+          {participantsState && <ParticipantList participants={currentDetails.participantDetails} onViewProfile={handleViewProfileClick} />}
+        </section>
 
         {viewUser && (
           <CreateProfilePopUp username={viewUser} email={viewEmail ?? ""} />

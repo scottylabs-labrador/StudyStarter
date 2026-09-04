@@ -24,8 +24,9 @@ export function ProfileDetailsForm({
   const inputClassName = compact ? "profile-input-compact" : "profile-input";
 
   return (
-    <>
-      <div>
+    <div className="profile-details-form">
+      <label>
+        <span>Academic Year</span>
         <select
           id="yearSelect"
           name="yearSelect"
@@ -46,14 +47,10 @@ export function ProfileDetailsForm({
           <option value={mastersValue}>Masters Student</option>
           <option value="PhD Student">PhD Student</option>
         </select>
-      </div>
-      <br />
-      <hr className="text-darkbg dark:text-lightbg" />
-      <br />
-      <h1 className="mb-1 text-lg font-bold text-black dark:text-white">
-        Majors:
-      </h1>
-      <input
+      </label>
+      <label>
+        <span>Major(s)</span>
+        <input
         id="majorInput"
         className={inputClassName}
         type="text"
@@ -63,13 +60,11 @@ export function ProfileDetailsForm({
         }
         placeholder="Add your major(s) here"
         required
-      />
-      <br />
-      <br />
-      <h1 className="mb-1 text-lg font-bold text-black dark:text-white">
-        Minors:
-      </h1>
-      <input
+        />
+      </label>
+      <label>
+        <span>Minor(s) / Concentrations <em>(optional)</em></span>
+        <input
         id="minorInput"
         className={`${inputClassName} mb-3`}
         type="text"
@@ -78,10 +73,8 @@ export function ProfileDetailsForm({
           updateProfileDetails({ minors: event.target.value })
         }
         placeholder="Add any minors or concentrations here"
-      />
-      <br />
-      <br />
-      <hr className="text-darkbg dark:text-lightbg" />
-    </>
+        />
+      </label>
+    </div>
   );
 }

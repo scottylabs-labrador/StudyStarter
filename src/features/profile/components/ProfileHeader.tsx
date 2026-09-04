@@ -24,20 +24,14 @@ export function ProfileHeader({
   const emailAddress = user?.emailAddresses?.[0]?.emailAddress;
 
   return (
-    <div className="mb-4 flex items-center">
+    <div className="profile-identity">
       <UserAvatar user={user} size="lg" />
-      <div className="ml-4">
-        <h1 className="text-2xl font-bold text-black dark:text-white">
-          {displayName}
-        </h1>
-        <p className="text-black dark:text-white">{emailAddress}</p>
+      <div>
+        <h1>{displayName}</h1>
+        <p>{emailAddress}</p>
       </div>
       {showLogout && (
-        <div className="ml-auto">
-          <SignOutButton>
-            <button className="button-primary">Logout</button>
-          </SignOutButton>
-        </div>
+        <SignOutButton><button className="button-primary">Logout</button></SignOutButton>
       )}
     </div>
   );

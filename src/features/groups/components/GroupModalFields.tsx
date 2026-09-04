@@ -4,6 +4,7 @@ import type { Dispatch, SetStateAction } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { DatePickerInput } from "~/components/ui/DatePickerInput";
+import { CalendarDays, MapPin, Users } from "lucide-react";
 
 type GroupModalFieldsProps = {
   title: string;
@@ -45,88 +46,16 @@ export function GroupModalFields({
   setDetails,
 }: GroupModalFieldsProps) {
   return (
-    <>
-      <input
-        className="form-control-accent"
-        type="text"
-        aria-label="Group title"
-        placeholder="Title"
-        value={title}
-        onChange={(event) => setTitle(event.target.value)}
-        required
-        maxLength={titleMaxLength}
-      />
-      <select
-        className="form-control"
-        id="classSelect"
-        aria-label="Course"
-        value={course}
-        onChange={(event) => setCourse(event.target.value)}
-        required
-      >
-        <option value="" disabled>
-          Select a class
-        </option>
-        {classes.map((classId) => (
-          <option key={classId} value={classId}>
-            {classId}
-          </option>
-        ))}
-      </select>
-      <input
-        className="form-control"
-        type="text"
-        aria-label="Purpose"
-        placeholder="Purpose"
-        value={purpose}
-        onChange={(event) => setPurpose(event.target.value)}
-        required
-        maxLength={50}
-      />
-      <DatePicker
-        selected={date}
-        onChange={(selectedDate) => setDate(selectedDate)}
-        ariaLabelledBy="Date and time"
-        showTimeSelect
-        dateFormat="Pp"
-        placeholderText="Date/Time"
-        popperClassName="custom-popper"
-        calendarClassName="bg-lightInput dark:bg-darkInput"
-        customInput={<DatePickerInput />}
-        wrapperClassName="w-full"
-        className="w-full"
-        required
-      />
-      <input
-        className="form-control"
-        type="text"
-        aria-label="Location"
-        placeholder="Location"
-        value={location}
-        onChange={(event) => setLocation(event.target.value)}
-        required
-        maxLength={locationMaxLength}
-      />
-      <input
-        className="form-control"
-        type="number"
-        aria-label="Maximum seats"
-        placeholder="Max Seats"
-        value={seats}
-        onChange={(event) => setSeats(event.target.value)}
-        required
-        min="2"
-        max="100"
-      />
-      <input
-        className="form-control"
-        type="text"
-        aria-label="Details"
-        placeholder="Details"
-        value={details}
-        maxLength={200}
-        onChange={(event) => setDetails(event.target.value)}
-      />
-    </>
+    <div className="group-form-fields">
+      <label>Title <span>{title.length} / {titleMaxLength}</span><input className="form-control-accent" type="text" placeholder="Algorithms Study Session" value={title} onChange={(event) => setTitle(event.target.value)} required maxLength={titleMaxLength} /></label>
+      <label>Course<select className="form-control" id="classSelect" value={course} onChange={(event) => setCourse(event.target.value)} required><option value="" disabled>Select a class</option>{classes.map((classId) => <option key={classId} value={classId}>{classId}</option>)}</select></label>
+      <label>Purpose <span>{purpose.length} / 50</span><input className="form-control" type="text" placeholder="Review and practice" value={purpose} onChange={(event) => setPurpose(event.target.value)} required maxLength={50} /></label>
+      <label className="form-icon-field"><CalendarDays size={15} />Date & time<DatePicker selected={date} onChange={(selectedDate) => setDate(selectedDate)} ariaLabelledBy="Date and time" showTimeSelect dateFormat="MMM d, yyyy · h:mm aa" placeholderText="Select a date and time" popperClassName="custom-popper" calendarClassName="bg-lightInput dark:bg-darkInput" customInput={<DatePickerInput />} wrapperClassName="w-full" className="w-full" required /></label>
+      <div className="group-form-row">
+        <label className="form-icon-field"><MapPin size={15} />Location <input className="form-control" type="text" placeholder="GHC 5403" value={location} onChange={(event) => setLocation(event.target.value)} required maxLength={locationMaxLength} /></label>
+        <label className="form-icon-field"><Users size={15} />Max Capacity <input className="form-control" type="number" placeholder="6" value={seats} onChange={(event) => setSeats(event.target.value)} required min="2" max="100" /></label>
+      </div>
+      <label>Details <span>{details.length} / 200</span><input className="form-control" type="text" placeholder="We’ll practice sample problems together." value={details} maxLength={200} onChange={(event) => setDetails(event.target.value)} /></label>
+    </div>
   );
 }

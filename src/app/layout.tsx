@@ -1,5 +1,5 @@
 import "~/styles/globals.css";
-import "~/styles/components.css";
+import "~/styles/new-ui.css";
 
 import { GeistSans } from "geist/font/sans";
 import ReduxProvider from "./StoreProvider";

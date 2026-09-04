@@ -92,7 +92,7 @@ export default function FeedPage() {
       type="button"
       aria-label="Create study group"
     >
-      <p className="text-6xl leading-none">+</p>
+      <p>+</p>
     </button>,
   );
 
@@ -110,6 +110,7 @@ export default function FeedPage() {
 
       <main className="container relative mx-auto h-screen px-4">
         <div className="pt-[20px]">
+          <div className="study-list-heading"><h1>Group Finder</h1><span className="text-xs text-gray-500">Upcoming sessions</span></div>
           <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
             {/* Display Scheduled Section */}
             <div

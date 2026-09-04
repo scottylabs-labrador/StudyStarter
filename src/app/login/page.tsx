@@ -31,7 +31,7 @@ export default async function LoginPage() {
   }
 
   if (!(await userHasCreatedProfile(email))) {
-    redirect("/create-account");
+    redirect("/onboarding/profile");
   }
   redirect("/feed");
 }

@@ -17,6 +17,7 @@ import { GroupModalFrame } from "./GroupModalFrame";
 import { GroupModalFields } from "./GroupModalFields";
 import { useUserCourses } from "~/features/profile/hooks/useUserCourses";
 import { createGroup } from "../services/groupApi";
+import { Check } from "lucide-react";
 
 export default function CreateGroupModal() {
   const { user } = useUser();
@@ -28,6 +29,7 @@ export default function CreateGroupModal() {
   const [location, setLocation] = useState("");
   const [seats, setSeats] = useState("");
   const [details, setDetails] = useState("");
+  const [createdGroupId, setCreatedGroupId] = useState<string | null>(null);
   const { classes } = useUserCourses(userId);
   const classOptions = classes.map((course) => course.courseID);
 
@@ -36,6 +38,7 @@ export default function CreateGroupModal() {
   const posthog = usePostHog();
 
   const handleClose = () => {
+    setCreatedGroupId(null);
     dispatch(setIsCreateGroupModalOpen(false));
   };
 
@@ -131,7 +134,7 @@ export default function CreateGroupModal() {
     setLocation("");
     setSeats("");
     setDetails("");
-    handleClose();
+    setCreatedGroupId(group.id);
 
     toast("Study group created successfully!", {
       icon: "👏",
@@ -151,6 +154,21 @@ export default function CreateGroupModal() {
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  if (createdGroupId) {
+    return (
+      <GroupModalFrame id="createGroupSuccess" title="" onClose={handleClose}>
+        <div className="group-success">
+          <div className="group-success-icon"><Check size={30} /></div>
+          <h2>Study group created!</h2>
+          <p>You&apos;re the first participant and the group has been added to My Groups.</p>
+          <p className="group-success-note">Your calendar event is added when calendar access is available.</p>
+          <a href="/feed" onClick={handleClose} className="primary-action w-full">View Group</a>
+          <button type="button" onClick={handleClose} className="group-success-link">Back to Group Finder</button>
+        </div>
+      </GroupModalFrame>
+    );
+  }
 
   return (
     <GroupModalFrame

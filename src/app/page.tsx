@@ -1,178 +1,50 @@
 "use client";
+
+import { CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import "~/styles/globals.css";
-import { useUser, SignInButton, SignedIn, SignedOut } from "~/lib/auth-client";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import darkLogo from "~/image/darkLogoLarge.png";
-import lightLogo from "~/image/lightLogoLarge.png";
-import {
-  Users,
-  Calendar,
-  MapPin,
-  BookOpen,
-  Search,
-  PlusCircle,
-} from "lucide-react";
+import { useEffect } from "react";
+import { SignedOut, useUser } from "~/lib/auth-client";
+import { Wordmark } from "~/components/layout/Wordmark";
+
+function LandingHero() {
+  return (
+    <div className="landing-hero">
+      <section className="landing-copy">
+        <h1 className="landing-title">Find. Create. Study.<span className="highlight">Succeed together.</span></h1>
+        <p className="landing-subtitle">CMU Study helps Carnegie Mellon students find and create study groups that fit their courses, schedule, and goals.</p>
+        <ul className="landing-bullets">
+          <li><CheckCircle2 size={15} /> Find upcoming study sessions</li>
+          <li><CheckCircle2 size={15} /> Create your own group in minutes</li>
+          <li><CheckCircle2 size={15} /> Join, leave, and manage your groups</li>
+          <li><CheckCircle2 size={15} /> Add sessions to your personal calendar</li>
+        </ul>
+        <div className="landing-actions">
+          <a className="primary-action" href="/sign-in?mode=create">Get Started</a>
+          <a className="secondary-action" href="/sign-in">Sign in</a>
+        </div>
+        <p className="landing-students-only">◉ CMU students only</p>
+      </section>
+      <div className="landing-art" aria-label="Students studying together on campus" role="img">
+        <div className="campus-tower" /><div className="hero-trees" /><div className="study-group-art" />
+        <div className="student student-one" /><div className="student student-two" /><div className="student student-three" />
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const { user } = useUser();
   const router = useRouter();
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  useEffect(() => { if (user) router.replace("/login"); }, [router, user]);
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    setIsRedirecting(true);
-    router.replace("/login");
-  }, [user, router]);
-
-  return (
-    <div className="landing-page">
-      <SignedOut>
-        <div className="landing-content">
-          {/* Hero Section */}
-          <div className="landing-hero">
-            <div className="mb-8 flex justify-center">
-              <Image
-                className="hidden dark:block"
-                src={darkLogo}
-                alt="CMU Study Logo"
-                width={600}
-                height={300}
-                priority
-              />
-              <Image
-                className="block dark:hidden"
-                src={lightLogo}
-                alt="CMU Study Logo"
-                width={600}
-                height={300}
-                priority
-              />
-            </div>
-
-            <h1 className="landing-title">Find Your Study Group</h1>
-            <p className="landing-subtitle">
-              Connect with CMU students. Create, find, and join study groups for
-              your classes.
-            </p>
-
-            <div className="landing-actions">
-              <SignInButton forceRedirectUrl="/login">
-                <button className="button-large">Create Account</button>
-              </SignInButton>
-              <SignInButton forceRedirectUrl="/login">
-                <button className="button-large">Sign in</button>
-              </SignInButton>
-            </div>
-          </div>
-
-          {/* Features Section */}
-          <div className="feature-grid">
-            {/* Feature 1 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <PlusCircle className="h-8 w-8 text-black dark:text-white" />
-              </div>
-              <h3 className="feature-title">Create Groups</h3>
-              <p className="feature-copy">
-                Easily create study groups for your classes. Set the time,
-                location, and purpose.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Search className="h-8 w-8 text-black dark:text-white" />
-              </div>
-              <h3 className="feature-title">Find Groups</h3>
-              <p className="feature-copy">
-                Search and filter study groups by course, or date to find the
-                perfect match.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Users className="h-8 w-8 text-black dark:text-white" />
-              </div>
-              <h3 className="feature-title">Join & Collaborate</h3>
-              <p className="feature-copy">
-                Join study groups and collaborate with other CMU students to
-                achieve your academic goals.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <BookOpen className="h-8 w-8 text-black dark:text-white" />
-              </div>
-              <h3 className="feature-title">Manage Classes</h3>
-              <p className="feature-copy">
-                Organize your study groups by class and track all your academic
-                commitments in one place.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <MapPin className="h-8 w-8 text-black dark:text-white" />
-              </div>
-              <h3 className="feature-title">CMU Locations</h3>
-              <p className="feature-copy">
-                Meet at popular CMU locations like Gates, Wean, Doherty, or join
-                virtual sessions on Zoom.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Calendar className="h-8 w-8 text-black dark:text-white" />
-              </div>
-              <h3 className="feature-title">Schedule Sessions</h3>
-              <p className="feature-copy">
-                Plan your study sessions with clear dates and times. Never miss
-                an important study group again.
-              </p>
-            </div>
-          </div>
-
-          {/* Privacy Policy Link */}
-          <div className="mb-4 mt-8">
-            <a
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-link-subtle"
-            >
-              Privacy Policy
-            </a>
-          </div>
-        </div>
-      </SignedOut>
-
-      <SignedIn>
-        {isRedirecting && (
-          <div className="flex min-h-screen items-center justify-center">
-            <div className="text-center">
-              <div className="mb-4 text-2xl font-bold text-black dark:text-white">
-                Welcome back!
-              </div>
-              <div className="text-black dark:text-white">
-                Redirecting you...
-              </div>
-            </div>
-          </div>
-        )}
-      </SignedIn>
-    </div>
-  );
+  return <main className="landing-page"><SignedOut><div className="landing-content">
+    <header className="landing-header">
+      <Wordmark />
+      <nav className="landing-links" aria-label="Landing navigation"><a href="#features">Features</a><a href="#students">For Students</a><a href="/privacy">Privacy</a><a href="mailto:cmustudy.help@gmail.com">Support</a></nav>
+      <div className="landing-header-actions"><a href="/sign-in" className="text-action">Sign in</a><a href="/sign-in?mode=create" className="primary-action">Get Started</a></div>
+    </header>
+    <LandingHero />
+    <section id="features" className="sr-only"><h2>Features</h2><p>Find, create, join, and manage CMU study groups.</p></section>
+    <section id="students" className="sr-only"><h2>For Students</h2><p>CMU Study is for CMU students.</p></section>
+  </div></SignedOut></main>;
 }

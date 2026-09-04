@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 import { redirect } from "next/navigation";
 import NavBar from "~/components/layout/NavBar";
+import MobileNavBar from "~/components/layout/MobileNavBar";
 import React from "react";
 import {
   checkFacultyStatus,
@@ -41,7 +42,7 @@ export default async function ContentLayout({
   }
 
   if (!(await userHasCreatedProfile(email))) {
-    redirect("/create-account");
+    redirect("/onboarding/profile");
   }
 
   return (
@@ -50,6 +51,7 @@ export default async function ContentLayout({
       <div className="app-content">
         <div className="app-main">{children}</div>
       </div>
+      <MobileNavBar />
     </div>
   );
 }

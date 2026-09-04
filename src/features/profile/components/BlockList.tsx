@@ -15,6 +15,7 @@ import {
   hasCalendarAccess,
   requestCalendarAccessInteractive,
 } from "~/helpers/calendar_helper";
+import { Plus } from "lucide-react";
 
 const defaultBlockedUsers: BlockedUsers = {
   blockedByMe: [],
@@ -140,40 +141,23 @@ export function BlockList() {
   };
 
   return (
-    <div className="mt-8">
-      <div className="p-0">
-        <h1 className="section-heading">Block Users</h1>
+    <div className="block-list">
+      <div className="block-entry">
         <form onSubmit={handleBlockSubmit}>
-          <input
-            id="blockInput"
-            className="course-search-input"
-            type="text"
-            pattern="[A-Za-z0-9]+@andrew\.cmu\.edu"
-            title='"<id>@andrew.cmu.edu"'
-            value={inputValue}
-            onChange={handleBlock}
-            placeholder="Emails added here will not see groups you're in"
-            required
-          />
-          <button type="submit" className="button-primary mt-2 w-full">
-            Block User
-          </button>
+          <label htmlFor="blockInput">CMU email address</label>
+          <div className="block-add-row"><input id="blockInput" className="course-search-input" type="text" pattern="[A-Za-z0-9]+@andrew\.cmu\.edu" title='"<id>@andrew.cmu.edu"' value={inputValue} onChange={handleBlock} placeholder="username@andrew.cmu.edu" required /><button type="submit" className="icon-add" aria-label="Block user"><Plus size={18} /></button></div>
         </form>
       </div>
-      <br />
-      <h2 className="mb-1 text-lg font-bold text-black dark:text-white">
-        {blocked.blockedByMe.length > 0 ? "Blocked Students" : ""}
-      </h2>
-      <ul className="mt-2 space-y-2">
+      <ul className="blocked-list">
         {blocked.blockedByMe.map((blockedUser) => (
           <li key={blockedUser} className="class-list-item">
-            <div className="class-list-text">{blockedUser}</div>
+            <div className="blocked-person"><span className="blocked-initial">{blockedUser[0]?.toUpperCase()}</span><div><strong>{blockedUser.split("@")[0]}</strong><small>{blockedUser}</small></div></div>
             <button
               onClick={() => handleUnblock(blockedUser)}
               className="unblock-button"
               aria-label={`Unblock ${blockedUser}`}
             >
-              <strong>&times;</strong>
+              Unblock
             </button>
           </li>
         ))}
