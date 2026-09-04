@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import type { StudyGroup } from "~/types";
 import {
   setIsEditGroupModalOpen,
@@ -26,6 +26,14 @@ import {
   leaveGroup as leaveGroupApi,
 } from "../services/groupApi";
 import { useLiveGroupDetails } from "../hooks/useLiveGroupDetails";
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronUp,
+  Clock3,
+  MapPin,
+  Users,
+} from "lucide-react";
 interface Props {
   onClick: () => void;
   details: StudyGroup;
@@ -70,24 +78,12 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
     onClick();
   }, [isDeleted, onClick]);
 
-  /* Dynamic size for the info popup */
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const [maxHeight, setMaxHeight] = useState<string | undefined>(undefined);
   useEffect(() => {
-    const updateHeight = () => {
-      if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
-      const top = rect.top; // distance from top of viewport
-      const available = window.innerHeight - top - 20; // 20px from bottom
-      setMaxHeight(`${available}px`);
-    };
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    window.addEventListener("scroll", updateHeight, { passive: true });
-
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      window.removeEventListener("resize", updateHeight);
-      window.removeEventListener("scroll", updateHeight);
+      document.body.style.overflow = previousOverflow;
     };
   }, []);
 
@@ -227,55 +223,91 @@ const GroupDetails = ({ onClick, details, updateJoinedGroups }: Props) => {
     joinedState && currentDetails.participantDetails.length === 1;
 
   return (
-    <div ref={cardRef} style={{ maxHeight }} className="group-details-card">
+    <div
+      className="group-details-card"
+      role="dialog"
+      aria-label={`${currentDetails.title} details`}
+    >
       <GroupDetailsHeader
         title={currentDetails.title}
+        course={currentDetails.course}
+        purpose={currentDetails.purpose}
         canEdit={canEditGroup}
         onEdit={() => dispatch(setIsEditGroupModalOpen(true))}
         onClose={onClick}
       />
 
-      <div id="group_info_popup_body" className="pb-20">
-        <p className="group-details-text">
-          <strong>Course:</strong> {currentDetails.course}
-        </p>
-        <p className="group-details-text">
-          <strong>Purpose</strong>: {currentDetails.purpose}
-        </p>
-        <p className="group-details-text">
-          <strong>Time</strong>: {formattedTime}
-        </p>
-        <p className="group-details-text">
-          <strong>Date</strong>: {formattedDate}
-        </p>
-        <p className="group-details-text">
-          <strong>Location:</strong> {currentDetails.location}
-        </p>
-        <p className="group-details-text">
-          <strong>Participants:</strong>{" "}
-          {currentDetails.participantDetails.length} /{" "}
-          {currentDetails.totalSeats}{" "}
-          <button
-            onClick={() => participantsSetState(!participantsState)}
-            className="text-[12px]"
-          >
-            {participantsState ? "▼" : "▲"}
-          </button>
-        </p>
-
-        {participantsState && (
-          <ParticipantList
-            participants={currentDetails.participantDetails}
-            onViewProfile={handleViewProfileClick}
-          />
-        )}
-
-        <strong className="group-details-text">Details:</strong>
-        <div className="group-details-freeform">
-          {currentDetails.details
-            ? currentDetails.details
-            : "Hope you have a good time!"}
+      <div id="group_info_popup_body" className="group-details-body">
+        <div className="group-details-list">
+          <p className="group-details-text">
+            <CalendarDays className="group-details-info-icon" />
+            <span>
+              <span className="group-details-label">Date</span>
+              <span className="group-details-value">{formattedDate}</span>
+            </span>
+          </p>
+          <p className="group-details-text">
+            <Clock3 className="group-details-info-icon" />
+            <span>
+              <span className="group-details-label">Time</span>
+              <span className="group-details-value">{formattedTime}</span>
+            </span>
+          </p>
+          <p className="group-details-text">
+            <MapPin className="group-details-info-icon" />
+            <span>
+              <span className="group-details-label">Location</span>
+              <span className="group-details-value">
+                {currentDetails.location}
+              </span>
+            </span>
+          </p>
         </div>
+
+        <section className="group-details-section">
+          <div className="group-details-section-heading">
+            <span>
+              <Users size={17} /> Participants
+            </span>
+            <div>
+              <span className="group-details-count">
+                {currentDetails.participantDetails.length} /{" "}
+                {currentDetails.totalSeats}
+              </span>
+              <button
+                onClick={() => participantsSetState(!participantsState)}
+                className="participants-toggle"
+                aria-expanded={participantsState}
+                aria-label={
+                  participantsState ? "Hide participants" : "Show participants"
+                }
+              >
+                {participantsState ? (
+                  <ChevronUp size={17} />
+                ) : (
+                  <ChevronDown size={17} />
+                )}
+              </button>
+            </div>
+          </div>
+          {participantsState && (
+            <ParticipantList
+              participants={currentDetails.participantDetails}
+              onViewProfile={handleViewProfileClick}
+            />
+          )}
+        </section>
+
+        <section className="group-details-section">
+          <div className="group-details-section-heading">
+            <span>About this group</span>
+          </div>
+          <div className="group-details-freeform">
+            {currentDetails.details
+              ? currentDetails.details
+              : "Hope you have a good time!"}
+          </div>
+        </section>
 
         {viewUser && (
           <CreateProfilePopUp username={viewUser} email={viewEmail ?? ""} />

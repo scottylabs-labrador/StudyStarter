@@ -23,8 +23,8 @@ export default function PrivacyPage() {
           </p>
 
           {/* Data Accessed */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">Data Accessed</h2>
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">Data Accessed</h2>
 
             <p>
               CMU Study only requests the minimum Google Calendar permissions
@@ -55,8 +55,8 @@ export default function PrivacyPage() {
           </div>
 
           {/* How We Use Data */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">
               How We Use Google User Data
             </h2>
 
@@ -85,8 +85,8 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data Stored */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">Data We Store</h2>
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">Data We Store</h2>
 
             <p>
               We store only one piece of information: the{" "}
@@ -108,8 +108,8 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data Sharing */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">Data Sharing</h2>
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">Data Sharing</h2>
             <p>
               We <strong>do not</strong> share, sell, or transmit any Google
               user data or stored event IDs to third parties.
@@ -130,10 +130,8 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data Storage & Protection */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">
-              Data Storage & Protection
-            </h2>
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">Data Storage & Protection</h2>
 
             <p>
               We use reasonable industry security measures to protect stored
@@ -153,10 +151,8 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data Retention & Deletion */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">
-              Data Retention & Deletion
-            </h2>
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">Data Retention & Deletion</h2>
 
             <h3 className="font-semibold">How Long We Retain Data</h3>
             <p className="mt-2">
@@ -191,8 +187,8 @@ export default function PrivacyPage() {
           </div>
 
           {/* Changes */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">Changes to This Policy</h2>
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time. Any revisions
               will be posted on this page with a new effective date.
@@ -200,8 +196,8 @@ export default function PrivacyPage() {
           </div>
 
           {/* Contact */}
-          <div className="p-6">
-            <h2 className="mb-3 text-2xl font-bold">Contact</h2>
+          <div className="privacy-section">
+            <h2 className="privacy-section-title">Contact</h2>
             <p>
               For questions, support, or data deletion requests, please contact:
               <br />

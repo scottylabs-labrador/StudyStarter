@@ -24,8 +24,9 @@ export function ProfileDetailsForm({
   const inputClassName = compact ? "profile-input-compact" : "profile-input";
 
   return (
-    <>
-      <div>
+    <div className="profile-details-form">
+      <label>
+        <span>Class year</span>
         <select
           id="yearSelect"
           name="yearSelect"
@@ -46,42 +47,34 @@ export function ProfileDetailsForm({
           <option value={mastersValue}>Masters Student</option>
           <option value="PhD Student">PhD Student</option>
         </select>
-      </div>
-      <br />
-      <hr className="text-darkbg dark:text-lightbg" />
-      <br />
-      <h1 className="mb-1 text-lg font-bold text-black dark:text-white">
-        Majors:
-      </h1>
-      <input
-        id="majorInput"
-        className={inputClassName}
-        type="text"
-        value={profileDetails.majors}
-        onChange={(event) =>
-          updateProfileDetails({ majors: event.target.value })
-        }
-        placeholder="Add your major(s) here"
-        required
-      />
-      <br />
-      <br />
-      <h1 className="mb-1 text-lg font-bold text-black dark:text-white">
-        Minors:
-      </h1>
-      <input
-        id="minorInput"
-        className={`${inputClassName} mb-3`}
-        type="text"
-        value={profileDetails.minors}
-        onChange={(event) =>
-          updateProfileDetails({ minors: event.target.value })
-        }
-        placeholder="Add any minors or concentrations here"
-      />
-      <br />
-      <br />
-      <hr className="text-darkbg dark:text-lightbg" />
-    </>
+      </label>
+      <label>
+        <span>Major</span>
+        <input
+          id="majorInput"
+          className={inputClassName}
+          type="text"
+          value={profileDetails.majors}
+          onChange={(event) =>
+            updateProfileDetails({ majors: event.target.value })
+          }
+          placeholder="Information Systems"
+          required
+        />
+      </label>
+      <label>
+        <span>Minor or concentration</span>
+        <input
+          id="minorInput"
+          className={inputClassName}
+          type="text"
+          value={profileDetails.minors}
+          onChange={(event) =>
+            updateProfileDetails({ minors: event.target.value })
+          }
+          placeholder="Optional"
+        />
+      </label>
+    </div>
   );
 }

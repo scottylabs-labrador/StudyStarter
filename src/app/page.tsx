@@ -1,19 +1,44 @@
 "use client";
-import { useRouter } from "next/navigation";
-import "~/styles/globals.css";
-import { useUser, SignInButton, SignedIn, SignedOut } from "~/lib/auth-client";
+
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import darkLogo from "~/image/darkLogoLarge.png";
-import lightLogo from "~/image/lightLogoLarge.png";
+import { useRouter } from "next/navigation";
 import {
-  Users,
-  Calendar,
+  CalendarDays,
+  CheckSquare,
+  Clock,
   MapPin,
-  BookOpen,
   Search,
-  PlusCircle,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
+import { SignedIn, SignedOut, SignInButton, useUser } from "~/lib/auth-client";
+
+const previewGroups = [
+  {
+    course: "15-112",
+    title: "Principles of Imperative Computation",
+    schedule: "Tue 7:00 - 8:30 PM",
+    location: "Wean 5213",
+    seats: "12 / 16",
+    status: "Open",
+  },
+  {
+    course: "21-127",
+    title: "Great Theoretical Ideas in CS",
+    schedule: "Wed 6:00 - 7:30 PM",
+    location: "GHC 4401",
+    seats: "9 / 14",
+    status: "Open",
+  },
+  {
+    course: "36-200",
+    title: "Probability & Statistics",
+    schedule: "Thu 7:30 - 9:00 PM",
+    location: "Posner 413",
+    seats: "7 / 12",
+    status: "Filling",
+  },
+];
 
 export default function HomePage() {
   const { user } = useUser();
@@ -21,10 +46,7 @@ export default function HomePage() {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-
+    if (!user) return;
     setIsRedirecting(true);
     router.replace("/login");
   }, [user, router]);
@@ -32,144 +54,149 @@ export default function HomePage() {
   return (
     <div className="landing-page">
       <SignedOut>
-        <div className="landing-content">
-          {/* Hero Section */}
-          <div className="landing-hero">
-            <div className="mb-8 flex justify-center">
-              <Image
-                className="hidden dark:block"
-                src={darkLogo}
-                alt="CMU Study Logo"
-                width={600}
-                height={300}
-                priority
-              />
-              <Image
-                className="block dark:hidden"
-                src={lightLogo}
-                alt="CMU Study Logo"
-                width={600}
-                height={300}
-                priority
-              />
-            </div>
+        <header className="landing-nav">
+          <a href="/" className="landing-brand">
+            <span>CMU</span> Study
+          </a>
+          <nav className="landing-nav-actions">
+            <SignInButton forceRedirectUrl="/login">
+              <button type="button" className="landing-signin">
+                Sign in
+              </button>
+            </SignInButton>
+            <SignInButton forceRedirectUrl="/login">
+              <button type="button" className="button-primary">
+                Create account
+              </button>
+            </SignInButton>
+          </nav>
+          <SignInButton forceRedirectUrl="/login">
+            <button type="button" className="landing-mobile-signin">
+              Sign in
+            </button>
+          </SignInButton>
+        </header>
 
-            <h1 className="landing-title">Find Your Study Group</h1>
-            <p className="landing-subtitle">
-              Connect with CMU students. Create, find, and join study groups for
-              your classes.
-            </p>
-
+        <main className="landing-main">
+          <section className="landing-hero">
+            <h1>
+              Find your people.
+              <br />
+              Get the work done.
+            </h1>
+            <p>Create or join study groups for your CMU courses.</p>
             <div className="landing-actions">
               <SignInButton forceRedirectUrl="/login">
-                <button className="button-large">Create Account</button>
+                <button type="button" className="button-large">
+                  Find a study group
+                </button>
               </SignInButton>
               <SignInButton forceRedirectUrl="/login">
-                <button className="button-large">Sign in</button>
+                <button
+                  type="button"
+                  className="button-outline landing-secondary"
+                >
+                  Get started
+                </button>
               </SignInButton>
             </div>
-          </div>
+          </section>
 
-          {/* Features Section */}
-          <div className="feature-grid">
-            {/* Feature 1 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <PlusCircle className="h-8 w-8 text-black dark:text-white" />
-              </div>
-              <h3 className="feature-title">Create Groups</h3>
-              <p className="feature-copy">
-                Easily create study groups for your classes. Set the time,
-                location, and purpose.
-              </p>
+          <section className="landing-browser" aria-label="Study group preview">
+            <div className="landing-browser-heading">
+              <h2>Browse study groups</h2>
             </div>
-
-            {/* Feature 2 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Search className="h-8 w-8 text-black dark:text-white" />
+            <div className="landing-browser-tools">
+              <div className="landing-search">
+                <Search size={18} />
+                <span>Search courses or keywords</span>
               </div>
-              <h3 className="feature-title">Find Groups</h3>
-              <p className="feature-copy">
-                Search and filter study groups by course, or date to find the
-                perfect match.
-              </p>
+              <div className="landing-filter">All courses</div>
+              <div className="landing-filter">Upcoming</div>
             </div>
+            <div className="landing-group-list">
+              {previewGroups.map((group) => (
+                <article key={group.course} className="landing-group-row">
+                  <div className="landing-course-code">{group.course}</div>
+                  <div className="landing-group-name">
+                    <strong>{group.title}</strong>
+                    <span>
+                      <span
+                        className={
+                          group.status === "Filling"
+                            ? "status-filling"
+                            : "status-open"
+                        }
+                      >
+                        {group.status}
+                      </span>{" "}
+                      {group.seats} members
+                    </span>
+                  </div>
+                  <div className="landing-group-meta">
+                    <span>
+                      <Clock size={16} />
+                      {group.schedule}
+                    </span>
+                    <span>
+                      <MapPin size={16} />
+                      {group.location}
+                    </span>
+                  </div>
+                  <div className="landing-avatar-stack">
+                    <i>AK</i>
+                    <i>MS</i>
+                    <i>JL</i>
+                  </div>
+                  <button type="button">View group</button>
+                </article>
+              ))}
+            </div>
+          </section>
 
-            {/* Feature 3 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Users className="h-8 w-8 text-black dark:text-white" />
+          <section className="landing-features">
+            <article>
+              <Users />
+              <div>
+                <h3>Find your people</h3>
+                <p>Connect with classmates in your courses.</p>
               </div>
-              <h3 className="feature-title">Join & Collaborate</h3>
-              <p className="feature-copy">
-                Join study groups and collaborate with other CMU students to
-                achieve your academic goals.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <BookOpen className="h-8 w-8 text-black dark:text-white" />
+            </article>
+            <article>
+              <CalendarDays />
+              <div>
+                <h3>Coordinate easily</h3>
+                <p>Plan sessions around your schedule.</p>
               </div>
-              <h3 className="feature-title">Manage Classes</h3>
-              <p className="feature-copy">
-                Organize your study groups by class and track all your academic
-                commitments in one place.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <MapPin className="h-8 w-8 text-black dark:text-white" />
+            </article>
+            <article>
+              <CheckSquare />
+              <div>
+                <h3>Stay organized</h3>
+                <p>Keep every group in one place.</p>
               </div>
-              <h3 className="feature-title">CMU Locations</h3>
-              <p className="feature-copy">
-                Meet at popular CMU locations like Gates, Wean, Doherty, or join
-                virtual sessions on Zoom.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Calendar className="h-8 w-8 text-black dark:text-white" />
+            </article>
+            <article>
+              <ShieldCheck />
+              <div>
+                <h3>Built for CMU</h3>
+                <p>Private, focused, and student-first.</p>
               </div>
-              <h3 className="feature-title">Schedule Sessions</h3>
-              <p className="feature-copy">
-                Plan your study sessions with clear dates and times. Never miss
-                an important study group again.
-              </p>
-            </div>
-          </div>
-
-          {/* Privacy Policy Link */}
-          <div className="mb-4 mt-8">
-            <a
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-link-subtle"
-            >
-              Privacy Policy
-            </a>
-          </div>
-        </div>
+            </article>
+          </section>
+        </main>
+        <footer className="landing-footer">
+          <span>CMU Study</span>
+          <a href="/privacy">Privacy</a>
+        </footer>
       </SignedOut>
 
       <SignedIn>
         {isRedirecting && (
-          <div className="flex min-h-screen items-center justify-center">
-            <div className="text-center">
-              <div className="mb-4 text-2xl font-bold text-black dark:text-white">
-                Welcome back!
-              </div>
-              <div className="text-black dark:text-white">
-                Redirecting you...
-              </div>
-            </div>
+          <div className="redirect-state">
+            <div className="loading-mark" />
+            <strong>Welcome back</strong>
+            <span>Opening CMU Study...</span>
           </div>
         )}
       </SignedIn>

@@ -1,115 +1,145 @@
 .app-shell {
-  @apply flex h-screen w-screen bg-lightbg dark:bg-darkbg;
+  @apply flex h-screen w-screen bg-lightbg text-lightText dark:bg-darkbg dark:text-darkText;
 }
 
 .app-content {
-  @apply flex-1 overflow-auto;
+  @apply min-w-0 flex-1 overflow-auto;
 }
 
 .app-main {
-  @apply w-full bg-lightbg dark:bg-darkbg;
+  @apply min-h-screen w-full bg-lightbg dark:bg-darkbg;
 }
 
 .app-main-padded {
-  @apply container mx-auto px-4 py-8;
+  @apply mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8;
 }
 
 .text-default {
-  @apply text-black dark:text-white;
+  @apply text-lightText dark:text-darkText;
 }
 
 .section-heading {
-  @apply mb-2 text-xl font-bold text-black dark:text-white;
+  @apply mb-3 text-base font-semibold text-lightText dark:text-darkText;
+}
+
+.section-copy {
+  @apply mb-3 text-sm text-black/60 dark:text-white/60;
 }
 
 .sidebar-shell {
-  @apply left-0 top-0 hidden h-full w-[12vw] flex-none bg-lightSidebar dark:bg-darkSidebar md:block;
+  @apply left-0 top-0 hidden h-full w-[248px] flex-none border-r border-black/10 bg-lightSidebar dark:border-white/10 dark:bg-darkSidebar md:block;
 }
 
 .sidebar-content {
-  @apply grid h-screen grid-rows-[auto,1fr,auto] gap-y-6 overflow-hidden bg-lightbg px-4 pt-[50px] text-black dark:bg-darkbg dark:text-white md:bg-lightSidebar md:dark:bg-darkSidebar;
+  @apply grid h-screen grid-rows-[auto,1fr,auto] gap-y-8 overflow-hidden px-5 py-6 text-lightText dark:text-darkText;
+}
+
+.sidebar-logo-link {
+  @apply flex h-14 items-center rounded-lg px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:focus-visible:ring-darkSelected;
+}
+
+.sidebar-utility-panel {
+  @apply rounded-lg border border-black/10 bg-lightbg p-3 shadow-sm dark:border-white/10 dark:bg-darkbg;
 }
 
 .mobile-nav-bar {
-  width: calc(100% + 1rem);
-  @apply sticky top-0 z-10 md:hidden flex items-center justify-between px-6 py-3  px-4 py-3 text-left font-medium text-black transition-colors bg-lightSidebar dark:bg-darkSidebar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white dark:focus-visible:ring-darkSelected w-full;
+  @apply sticky top-0 z-20 flex w-full items-center justify-between border-b border-black/10 bg-lightSidebar px-4 py-3 text-lightText shadow-sm dark:border-white/10 dark:bg-darkSidebar dark:text-darkText md:hidden;
+}
+
+.mobile-menu-button {
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-lg border border-black/10 bg-lightInput text-lightText transition hover:border-lightSelected hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/10 dark:bg-darkInput dark:text-darkText dark:hover:border-darkSelected dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .mobile-nav-list {
-  @apply md:hidden overflow-hidden transition-all duration-300 ease-in-out transform bg-lightSidebar dark:bg-darkSidebar;
+  @apply overflow-hidden border-b border-black/10 bg-lightSidebar transition-all duration-300 ease-in-out dark:border-white/10 dark:bg-darkSidebar md:hidden;
+}
+
+.mobile-nav-list-inner {
+  @apply flex flex-col gap-1 px-3 py-3;
+}
+
+.mobile-nav-footer {
+  @apply mt-2 grid grid-cols-3 gap-2 border-t border-black/10 pt-3 text-xs dark:border-white/10;
 }
 
 .nav-link {
-  width: calc(100% + 1rem);
-  @apply block rounded-lg px-4 py-3 text-left font-medium text-black transition-colors hover:bg-lightAccent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white dark:hover:bg-darkAccent dark:focus-visible:ring-darkSelected;
+  @apply flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-black/70 transition-colors hover:bg-lightAccent hover:text-lightText focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/70 dark:hover:bg-darkAccent dark:hover:text-darkText dark:focus-visible:ring-darkSelected;
 }
 
 .nav-link-active {
-  border-radius: 0.5rem 0 0 0.5rem;
-  @apply bg-lightbg font-semibold dark:bg-darkbg;
+  @apply bg-lightAccent text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
+}
+
+.nav-link-icon {
+  @apply h-4 w-4 flex-none;
+}
+
+.nav-link-subtle {
+  @apply flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-center text-xs font-medium text-black/60 transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/60 dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .button-primary {
-  @apply rounded bg-lightButton px-4 py-2 font-bold text-black transition-colors hover:bg-lightSelected dark:bg-darkButton dark:text-white dark:hover:bg-darkSelected;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-lightButton px-4 py-2 text-sm font-semibold text-white transition hover:bg-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected focus-visible:ring-offset-2 focus-visible:ring-offset-lightbg dark:bg-darkButton dark:text-darkbg dark:hover:bg-darkSelected dark:hover:text-white dark:focus-visible:ring-darkSelected dark:focus-visible:ring-offset-darkbg;
 }
 
 .feedback-button {
-  @apply rounded-lg;
+  @apply w-full;
 }
 
 .button-large {
-  @apply rounded-lg bg-lightButton px-8 py-4 text-lg font-bold text-black shadow-lg transition-colors hover:bg-lightSelected hover:shadow-xl dark:bg-darkButton dark:text-white dark:hover:bg-darkSelected;
+  @apply inline-flex min-h-12 items-center justify-center rounded-lg bg-lightButton px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected focus-visible:ring-offset-2 focus-visible:ring-offset-lightbg dark:bg-darkButton dark:text-darkbg dark:hover:bg-darkSelected dark:hover:text-white dark:focus-visible:ring-darkSelected dark:focus-visible:ring-offset-darkbg;
 }
 
 .button-outline {
-  @apply rounded-lg border-2 px-4 py-2 font-bold text-black hover:border-lightbg hover:bg-lightAccent dark:text-white dark:hover:border-darkbg dark:hover:bg-darkAccent;
+  @apply inline-flex items-center justify-center rounded-lg border border-black/15 bg-lightInput px-4 py-2 text-sm font-semibold text-lightText transition hover:border-lightSelected hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/15 dark:bg-darkInput dark:text-darkText dark:hover:border-darkSelected dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .button-inverse {
-  @apply rounded-lg bg-darkbg py-2 text-lightbg dark:bg-lightbg dark:text-darkbg;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-black/10 bg-lightAccent px-3 py-2 text-sm font-semibold text-lightText transition hover:border-lightSelected hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/10 dark:bg-darkAccent dark:text-darkText dark:hover:border-darkSelected dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
-.form-control {
-  @apply mb-2 w-full rounded border bg-lightInput p-2 text-black dark:bg-darkInput;
+.icon-button {
+  @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-black/60 transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/60 dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
+}
+
+.form-control,
+.form-control-accent {
+  @apply mb-3 min-h-11 w-full rounded-lg border border-black/15 bg-lightInput px-3 py-2 text-sm text-lightText outline-none transition placeholder:text-black/40 focus:border-lightSelected focus:ring-2 focus:ring-lightSelected/20 dark:border-white/15 dark:bg-darkInput dark:text-darkText dark:placeholder:text-white/40 dark:focus:border-darkSelected dark:focus:ring-darkSelected/20;
 }
 
 .form-control-accent {
-  @apply mb-2 w-full rounded border-b-4 border-b-lightbg bg-lightInput p-2 text-black dark:border-b-darkbg dark:bg-darkInput;
+  @apply border-l-4 border-l-lightSelected dark:border-l-darkSelected;
 }
 
-.profile-select {
-  @apply mt-3 w-full rounded-lg border-2 bg-lightInput px-4 py-2 font-bold text-black hover:border-lightbg hover:bg-lightAccent dark:bg-darkInput dark:hover:border-darkbg dark:hover:bg-darkAccent;
-}
-
-.profile-select-compact {
-  @apply mt-3 w-1/3 rounded-lg border-2 bg-lightInput px-4 py-2 font-bold text-black hover:border-lightbg hover:bg-lightAccent dark:bg-darkInput dark:hover:border-darkbg dark:hover:bg-darkAccent;
-}
-
-.profile-input {
-  border-color: #d1d5db;
-  @apply mb-0 w-full rounded border bg-lightInput p-2 text-black dark:bg-darkInput;
-}
-
-.profile-input-compact {
-  border-color: #d1d5db;
-  @apply mb-0 w-1/3 rounded border bg-lightInput p-2 text-black dark:bg-darkInput;
-}
-
+.profile-select,
+.profile-select-compact,
+.profile-input,
+.profile-input-compact,
 .course-search-input {
-  border-color: #d1d5db;
-  @apply mb-0 w-full rounded border bg-lightInput p-2 text-black dark:bg-darkInput;
+  @apply mb-0 min-h-11 rounded-lg border border-black/15 bg-lightInput px-3 py-2 text-sm text-lightText outline-none transition placeholder:text-black/40 focus:border-lightSelected focus:ring-2 focus:ring-lightSelected/20 dark:border-white/15 dark:bg-darkInput dark:text-darkText dark:placeholder:text-white/40 dark:focus:border-darkSelected dark:focus:ring-darkSelected/20;
+}
+
+.profile-select,
+.profile-input,
+.course-search-input {
+  @apply w-full;
+}
+
+.profile-select-compact,
+.profile-input-compact {
+  @apply w-full sm:w-1/3;
 }
 
 .course-search-result {
-  @apply flex w-full items-center rounded px-2 py-1 text-black hover:text-lightSelected focus:outline-none dark:text-white dark:hover:text-darkSelected;
+  @apply flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-lightText transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-darkText dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .course-search-text {
-  @apply block flex-grow overflow-hidden text-ellipsis whitespace-nowrap text-left font-medium;
+  @apply block flex-grow overflow-hidden text-ellipsis whitespace-nowrap font-medium;
 }
 
 .class-list-item {
-  @apply flex w-full items-center justify-between rounded bg-lightSidebar p-2 text-black dark:bg-darkSidebar dark:text-white;
+  @apply flex w-full items-center justify-between gap-3 rounded-lg border border-black/10 bg-lightSidebar px-3 py-2 text-sm text-lightText shadow-sm dark:border-white/10 dark:bg-darkSidebar dark:text-darkText;
 }
 
 .class-list-text {
@@ -122,24 +152,24 @@
 }
 
 .filter-bar {
-  @apply  w-full border-b border-b-darkbg bg-lightbg px-6 pb-4 pt-6 dark:border-b-lightbg dark:bg-darkbg;
+  @apply w-full border-b border-black/10 bg-lightbg/95 px-4 py-3 backdrop-blur dark:border-white/10 dark:bg-darkbg/95 sm:px-6 lg:px-8;
 }
 
 .filter-controls {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .filter-course-select {
-  --filter-input-background: #f0f5f7;
+  --filter-input-background: #ffffff;
   min-width: 0;
-  @apply rounded;
 }
 
 .dark .filter-course-select {
-  --filter-input-background: #ddeaf0;
+  --filter-input-background: #181a1f;
 }
 
 .filter-date-control {
@@ -153,28 +183,25 @@
 }
 
 .filter-controls .react-datepicker__input-container {
-  @apply h-[46px];
+  @apply h-11;
 }
 
 .filter-date-input {
-  border-color: #d1d5db;
-  box-shadow: none;
-  color: #000;
-  @apply h-[46px] w-full rounded border bg-lightInput px-3 text-base dark:bg-darkInput;
+  @apply h-11 w-full rounded-lg border border-black/15 bg-lightInput px-3 text-sm text-lightText outline-none transition placeholder:text-black/40 focus:border-lightSelected focus:ring-2 focus:ring-lightSelected/20 dark:border-white/15 dark:bg-darkInput dark:text-darkText dark:placeholder:text-white/40 dark:focus:border-darkSelected dark:focus:ring-darkSelected/20;
 }
 
 .profile-menu-container {
   z-index: 1000;
-  @apply relative hidden h-[46px] w-[46px] items-center justify-center md:flex;
+  @apply relative hidden h-11 w-11 items-center justify-center md:flex;
 }
 
 .drawer-profile-menu-container {
   z-index: 1000;
-  @apply fixed right-6 top-4 flex h-[46px] w-[46px] items-center justify-center;
+  @apply fixed right-6 top-4 flex h-11 w-11 items-center justify-center;
 }
 
 .avatar-button {
-  @apply flex h-[46px] w-[46px] items-center justify-center rounded-full bg-lightButton text-xl text-black shadow-lg ring-1 ring-black/5 transition hover:ring-black/10 dark:bg-darkAccent dark:text-white dark:ring-white/10 dark:hover:ring-white/20;
+  @apply flex h-11 w-11 items-center justify-center rounded-full bg-lightInput text-lg text-lightText shadow-sm ring-1 ring-black/10 transition hover:ring-lightSelected dark:bg-darkInput dark:text-darkText dark:ring-white/10 dark:hover:ring-darkSelected;
 }
 
 .avatar-button > .avatar-small,
@@ -185,176 +212,251 @@
 
 @media (min-width: 768px) {
   .filter-controls {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) 46px;
+    grid-template-columns: minmax(12rem, 24rem) minmax(10rem, 16rem) 44px;
   }
 }
 
 .avatar-small {
-  @apply h-10 w-10 rounded-full;
+  @apply h-10 w-10 rounded-full object-cover;
 }
 
 .avatar-large {
-  @apply h-20 w-20 rounded-full;
+  @apply h-20 w-20 rounded-full object-cover;
 }
 
-.avatar-fallback {
-  @apply flex h-10 w-10 items-center justify-center rounded-full bg-lightButton text-xl text-black shadow-lg ring-1 ring-black/5 transition hover:ring-black/10 dark:bg-darkButton dark:text-white dark:ring-white/10 dark:hover:ring-white/20;
-}
-
-.avatar-fallback-large {
-  @apply flex h-20 w-20 items-center justify-center rounded-full bg-lightButton text-3xl text-black shadow-lg ring-1 ring-black/5 dark:bg-darkButton dark:text-white dark:ring-white/10;
-}
-
+.avatar-fallback,
 .avatar-label {
-  @apply flex h-10 w-10 items-center justify-center rounded-full bg-lightButton text-sm text-black shadow-lg ring-1 ring-black/5 transition hover:ring-black/10 dark:bg-darkButton dark:text-white dark:ring-white/10 dark:hover:ring-white/20;
+  @apply flex h-10 w-10 items-center justify-center rounded-full bg-lightAccent text-sm font-semibold text-lightSelected ring-1 ring-black/10 dark:bg-darkAccent dark:text-darkSelected dark:ring-white/10;
 }
 
-.avatar-label-large {
-  @apply flex h-20 w-20 items-center justify-center rounded-full bg-lightButton text-sm text-black shadow-lg ring-1 ring-black/5 dark:bg-darkButton dark:text-white dark:ring-white/10;
-}
-
+.avatar-fallback-large,
+.avatar-label-large,
 .avatar-icon-large {
-  @apply flex h-20 w-20 items-center justify-center rounded-full bg-lightButton shadow-lg dark:bg-darkButton;
+  @apply flex h-20 w-20 items-center justify-center rounded-full bg-lightAccent text-2xl font-semibold text-lightSelected ring-1 ring-black/10 dark:bg-darkAccent dark:text-darkSelected dark:ring-white/10;
 }
 
 .profile-menu {
-  @apply absolute right-0 top-12 w-40 overflow-hidden rounded-lg border border-lightAccent bg-lightbg shadow-lg dark:border-darkAccent dark:bg-darkbg;
+  @apply absolute right-0 top-12 w-44 overflow-hidden rounded-lg border border-black/10 bg-lightSidebar shadow-lg dark:border-white/10 dark:bg-darkSidebar;
 }
 
 .profile-menu-item {
-  @apply block w-full px-4 py-2 text-left text-sm text-black transition hover:bg-lightButton dark:text-white dark:hover:bg-darkButton;
+  @apply block w-full px-4 py-2.5 text-left text-sm text-lightText transition hover:bg-lightAccent hover:text-lightSelected dark:text-darkText dark:hover:bg-darkAccent dark:hover:text-darkSelected;
 }
 
 .profile-page-panel {
-  @apply w-full p-4 font-sans lg:w-1/3;
+  @apply w-full px-4 py-6 font-sans sm:px-6 lg:px-8;
 }
 
-.mobile-drawer-backdrop {
-  @apply fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden;
+.profile-page {
+  @apply w-full px-4 py-6 font-sans sm:px-6 lg:px-8;
 }
 
-.mobile-drawer-panel {
-  @apply fixed left-0 top-0 flex h-full w-44 flex-col justify-between bg-lightSidebar p-4 shadow-lg dark:bg-darkSidebar;
+.profile-workspace {
+  @apply grid w-full gap-5 xl:grid-cols-[minmax(22rem,0.7fr)_minmax(28rem,1fr)];
+}
+
+.profile-column {
+  @apply min-w-0 space-y-6;
+}
+
+.settings-panel {
+  @apply rounded-lg border border-black/10 bg-lightSidebar p-5 shadow-sm dark:border-white/10 dark:bg-darkSidebar;
+}
+
+.settings-panel-spaced {
+  @apply space-y-4;
+}
+
+.profile-header {
+  @apply mb-6 flex items-center gap-4 rounded-lg border border-black/10 bg-lightSidebar p-4 shadow-sm dark:border-white/10 dark:bg-darkSidebar;
+}
+
+.profile-header-meta {
+  @apply min-w-0 flex-1;
+}
+
+.profile-header-title {
+  @apply truncate text-2xl font-semibold text-lightText dark:text-darkText;
+}
+
+.profile-header-email {
+  @apply truncate text-sm text-black/60 dark:text-white/60;
 }
 
 .feedback-link {
-  @apply block w-full rounded-lg bg-lightButton px-2 py-2 text-center font-bold text-black dark:bg-darkButton dark:text-white;
+  @apply block w-full rounded-lg bg-lightButton px-2 py-2 text-center text-sm font-semibold text-white dark:bg-darkButton dark:text-darkbg;
 }
 
 .landing-page {
-  @apply min-h-screen bg-lightbg dark:bg-darkbg;
+  @apply min-h-screen bg-lightbg text-lightText dark:bg-darkbg dark:text-darkText;
 }
 
 .landing-content {
-  @apply flex min-h-screen flex-col items-center justify-center px-4 py-12;
+  @apply mx-auto flex min-h-screen w-full max-w-[96rem] flex-col px-4 py-8 sm:px-6 lg:px-8;
 }
 
 .landing-hero {
-  @apply mb-16 w-full max-w-4xl text-center;
+  @apply flex min-h-[54vh] flex-col items-center justify-center py-8 text-center;
+}
+
+.landing-copy {
+  @apply flex max-w-3xl flex-col items-center;
+}
+
+.landing-logo {
+  @apply mb-7 w-full max-w-lg;
 }
 
 .landing-title {
-  @apply mb-6 text-5xl font-bold text-black dark:text-white md:text-6xl;
+  @apply mb-5 text-4xl font-semibold leading-tight text-lightText dark:text-darkText md:text-6xl;
 }
 
 .landing-subtitle {
-  @apply mb-8 text-xl text-black dark:text-white md:text-2xl;
+  @apply mb-8 max-w-xl text-lg leading-8 text-black/65 dark:text-white/65;
 }
 
 .landing-actions {
-  @apply flex flex-col justify-center gap-4 sm:flex-row;
+  @apply flex flex-col gap-3 sm:flex-row;
+}
+
+.landing-preview {
+  @apply w-full rounded-lg border border-black/10 bg-lightSidebar p-4 shadow-xl dark:border-white/10 dark:bg-darkSidebar;
+}
+
+.landing-preview-bar {
+  @apply mb-4 flex items-center justify-between border-b border-black/10 pb-3 dark:border-white/10;
+}
+
+.landing-preview-title {
+  @apply text-sm font-semibold text-lightText dark:text-darkText;
+}
+
+.landing-preview-filter {
+  @apply h-8 rounded-lg border border-black/10 bg-lightbg px-3 py-1 text-xs text-black/60 dark:border-white/10 dark:bg-darkbg dark:text-white/60;
+}
+
+.landing-preview-grid {
+  @apply grid gap-3 md:grid-cols-[260px_minmax(0,1fr)_300px];
+}
+
+.landing-preview-card {
+  @apply rounded-lg border border-black/10 bg-lightbg p-4 dark:border-white/10 dark:bg-darkbg;
+}
+
+.landing-preview-panel {
+  @apply rounded-lg border border-black/10 bg-lightbg p-4 dark:border-white/10 dark:bg-darkbg;
+}
+
+.landing-preview-kicker {
+  @apply mb-2 text-xs font-semibold uppercase text-lightSelected dark:text-darkSelected;
+}
+
+.landing-preview-card-title {
+  @apply mb-3 truncate text-base font-semibold text-lightText dark:text-darkText;
+}
+
+.landing-preview-row {
+  @apply flex items-center gap-2 text-sm text-black/60 dark:text-white/60;
 }
 
 .feature-grid {
-  @apply mb-16 grid w-full max-w-6xl grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3;
+  @apply grid w-full grid-cols-1 gap-4 border-t border-black/10 py-8 dark:border-white/10 md:grid-cols-3;
 }
 
 .feature-card {
-  @apply rounded-xl bg-lightSidebar p-6 shadow-lg transition-shadow hover:shadow-xl dark:bg-darkSidebar;
+  @apply rounded-lg border border-black/10 bg-lightSidebar p-5 shadow-sm dark:border-white/10 dark:bg-darkSidebar;
 }
 
 .feature-icon {
-  @apply mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-lightButton dark:bg-darkButton;
+  @apply mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-lightAccent text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
 }
 
 .feature-title {
-  @apply mb-3 text-center text-2xl font-bold text-black dark:text-white;
+  @apply mb-2 text-base font-semibold text-lightText dark:text-darkText;
 }
 
 .feature-copy {
-  @apply text-center text-black dark:text-white;
+  @apply text-sm leading-6 text-black/60 dark:text-white/60;
 }
 
 .text-link-subtle {
-  @apply text-xs text-black underline transition-colors hover:text-lightSelected dark:text-white dark:hover:text-darkSelected;
+  @apply text-xs text-black/60 underline underline-offset-4 transition-colors hover:text-lightSelected dark:text-white/60 dark:hover:text-darkSelected;
 }
 
 .center-page {
-  @apply flex min-h-screen items-center justify-center bg-lightbg px-4 dark:bg-darkbg;
+  @apply flex min-h-screen items-center justify-center bg-lightbg px-4 text-lightText dark:bg-darkbg dark:text-darkText;
 }
 
 .center-panel {
-  @apply w-full max-w-3xl py-16 text-center;
+  @apply w-full max-w-2xl rounded-lg border border-black/10 bg-lightSidebar p-8 text-center shadow-sm dark:border-white/10 dark:bg-darkSidebar;
 }
 
 .access-title {
-  @apply mb-6 text-4xl font-bold text-black dark:text-white md:text-5xl;
+  @apply mb-4 text-3xl font-semibold text-lightText dark:text-darkText md:text-4xl;
 }
 
 .access-message {
-  @apply text-lg leading-relaxed text-black dark:text-white md:text-xl;
+  @apply text-base leading-7 text-black/65 dark:text-white/65 md:text-lg;
 }
 
 .inline-link {
-  @apply underline transition-colors hover:text-lightSelected dark:hover:text-darkSelected;
+  @apply font-medium text-lightSelected underline underline-offset-4 transition-colors hover:text-lightText dark:text-darkSelected dark:hover:text-darkText;
 }
 
 .privacy-page {
-  @apply flex min-h-screen items-start justify-center bg-gradient-to-b from-lightbg to-lightSidebar px-6 py-16 dark:from-darkbg dark:to-darkSidebar;
+  @apply flex min-h-screen items-start justify-center bg-lightbg px-4 py-10 text-lightText dark:bg-darkbg dark:text-darkText sm:px-6;
 }
 
 .privacy-card {
-  @apply w-full max-w-3xl rounded-3xl border border-white/30 bg-white/60 p-10 shadow-2xl backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-black/40 sm:p-14;
+  @apply w-full max-w-4xl rounded-lg border border-black/10 bg-lightSidebar p-6 shadow-sm dark:border-white/10 dark:bg-darkSidebar sm:p-10;
 }
 
 .privacy-title {
-  @apply mb-4 text-center text-5xl font-extrabold tracking-tight;
-
-  background-image: linear-gradient(to right, #0cacf0, #3b82f6);
-  background-clip: text;
-  color: transparent;
-}
-
-.dark .privacy-title {
-  background-image: linear-gradient(to right, #5ec6f2, #c084fc);
+  @apply mb-4 text-center text-4xl font-semibold text-lightText dark:text-darkText;
 }
 
 .privacy-content {
-  @apply space-y-10 leading-relaxed text-black dark:text-white;
+  @apply space-y-6 leading-7 text-black/70 dark:text-white/70;
+}
+
+.privacy-section {
+  @apply rounded-lg border border-black/10 bg-lightbg p-5 dark:border-white/10 dark:bg-darkbg;
+}
+
+.privacy-section-title {
+  @apply mb-3 text-xl font-semibold text-lightText dark:text-darkText;
 }
 
 .unblock-button {
-  @apply text-xl text-lightSelected hover:text-black dark:text-darkSelected dark:hover:text-white;
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-black/45 transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/45 dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .profile-popup-overlay {
-  @apply absolute inset-0 z-50 flex items-center justify-center;
+  @apply absolute inset-0 z-50 flex items-center justify-center bg-black/20 p-4 backdrop-blur-sm;
 }
 
 .profile-popup-panel {
-  @apply w-96 rounded-lg bg-lightSidebar p-6 dark:bg-darkSidebar;
+  @apply w-full max-w-sm rounded-lg border border-black/10 bg-lightSidebar p-5 shadow-xl dark:border-white/10 dark:bg-darkSidebar;
 }
 
 .profile-popup-header {
-  @apply flex items-center justify-between;
+  @apply flex items-start justify-between gap-4;
 }
 
 .profile-popup-close {
-  @apply text-xl font-bold text-black dark:text-white;
+  @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-black/60 transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/60 dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .create-card {
-  @apply my-3 flex min-h-48 max-w-sm cursor-pointer items-center justify-center overflow-hidden rounded-xl border-4 border-dashed border-lightAccent bg-lightbg px-6 py-4 text-center text-lightAccent shadow-lg hover:border-lightSidebar hover:bg-lightSidebar hover:text-black dark:border-darkAccent dark:bg-darkbg dark:text-darkAccent dark:hover:border-darkSidebar dark:hover:bg-darkSidebar dark:hover:text-white;
+  @apply my-2 flex min-h-[13rem] w-full cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-lg border border-dashed border-black/20 bg-lightSidebar px-5 py-4 text-center text-black/50 shadow-sm transition hover:border-lightSelected hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/20 dark:bg-darkSidebar dark:text-white/50 dark:hover:border-darkSelected dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
+}
+
+.create-card-icon {
+  @apply flex h-11 w-11 items-center justify-center rounded-lg bg-lightAccent text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
+}
+
+.create-card-text {
+  @apply text-sm font-semibold;
 }
 
 .details-overlay {
@@ -365,7 +467,8 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background-color: rgb(0 0 0 / 0.5);
+  background-color: rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(6px);
 }
 
 @media (min-width: 768px) {
@@ -378,141 +481,250 @@
     flex: none;
     padding: 0;
     background-color: transparent;
+    backdrop-filter: none;
   }
 }
 
 .details-overlay-inner {
-  @apply max-h-[90vh] w-full max-w-sm overflow-auto md:max-h-none md:overflow-visible;
+  @apply max-h-[90vh] w-full max-w-md overflow-auto md:max-h-none md:max-w-none md:overflow-visible;
 }
 
 .group-details-card {
-  @apply my-3 max-w-sm overflow-auto rounded-xl bg-lightAccent px-6 text-black shadow-lg dark:bg-darkAccent dark:text-white;
+  @apply my-2 w-full overflow-auto rounded-lg border border-black/10 bg-lightSidebar px-5 text-lightText shadow-lg dark:border-white/10 dark:bg-darkSidebar dark:text-darkText;
 }
 
 .group-details-header {
-  @apply sticky top-0 flex items-start justify-between bg-lightAccent py-4 text-[35px] dark:bg-darkAccent;
-
-  font-family: Verdana, sans-serif;
+  @apply sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-black/10 bg-lightSidebar py-4 dark:border-white/10 dark:bg-darkSidebar;
 }
 
 .group-details-title {
-  @apply min-w-0 flex-1 whitespace-normal break-words;
+  @apply min-w-0 flex-1 whitespace-normal break-words text-xl font-semibold leading-7;
+}
+
+.group-details-actions {
+  @apply flex flex-none items-center gap-1;
 }
 
 .group-details-action {
-  @apply mb-[-12px] me-5 mt-3 text-xl font-bold;
+  @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-black/60 transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/60 dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
+}
+
+.group-details-body {
+  @apply space-y-4 py-4 pb-20;
+}
+
+.group-details-list {
+  @apply grid gap-3 sm:grid-cols-2;
 }
 
 .group-details-text {
-  @apply whitespace-normal break-words text-[20px];
+  @apply rounded-lg border border-black/10 bg-lightbg p-3 text-sm text-black/65 dark:border-white/10 dark:bg-darkbg dark:text-white/65;
+}
 
-  font-family: Verdana, sans-serif;
+.group-details-label {
+  @apply text-xs font-semibold uppercase text-black/45 dark:text-white/45;
+}
+
+.group-details-value {
+  @apply text-base font-medium text-lightText dark:text-darkText;
+}
+
+.participants-toggle {
+  @apply inline-flex h-7 w-7 items-center justify-center rounded-lg text-black/50 transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/50 dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .participant-list {
-  @apply h-40 overflow-y-scroll p-[10px];
+  @apply max-h-44 overflow-y-auto rounded-lg border border-black/10 bg-lightbg p-2 dark:border-white/10 dark:bg-darkbg;
 }
 
 .participant-row {
-  @apply flex items-center p-[5px];
+  @apply flex w-full items-center gap-3 rounded-lg p-2 text-left transition hover:bg-lightAccent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:hover:bg-darkAccent dark:focus-visible:ring-darkSelected;
 }
 
 .participant-avatar {
-  @apply h-[2rem] w-[2rem] rounded-full;
+  @apply h-8 w-8 flex-none rounded-full object-cover;
 }
 
 .participant-name {
-  @apply indent-[0.5rem] text-[16px];
-
-  font-family: Verdana, sans-serif;
+  @apply truncate text-sm font-medium text-lightText dark:text-darkText;
 }
 
 .group-details-freeform {
-  @apply mx-auto mb-1 mt-[1px] h-[4rem] max-w-[25rem] rounded-[10px] p-[3px];
+  @apply min-h-20 rounded-lg border border-black/10 bg-lightbg p-3 text-sm leading-6 text-black/70 dark:border-white/10 dark:bg-darkbg dark:text-white/70;
 }
 
 .join-button {
-  @apply sticky bottom-4 float-end mt-3 w-[100px] rounded-[26px] p-[10px];
+  @apply sticky bottom-4 float-end mt-3 inline-flex min-w-[7rem] items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:focus-visible:ring-darkSelected;
 }
 
 .join-button-active {
-  @apply bg-lightSelected text-white dark:bg-darkSelected;
+  @apply border border-black/15 bg-lightInput text-lightText hover:border-lightSelected hover:text-lightSelected dark:border-white/15 dark:bg-darkInput dark:text-darkText dark:hover:border-darkSelected dark:hover:text-darkSelected;
 }
 
 .join-button-inactive {
-  @apply border-2 text-black dark:text-white;
+  @apply bg-lightButton text-white hover:bg-lightSelected dark:bg-darkButton dark:text-darkbg dark:hover:bg-darkSelected dark:hover:text-white;
 }
 
 .modal-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center;
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm;
 }
 
 .modal-panel {
-  @apply w-96 rounded-lg bg-lightAccent p-8 dark:bg-darkAccent;
+  @apply max-h-[90vh] w-full max-w-md overflow-auto rounded-lg border border-black/10 bg-lightSidebar p-5 shadow-xl dark:border-white/10 dark:bg-darkSidebar;
 }
 
 .modal-header {
-  @apply mb-4 flex items-center justify-between;
+  @apply mb-4 flex items-center justify-between gap-4;
 }
 
 .modal-title {
-  @apply text-xl font-bold text-black dark:text-white;
+  @apply text-xl font-semibold text-lightText dark:text-darkText;
 }
 
 .modal-close {
-  @apply text-xl font-bold text-black dark:text-white;
+  @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-black/60 transition hover:bg-lightAccent hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/60 dark:hover:bg-darkAccent dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .modal-submit-button {
-  @apply w-full rounded bg-lightbg px-4 py-2 font-bold text-black transition-colors hover:bg-lightSelected dark:bg-darkbg dark:text-white dark:hover:bg-darkSelected;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-lg bg-lightButton px-4 py-2 text-sm font-semibold text-white transition hover:bg-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected focus-visible:ring-offset-2 focus-visible:ring-offset-lightbg dark:bg-darkButton dark:text-darkbg dark:hover:bg-darkSelected dark:hover:text-white dark:focus-visible:ring-darkSelected dark:focus-visible:ring-offset-darkbg;
 }
 
 .confirm-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/40;
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm;
 }
 
 .confirm-panel {
-  @apply w-80 rounded-xl bg-white p-6 shadow-xl dark:bg-darkSidebar;
+  @apply w-full max-w-sm rounded-lg border border-black/10 bg-lightSidebar p-5 shadow-xl dark:border-white/10 dark:bg-darkSidebar;
 }
 
 .confirm-message {
-  @apply mb-6 text-center text-black dark:text-white;
+  @apply mb-6 text-center text-sm leading-6 text-lightText dark:text-darkText;
 }
 
 .confirm-actions {
-  @apply mt-4 flex justify-between;
+  @apply mt-4 flex justify-end gap-3;
 }
 
 .confirm-button-cancel {
-  @apply rounded-lg bg-lightSidebar px-4 py-2 text-black dark:bg-darkSidebar dark:text-white;
+  @apply inline-flex items-center justify-center rounded-lg border border-black/15 bg-lightInput px-4 py-2 text-sm font-semibold text-lightText transition hover:border-lightSelected hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/15 dark:bg-darkInput dark:text-darkText dark:hover:border-darkSelected dark:hover:text-darkSelected dark:focus-visible:ring-darkSelected;
 }
 
 .confirm-button-continue {
-  @apply rounded-lg bg-lightButton px-4 py-2 text-black dark:bg-darkButton dark:text-white;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-lightButton px-4 py-2 text-sm font-semibold text-white transition hover:bg-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected focus-visible:ring-offset-2 focus-visible:ring-offset-lightbg dark:bg-darkButton dark:text-darkbg dark:hover:bg-darkSelected dark:hover:text-white dark:focus-visible:ring-darkSelected dark:focus-visible:ring-offset-darkbg;
+}
+
+.content-page {
+  @apply w-full px-4 py-5 sm:px-6 lg:px-8;
+}
+
+.workspace-page {
+  @apply flex min-h-[calc(100vh-73px)] w-full flex-col gap-5;
+}
+
+.workspace-header {
+  @apply grid gap-4 border-b border-black/10 pb-5 dark:border-white/10 lg:grid-cols-[1fr_auto];
+}
+
+.workspace-kicker {
+  @apply mb-2 text-xs font-semibold uppercase text-lightSelected dark:text-darkSelected;
+}
+
+.workspace-title {
+  @apply text-3xl font-semibold tracking-normal text-lightText dark:text-darkText sm:text-4xl;
+}
+
+.workspace-subtitle {
+  @apply mt-2 max-w-3xl text-sm leading-6 text-black/60 dark:text-white/60;
+}
+
+.workspace-actions {
+  @apply flex flex-wrap items-end gap-3 lg:justify-end;
+}
+
+.workspace-stat {
+  @apply min-w-28 rounded-lg border border-black/10 bg-lightSidebar px-4 py-3 shadow-sm dark:border-white/10 dark:bg-darkSidebar;
+}
+
+.workspace-stat-value {
+  @apply text-2xl font-semibold text-lightText dark:text-darkText;
+}
+
+.workspace-stat-label {
+  @apply text-xs font-medium uppercase text-black/45 dark:text-white/45;
+}
+
+.workspace-layout {
+  @apply grid flex-1 grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_420px];
+}
+
+.workspace-results {
+  @apply min-w-0;
+}
+
+.workspace-detail {
+  @apply xl:sticky xl:top-24 xl:self-start;
+}
+
+.group-grid {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3;
+}
+
+.group-grid-wide {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4;
+}
+
+.app-empty {
+  @apply flex min-h-[13rem] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-black/15 bg-lightSidebar px-6 text-center text-sm font-medium text-black/55 dark:border-white/15 dark:bg-darkSidebar dark:text-white/55;
 }
 
 .study-card {
-  @apply my-3 max-w-sm cursor-pointer overflow-hidden rounded-xl px-6 py-4 text-black shadow-lg dark:text-white;
+  @apply relative flex min-h-[12rem] w-full cursor-pointer flex-col overflow-hidden rounded-lg border border-black/10 bg-lightSidebar p-5 text-lightText shadow-sm transition hover:-translate-y-0.5 hover:border-lightSelected hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/10 dark:bg-darkSidebar dark:text-darkText dark:hover:border-darkSelected dark:focus-visible:ring-darkSelected;
+}
+
+.study-card::before {
+  content: "";
+  @apply absolute inset-y-0 left-0 w-1 bg-black/10 dark:bg-white/10;
+}
+
+.study-card:hover::before,
+.study-card-accent::before {
+  @apply bg-lightSelected dark:bg-darkSelected;
 }
 
 .study-card-accent {
-  @apply bg-lightAccent dark:bg-darkAccent;
+  @apply border-lightSelected bg-lightAccent dark:border-darkSelected dark:bg-darkAccent;
 }
 
 .study-card-sidebar {
   @apply bg-lightSidebar dark:bg-darkSidebar;
 }
 
+.study-card-header {
+  @apply mb-4 flex items-start justify-between gap-3 pl-1;
+}
+
+.study-card-course {
+  @apply flex-none rounded-md bg-lightAccent px-2 py-1 text-xs font-semibold text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
+}
+
 .study-card-title {
-  @apply mb-2 truncate text-xl font-bold;
+  @apply min-w-0 flex-1 text-lg font-semibold leading-6;
+}
+
+.study-card-meta {
+  @apply mt-auto grid gap-2 pl-1;
 }
 
 .study-card-row {
-  @apply flex min-w-0 flex-row;
+  @apply flex min-w-0 items-center gap-2 text-sm text-black/60 dark:text-white/60;
+}
+
+.study-card-icon {
+  @apply h-4 w-4 flex-none text-black/35 dark:text-white/35;
 }
 
 .study-card-label {
-  @apply flex-shrink-0 truncate font-bold;
+  @apply sr-only;
 }
 
 .study-card-value {
@@ -520,9 +732,928 @@
 }
 
 .joined-row {
-  @apply flex flex-row justify-end;
+  @apply mt-4 flex justify-end;
 }
 
 .joined-badge {
-  @apply -mt-8 rounded-md bg-joined px-3 py-1 text-joinedText;
+  @apply rounded-md bg-joined px-2.5 py-1 text-xs font-semibold text-joinedText;
+}
+
+/* Approved responsive redesign */
+.app-shell {
+  @apply flex h-auto min-h-screen w-full flex-col bg-lightbg text-lightText dark:bg-darkbg dark:text-darkText md:block;
+}
+
+.app-content {
+  @apply min-w-0 pb-20 md:ml-[240px] md:pb-0;
+}
+
+.sidebar-shell {
+  @apply fixed inset-y-0 left-0 z-30 hidden w-[240px] border-r border-black/10 bg-white dark:border-white/10 dark:bg-darkSidebar md:block;
+}
+
+.sidebar-content {
+  @apply flex h-full flex-col justify-between overflow-y-auto px-4 py-6;
+}
+
+.sidebar-brand,
+.mobile-brand,
+.landing-brand {
+  @apply inline-flex items-baseline text-2xl font-semibold text-lightText no-underline dark:text-darkText;
+}
+
+.sidebar-brand span,
+.mobile-brand span,
+.landing-brand span {
+  @apply mr-1 text-lightSelected dark:text-darkSelected;
+}
+
+.sidebar-brand {
+  @apply mb-9 px-3;
+}
+
+.sidebar-create-button {
+  @apply mb-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-lightButton px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#a80f28] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected focus-visible:ring-offset-2 dark:bg-darkButton dark:hover:bg-[#ef5268] dark:focus-visible:ring-darkSelected;
+}
+
+.sidebar-nav,
+.sidebar-utilities,
+.mobile-drawer-links {
+  @apply flex flex-col gap-1;
+}
+
+.nav-link {
+  @apply flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-medium text-black/65 transition-colors hover:bg-black/[0.035] hover:text-lightText focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-white/65 dark:hover:bg-white/[0.06] dark:hover:text-darkText dark:focus-visible:ring-darkSelected;
+}
+
+.nav-link-active {
+  @apply relative bg-lightAccent font-semibold text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
+}
+
+.nav-link-active::before {
+  content: "";
+  @apply absolute inset-y-2 left-0 w-[3px] rounded-r bg-lightSelected dark:bg-darkSelected;
+}
+
+.nav-link-icon {
+  @apply h-[18px] w-[18px] flex-none;
+}
+
+.sidebar-bottom {
+  @apply space-y-4;
+}
+
+.sidebar-utilities {
+  @apply border-b border-black/10 pb-4 dark:border-white/10;
+}
+
+.sidebar-account {
+  @apply flex items-center gap-3 rounded-md p-2 text-lightText transition hover:bg-black/[0.035] dark:text-darkText dark:hover:bg-white/[0.06];
+}
+
+.sidebar-account-copy {
+  @apply min-w-0 flex-1;
+}
+
+.sidebar-account-copy strong,
+.sidebar-account-copy small {
+  @apply block truncate;
+}
+
+.sidebar-account-copy strong {
+  @apply text-sm font-semibold;
+}
+
+.sidebar-account-copy small {
+  @apply mt-0.5 text-xs text-black/45 dark:text-white/45;
+}
+
+.sidebar-logout {
+  @apply flex min-h-11 w-full items-center gap-3 rounded-md border-t border-black/10 px-3 pt-3 text-sm font-semibold text-lightSelected transition hover:bg-lightAccent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/10 dark:text-darkSelected dark:hover:bg-darkAccent;
+}
+
+.mobile-nav-bar {
+  @apply sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-black/10 bg-white px-4 dark:border-white/10 dark:bg-darkSidebar md:hidden;
+}
+
+.mobile-menu-button,
+.mobile-avatar-link {
+  @apply flex h-11 w-11 items-center justify-center rounded-md text-lightText focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-darkText;
+}
+
+.mobile-logout-quick {
+  @apply flex min-h-11 items-center gap-2 rounded-md px-2 text-sm font-semibold text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:text-darkSelected;
+}
+
+.mobile-avatar-link .avatar-small,
+.mobile-avatar-link .avatar-fallback,
+.mobile-avatar-link .avatar-label {
+  @apply h-9 w-9;
+}
+
+.mobile-drawer-backdrop {
+  @apply fixed inset-0 z-40 bg-black/35 md:hidden;
+}
+
+.mobile-drawer {
+  @apply fixed inset-y-0 left-0 z-50 flex w-[min(84vw,320px)] -translate-x-full flex-col bg-white p-5 shadow-2xl transition-transform duration-200 dark:bg-darkSidebar md:hidden;
+}
+
+.mobile-drawer-open {
+  @apply translate-x-0;
+}
+
+.mobile-drawer-header {
+  @apply mb-5 border-b border-black/10 pb-5 dark:border-white/10;
+}
+
+.mobile-drawer-header strong,
+.mobile-drawer-header small {
+  @apply block truncate;
+}
+
+.mobile-drawer-header small {
+  @apply mt-1 text-xs text-black/50 dark:text-white/50;
+}
+
+.mobile-drawer-links {
+  @apply mb-auto;
+}
+
+.mobile-bottom-nav {
+  @apply fixed inset-x-0 bottom-0 z-40 grid h-[68px] grid-cols-3 border-t border-black/10 bg-white pb-[env(safe-area-inset-bottom)] dark:border-white/10 dark:bg-darkSidebar md:hidden;
+}
+
+.mobile-bottom-link {
+  @apply relative flex flex-col items-center justify-center gap-1 text-[11px] font-medium text-black/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-lightSelected dark:text-white/55;
+}
+
+.mobile-bottom-link-active {
+  @apply text-lightSelected dark:text-darkSelected;
+}
+
+.mobile-bottom-link-active::before {
+  content: "";
+  @apply absolute inset-x-5 top-0 h-[3px] bg-lightSelected dark:bg-darkSelected;
+}
+
+.top-bar {
+  @apply sticky top-16 z-20 md:top-0;
+}
+
+.filter-bar {
+  @apply border-b border-black/10 bg-white/95 px-4 py-3 backdrop-blur dark:border-white/10 dark:bg-darkSidebar/95 sm:px-6 lg:px-7;
+}
+
+.filter-controls {
+  @apply grid w-full grid-cols-2 gap-2 md:grid-cols-[minmax(18rem,1fr)_minmax(12rem,18rem)_minmax(10rem,14rem)] md:gap-3;
+}
+
+.filter-search {
+  @apply col-span-2 flex h-11 min-w-0 items-center gap-2 rounded-lg border border-black/15 bg-lightInput px-3 text-black/40 transition focus-within:border-lightSelected focus-within:ring-2 focus-within:ring-lightSelected/15 dark:border-white/15 dark:bg-darkInput dark:text-white/40 md:col-span-1;
+}
+
+.filter-search input {
+  @apply h-full min-w-0 flex-1 bg-transparent text-sm text-lightText outline-none placeholder:text-black/40 dark:text-darkText dark:placeholder:text-white/40;
+}
+
+.filter-course-select {
+  @apply min-w-0;
+}
+
+.filter-date-control {
+  @apply relative block min-w-0;
+}
+
+.filter-date-icon {
+  @apply pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-black/40 dark:text-white/40;
+}
+
+.filter-date-input {
+  @apply h-11 w-full rounded-lg border border-black/15 bg-lightInput pl-10 pr-3 text-sm text-lightText outline-none transition focus:border-lightSelected focus:ring-2 focus:ring-lightSelected/15 dark:border-white/15 dark:bg-darkInput dark:text-darkText;
+}
+
+.filter-mobile-button {
+  @apply flex h-11 items-center justify-center gap-2 rounded-lg border border-black/15 bg-white text-sm font-medium dark:border-white/15 dark:bg-darkInput md:hidden;
+}
+
+.content-page,
+.profile-page {
+  @apply w-full px-4 py-6 sm:px-6 lg:px-7 lg:py-7;
+}
+
+.workspace-page {
+  @apply flex min-h-[calc(100vh-8rem)] w-full flex-col gap-6;
+}
+
+.workspace-header {
+  @apply flex items-end justify-between gap-5 border-0 pb-0;
+}
+
+.workspace-title {
+  @apply text-[2rem] font-semibold leading-tight text-lightText dark:text-darkText;
+}
+
+.workspace-subtitle {
+  @apply mt-1.5 text-sm text-black/55 dark:text-white/55;
+}
+
+.workspace-actions {
+  @apply flex flex-none items-center gap-2;
+}
+
+.workspace-stat {
+  @apply hidden border-0 bg-transparent px-2 py-0 shadow-none lg:block;
+}
+
+.workspace-stat-value {
+  @apply text-lg font-semibold;
+}
+
+.workspace-stat-label {
+  @apply text-[10px] font-medium uppercase text-black/40 dark:text-white/40;
+}
+
+.workspace-layout {
+  @apply grid min-h-0 flex-1 grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_400px];
+}
+
+.workspace-results {
+  @apply min-w-0;
+}
+
+.group-grid,
+.group-grid-wide {
+  @apply grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3;
+}
+
+@media (min-width: 1280px) {
+  .group-grid-wide {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.study-card {
+  @apply relative flex min-h-[320px] w-full cursor-pointer flex-col overflow-hidden rounded-lg border border-black/10 bg-white p-5 text-lightText shadow-sm transition hover:border-lightSelected/60 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/10 dark:bg-darkSidebar dark:text-darkText dark:hover:border-darkSelected;
+}
+
+.study-card::before {
+  @apply hidden;
+}
+
+.study-card-accent {
+  @apply border-lightSelected/40 bg-white dark:border-darkSelected/40 dark:bg-darkSidebar;
+}
+
+.study-card-header {
+  @apply mb-2 flex items-center justify-between gap-3 p-0;
+}
+
+.study-card-course {
+  @apply bg-transparent p-0 text-sm font-semibold text-lightSelected dark:bg-transparent dark:text-darkSelected;
+}
+
+.study-card-purpose {
+  @apply max-w-[55%] truncate rounded bg-[#E9F7F6] px-2 py-1 text-[10px] font-semibold uppercase text-[#087B76] dark:bg-[#173B3A] dark:text-[#71D4CF];
+}
+
+.study-card-title {
+  @apply mb-4 text-lg font-semibold leading-6;
+}
+
+.study-card-meta {
+  @apply mt-0 grid gap-2 p-0;
+}
+
+.study-card-row {
+  @apply flex min-w-0 items-center gap-2 text-sm text-black/60 dark:text-white/60;
+}
+
+.study-card-divider {
+  @apply my-4 border-t border-black/10 dark:border-white/10;
+}
+
+.study-card-participants {
+  @apply flex items-center gap-3 text-xs text-black/55 dark:text-white/55;
+}
+
+.participant-stack,
+.landing-avatar-stack {
+  @apply flex items-center;
+}
+
+.participant-stack > * {
+  @apply -ml-2 h-7 w-7 border-2 border-white text-[10px] first:ml-0 dark:border-darkSidebar;
+}
+
+.participant-overflow {
+  @apply flex items-center justify-center rounded-full bg-lightAccent font-semibold text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
+}
+
+.study-card-creator {
+  @apply mt-3 flex items-center gap-2 truncate text-xs text-black/55 dark:text-white/55;
+}
+
+.study-card-action {
+  @apply mt-auto flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-lightSelected text-sm font-semibold text-lightSelected transition group-hover:bg-lightAccent dark:border-darkSelected dark:text-darkSelected dark:hover:bg-darkAccent;
+}
+
+.study-card-action-joined {
+  @apply border-[#9DD7D3] bg-[#E9F7F6] text-[#087B76] dark:border-[#356D69] dark:bg-[#173B3A] dark:text-[#71D4CF];
+}
+
+.app-empty {
+  @apply flex min-h-64 flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-black/15 bg-white px-6 text-center text-sm font-medium text-black/55 dark:border-white/15 dark:bg-darkSidebar dark:text-white/55;
+}
+
+.workspace-detail {
+  @apply xl:sticky xl:top-24 xl:self-start;
+}
+
+.profile-page {
+  @apply pb-24 md:pb-8;
+}
+
+.profile-page-title {
+  @apply mb-5;
+}
+
+.profile-header {
+  @apply relative mb-5 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-5 rounded-lg border border-black/10 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-darkSidebar md:grid-cols-[auto_minmax(0,1fr)_auto];
+}
+
+.profile-header .avatar-large,
+.profile-header .avatar-fallback-large,
+.profile-header .avatar-label-large {
+  @apply h-24 w-24 bg-lightSelected text-3xl text-white dark:bg-darkButton dark:text-white;
+}
+
+.profile-header-title {
+  @apply text-2xl font-semibold;
+}
+
+.profile-header-details {
+  @apply mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-black/65 dark:text-white/65;
+}
+
+.profile-header-details span {
+  @apply flex items-center gap-2;
+}
+
+.profile-header-details span:last-child {
+  @apply text-[#A96500] dark:text-[#F2B84B];
+}
+
+.profile-header-email {
+  @apply mt-2 text-xs text-black/45 dark:text-white/45;
+}
+
+.profile-edit-button {
+  @apply col-span-2 gap-2 md:col-span-1;
+}
+
+.profile-tabs {
+  @apply mb-5 grid grid-cols-3 border-b border-black/10 dark:border-white/10 md:hidden;
+}
+
+.profile-tabs button {
+  @apply min-h-12 border-b-[3px] border-transparent text-sm font-medium text-black/55 dark:text-white/55;
+}
+
+.profile-tabs .profile-tab-active {
+  @apply border-lightSelected font-semibold text-lightSelected dark:border-darkSelected dark:text-darkSelected;
+}
+
+.profile-workspace {
+  @apply grid w-full grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-2;
+}
+
+.settings-panel {
+  @apply rounded-lg border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-darkSidebar;
+}
+
+.profile-section-account {
+  @apply md:col-span-2;
+}
+
+.settings-panel-heading {
+  @apply mb-4 flex items-start justify-between gap-4;
+}
+
+.settings-panel-heading h2 {
+  @apply text-xl font-semibold;
+}
+
+.settings-panel-heading p {
+  @apply mt-1 text-sm text-black/50 dark:text-white/50;
+}
+
+.profile-details-form {
+  @apply grid gap-4 md:grid-cols-3;
+}
+
+.profile-details-form label > span {
+  @apply mb-1.5 block text-xs font-semibold text-black/55 dark:text-white/55;
+}
+
+.profile-select,
+.profile-select-compact,
+.profile-input,
+.profile-input-compact,
+.course-search-input {
+  @apply mb-0 min-h-11 w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm text-lightText outline-none transition placeholder:text-black/35 focus:border-lightSelected focus:ring-2 focus:ring-lightSelected/15 dark:border-white/15 dark:bg-darkInput dark:text-darkText dark:placeholder:text-white/35 dark:focus:border-darkSelected;
+}
+
+.class-list,
+.block-list {
+  @apply mt-0;
+}
+
+.course-picker {
+  @apply relative;
+}
+
+.course-search-wrap {
+  @apply flex items-center gap-2 rounded-md border border-black/15 px-3 text-black/40 focus-within:border-lightSelected focus-within:ring-2 focus-within:ring-lightSelected/15 dark:border-white/15 dark:text-white/40;
+}
+
+.course-search-wrap .course-search-input {
+  @apply border-0 px-0 focus:ring-0;
+}
+
+.course-search-result {
+  @apply flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition hover:bg-lightAccent hover:text-lightSelected dark:hover:bg-darkAccent dark:hover:text-darkSelected;
+}
+
+.class-list-items {
+  @apply mt-4 divide-y divide-black/10 overflow-hidden rounded-md border border-black/10 dark:divide-white/10 dark:border-white/10;
+}
+
+.class-list-item {
+  @apply flex min-h-[68px] w-full items-center justify-between gap-3 rounded-none border-0 bg-white px-4 py-3 text-sm shadow-none dark:bg-darkSidebar;
+}
+
+.class-list-text {
+  @apply flex min-w-0 flex-col;
+}
+
+.class-list-text strong {
+  @apply text-base;
+}
+
+.class-list-text span {
+  @apply truncate text-sm text-black/55 dark:text-white/55;
+}
+
+.row-icon-button {
+  @apply flex h-10 w-10 flex-none items-center justify-center rounded-md border border-lightSelected/30 text-lightSelected hover:bg-lightAccent dark:border-darkSelected/40 dark:text-darkSelected dark:hover:bg-darkAccent;
+}
+
+.unblock-text-button {
+  @apply flex min-h-10 flex-none items-center gap-2 rounded-md border border-[#16827D] px-3 text-xs font-semibold text-[#087B76] dark:border-[#71D4CF] dark:text-[#71D4CF];
+}
+
+.blocked-empty {
+  @apply mt-5 flex min-h-40 flex-col items-center justify-center gap-2 rounded-md border border-dashed border-black/10 text-center text-black/45 dark:border-white/10 dark:text-white/45;
+}
+
+.blocked-empty strong {
+  @apply text-sm text-lightText dark:text-darkText;
+}
+
+.blocked-empty span,
+.form-empty-copy {
+  @apply text-xs text-black/45 dark:text-white/45;
+}
+
+@media (max-width: 767px) {
+  .profile-section {
+    display: none;
+  }
+  .profile-section-active {
+    display: block;
+  }
+  .workspace-header {
+    align-items: flex-start;
+  }
+  .workspace-header .workspace-subtitle {
+    display: none;
+  }
+  .workspace-actions .button-primary {
+    @apply h-11 w-11 overflow-hidden px-0 text-[0];
+  }
+  .workspace-actions .button-primary svg {
+    @apply h-5 w-5;
+  }
+  .study-card {
+    @apply min-h-[300px];
+  }
+}
+
+/* Landing */
+.landing-page {
+  @apply min-h-screen bg-white text-lightText dark:bg-darkbg dark:text-darkText;
+}
+
+.landing-nav {
+  @apply mx-auto flex h-16 w-[calc(100%_-_2.5rem)] max-w-[1344px] items-center justify-between border-b border-black/10 dark:border-white/10 sm:w-[calc(100%_-_4rem)] lg:w-[calc(100%_-_6rem)];
+}
+
+.landing-nav-actions {
+  @apply hidden items-center gap-3 sm:flex;
+}
+
+.landing-signin {
+  @apply min-h-10 px-4 text-sm font-medium hover:text-lightSelected dark:hover:text-darkSelected;
+}
+
+.landing-menu {
+  @apply flex h-11 w-11 items-center justify-center sm:hidden;
+}
+
+.landing-mobile-signin {
+  @apply min-h-11 px-2 text-sm font-semibold text-lightSelected dark:text-darkSelected sm:hidden;
+}
+
+.landing-main {
+  @apply mx-auto w-[calc(100%_-_2.5rem)] max-w-[1344px] sm:w-[calc(100%_-_4rem)] lg:w-[calc(100%_-_6rem)];
+}
+
+.landing-hero {
+  @apply min-h-0 items-start justify-start py-12 text-left sm:py-16 lg:py-12;
+}
+
+.landing-hero h1 {
+  @apply max-w-4xl text-[clamp(2.35rem,6vw,5rem)] font-semibold leading-[1.02];
+}
+
+.landing-hero p {
+  @apply mt-6 text-base text-black/60 dark:text-white/60 sm:text-lg;
+}
+
+.landing-actions {
+  @apply mt-7 flex w-full flex-col gap-3 sm:w-auto sm:flex-row;
+}
+
+.landing-actions > *,
+.landing-actions button {
+  @apply w-full sm:w-auto;
+}
+
+.button-primary,
+.button-large {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-lightButton px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#a80f28] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected focus-visible:ring-offset-2 dark:bg-darkButton dark:text-white dark:hover:bg-[#ef5268];
+}
+
+.button-large {
+  @apply min-h-12 px-6 text-base;
+}
+
+.button-outline {
+  @apply inline-flex min-h-11 items-center justify-center rounded-md border border-black/25 bg-white px-4 text-sm font-semibold text-lightText transition hover:border-lightSelected hover:text-lightSelected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lightSelected dark:border-white/25 dark:bg-darkInput dark:text-darkText dark:hover:border-darkSelected dark:hover:text-darkSelected;
+}
+
+.landing-secondary {
+  @apply min-h-12 px-6 text-base;
+}
+
+.landing-browser {
+  @apply mb-8 w-full;
+}
+
+.landing-browser-heading h2 {
+  @apply mb-3 text-xl font-semibold;
+}
+
+.landing-browser-tools {
+  @apply mb-3 grid gap-2 sm:grid-cols-[minmax(15rem,1fr)_12rem_12rem];
+}
+
+.landing-search,
+.landing-filter {
+  @apply flex h-11 items-center gap-2 rounded-md border border-black/15 px-3 text-sm text-black/45 dark:border-white/15 dark:text-white/45;
+}
+
+.landing-group-list {
+  @apply overflow-hidden rounded-lg border border-black/10 dark:border-white/10;
+}
+
+.landing-group-row {
+  @apply grid min-h-[92px] grid-cols-[72px_minmax(0,1fr)_auto] items-center gap-3 border-b border-black/10 p-3 last:border-0 dark:border-white/10 sm:grid-cols-[72px_minmax(13rem,1.2fr)_minmax(14rem,1fr)_auto_auto] sm:px-4;
+}
+
+.landing-course-code {
+  @apply flex h-14 items-center justify-center rounded-md bg-lightSelected text-sm font-semibold text-white dark:bg-darkButton;
+}
+
+.landing-group-name {
+  @apply min-w-0;
+}
+
+.landing-group-name strong,
+.landing-group-name > span {
+  @apply block;
+}
+
+.landing-group-name strong {
+  @apply truncate text-sm font-semibold;
+}
+
+.landing-group-name > span {
+  @apply mt-1 text-xs text-black/50 dark:text-white/50;
+}
+
+.status-open,
+.status-filling {
+  @apply mr-2 rounded px-1.5 py-0.5 font-medium;
+}
+
+.status-open {
+  @apply bg-[#DDF4F2] text-[#087B76];
+}
+
+.status-filling {
+  @apply bg-[#FFF0D4] text-[#A45B00];
+}
+
+.landing-group-meta {
+  @apply hidden text-xs text-black/60 dark:text-white/60 sm:block;
+}
+
+.landing-group-meta span {
+  @apply flex items-center gap-2 py-1;
+}
+
+.landing-avatar-stack {
+  @apply hidden lg:flex;
+}
+
+.landing-avatar-stack i {
+  @apply -ml-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-lightAccent text-[9px] font-semibold not-italic text-lightSelected first:ml-0 dark:border-darkSidebar dark:bg-darkAccent dark:text-darkSelected;
+}
+
+.landing-group-row > button {
+  @apply col-start-2 justify-self-start rounded-md border border-lightSelected px-3 py-2 text-xs font-semibold text-lightSelected dark:border-darkSelected dark:text-darkSelected sm:col-start-auto sm:justify-self-end;
+}
+
+.landing-features {
+  @apply grid border-y border-black/10 dark:border-white/10 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.landing-features article {
+  @apply flex gap-4 border-b border-black/10 px-4 py-6 last:border-0 dark:border-white/10 sm:border-r lg:border-b-0 sm:[&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r;
+}
+
+.landing-features svg {
+  @apply h-7 w-7 flex-none text-lightSelected dark:text-darkSelected;
+}
+
+.landing-features h3 {
+  @apply text-sm font-semibold;
+}
+
+.landing-features p {
+  @apply mt-1 text-xs leading-5 text-black/55 dark:text-white/55;
+}
+
+.landing-footer {
+  @apply mx-auto flex w-[calc(100%_-_2.5rem)] max-w-[1344px] items-center justify-between py-7 text-xs text-black/45 dark:text-white/45 sm:w-[calc(100%_-_4rem)] lg:w-[calc(100%_-_6rem)];
+}
+
+@media (max-width: 389px) {
+  .landing-hero h1 {
+    font-size: 2.15rem;
+  }
+}
+
+.redirect-state {
+  @apply flex min-h-screen flex-col items-center justify-center gap-2;
+}
+
+.loading-mark {
+  @apply mb-3 h-8 w-8 animate-spin rounded-full border-2 border-black/10 border-t-lightSelected dark:border-white/10 dark:border-t-darkSelected;
+}
+
+/* Group cards and contained details panel */
+.study-card {
+  @apply min-h-0 overflow-hidden p-0 text-left hover:-translate-y-0.5;
+}
+
+.study-card-header {
+  @apply mb-0 flex min-h-12 items-center justify-between border-b border-black/[0.07] px-4 dark:border-white/[0.08];
+}
+
+.study-card-course {
+  @apply rounded bg-lightAccent px-2 py-1 text-xs font-bold text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
+}
+
+.study-card-joined {
+  @apply flex items-center gap-1 rounded bg-[#E9F7F6] px-2 py-1 text-[11px] font-semibold text-[#087B76] dark:bg-[#173B3A] dark:text-[#71D4CF];
+}
+
+.study-card-copy {
+  @apply min-h-[94px] px-4 pb-4 pt-4;
+}
+
+.study-card-title {
+  @apply mb-1.5 line-clamp-2 text-[17px] font-semibold leading-6;
+}
+
+.study-card-purpose {
+  @apply line-clamp-2 max-w-none bg-transparent p-0 text-sm font-normal normal-case leading-5 text-black/50 dark:bg-transparent dark:text-white/50;
+}
+
+.study-card-meta {
+  @apply grid grid-cols-2 gap-0 border-y border-black/[0.07] bg-black/[0.018] dark:border-white/[0.08] dark:bg-white/[0.025];
+}
+
+.study-card-row {
+  @apply min-h-[68px] gap-2.5 border-r border-black/[0.07] px-4 py-3 last:border-r-0 dark:border-white/[0.08];
+}
+
+.study-card-icon {
+  @apply h-[18px] w-[18px] text-lightSelected/75 dark:text-darkSelected/80;
+}
+
+.study-card-value {
+  @apply flex min-w-0 flex-col;
+}
+
+.study-card-value strong,
+.study-card-value small {
+  @apply block truncate;
+}
+
+.study-card-value strong {
+  @apply text-xs font-semibold text-lightText dark:text-darkText;
+}
+
+.study-card-value small {
+  @apply mt-1 text-xs text-black/50 dark:text-white/50;
+}
+
+.study-card-footer {
+  @apply flex min-h-[62px] items-center justify-between gap-3 px-4 py-3;
+}
+
+.study-card-participants {
+  @apply min-w-0 gap-2 text-xs text-black/50 dark:text-white/50;
+}
+
+.participant-stack > * {
+  @apply h-7 w-7;
+}
+
+.study-card-open {
+  @apply flex flex-none items-center gap-1 text-xs font-semibold text-lightSelected dark:text-darkSelected;
+}
+
+.study-card-accent {
+  @apply border-[#9DD7D3] bg-white dark:border-[#356D69] dark:bg-darkSidebar;
+}
+
+.details-overlay {
+  overscroll-behavior: contain;
+}
+
+.details-overlay-inner {
+  @apply max-h-none overflow-visible;
+}
+
+.group-details-card {
+  max-height: calc(100dvh - 2rem);
+  overscroll-behavior: contain;
+  @apply my-0 flex w-full flex-col overflow-hidden rounded-lg border border-black/10 bg-white px-0 text-lightText shadow-2xl dark:border-white/10 dark:bg-darkSidebar dark:text-darkText md:max-h-[calc(100dvh-7rem)] md:shadow-lg;
+}
+
+.group-details-header {
+  @apply static flex flex-none items-start justify-between gap-4 border-b border-black/10 bg-white px-5 py-5 dark:border-white/10 dark:bg-darkSidebar;
+}
+
+.group-details-heading {
+  @apply min-w-0 flex-1;
+}
+
+.group-details-eyebrow {
+  @apply mb-2 flex flex-wrap items-center gap-2;
+}
+
+.group-details-eyebrow span:first-child {
+  @apply rounded bg-lightAccent px-2 py-1 text-[11px] font-bold text-lightSelected dark:bg-darkAccent dark:text-darkSelected;
+}
+
+.group-details-eyebrow span:last-child {
+  @apply truncate text-xs font-medium text-black/45 dark:text-white/45;
+}
+
+.group-details-title {
+  @apply text-xl font-semibold leading-7;
+}
+
+.group-details-action {
+  @apply h-10 w-10 rounded-md border border-transparent hover:border-black/10 hover:bg-black/[0.035] dark:hover:border-white/10 dark:hover:bg-white/[0.05];
+}
+
+.group-details-body {
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  @apply min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-5;
+}
+
+.group-details-list {
+  @apply grid grid-cols-1 gap-0 divide-y divide-black/[0.07] overflow-hidden rounded-lg border border-black/[0.08] dark:divide-white/[0.08] dark:border-white/10 sm:grid-cols-1;
+}
+
+.group-details-text {
+  @apply flex min-h-[64px] items-center gap-3 rounded-none border-0 bg-transparent px-4 py-3 dark:bg-transparent;
+}
+
+.group-details-info-icon {
+  @apply h-[19px] w-[19px] flex-none text-lightSelected/75 dark:text-darkSelected/80;
+}
+
+.group-details-text > span {
+  @apply min-w-0;
+}
+
+.group-details-label,
+.group-details-value {
+  @apply block;
+}
+
+.group-details-label {
+  @apply text-[10px] font-semibold uppercase text-black/40 dark:text-white/40;
+}
+
+.group-details-value {
+  @apply mt-0.5 truncate text-sm font-medium;
+}
+
+.group-details-section {
+  @apply overflow-hidden rounded-lg border border-black/[0.08] dark:border-white/10;
+}
+
+.group-details-section-heading {
+  @apply flex min-h-12 items-center justify-between gap-3 border-b border-black/[0.07] px-4 text-sm font-semibold dark:border-white/[0.08];
+}
+
+.group-details-section-heading > span,
+.group-details-section-heading > div {
+  @apply flex items-center gap-2;
+}
+
+.group-details-count {
+  @apply text-xs font-medium text-black/45 dark:text-white/45;
+}
+
+.participants-toggle {
+  @apply h-9 w-9 rounded-md;
+}
+
+.participant-list {
+  @apply max-h-none divide-y divide-black/[0.06] overflow-visible rounded-none border-0 bg-transparent p-1 dark:divide-white/[0.07] dark:bg-transparent;
+}
+
+.participant-row {
+  @apply min-h-12 rounded-md px-3 py-2;
+}
+
+.participant-name {
+  @apply text-sm font-medium;
+}
+
+.group-details-freeform {
+  @apply min-h-0 rounded-none border-0 bg-transparent px-4 py-4 text-sm leading-6 dark:bg-transparent;
+}
+
+.join-button {
+  @apply static m-4 mt-0 min-h-12 w-[calc(100%_-_2rem)] flex-none rounded-md px-4 text-sm font-semibold shadow-none;
+}
+
+.join-button-inactive {
+  @apply bg-lightButton text-white hover:bg-[#a80f28] dark:bg-darkButton dark:text-white dark:hover:bg-[#ef5268];
+}
+
+.join-button-active {
+  @apply border border-lightSelected/30 bg-white text-lightSelected hover:bg-lightAccent dark:border-darkSelected/40 dark:bg-darkInput dark:text-darkSelected dark:hover:bg-darkAccent;
+}
+
+.modal-panel,
+.profile-popup-panel,
+.confirm-panel {
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 639px) {
+  .study-card-copy {
+    @apply min-h-0;
+  }
+
+  .study-card-meta {
+    @apply grid-cols-1;
+  }
+
+  .study-card-row {
+    @apply min-h-[58px] border-b border-r-0 border-black/[0.07] py-2.5 last:border-b-0 dark:border-white/[0.08];
+  }
 }
