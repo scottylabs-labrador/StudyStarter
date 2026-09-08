@@ -15,13 +15,11 @@ type ProfileHeaderProps = {
     emailAddresses?: { emailAddress?: string }[];
   } | null;
   showLogout?: boolean;
-  onEdit?: () => void;
 };
 
 export function ProfileHeader({
   user,
   showLogout = false,
-  onEdit,
 }: ProfileHeaderProps) {
   const displayName =
     user?.fullName ?? user?.firstName ?? user?.username ?? "User";
@@ -51,15 +49,6 @@ export function ProfileHeader({
         </div>
         <p className="profile-header-email">{emailAddress}</p>
       </div>
-      {onEdit && (
-        <button
-          type="button"
-          className="button-outline profile-edit-button"
-          onClick={onEdit}
-        >
-          <Pencil size={17} /> Edit profile
-        </button>
-      )}
       {showLogout && (
         <div className="ml-auto">
           <SignOutButton>
