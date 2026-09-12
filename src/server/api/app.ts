@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 
 import {
-  requireEligibleSession,
+  requireSession,
   type ApiEnvironment,
 } from "~/server/api/auth-middleware";
 import {
@@ -51,7 +51,7 @@ api.get("/health", (context) =>
   }),
 );
 
-api.get("/groups", requireEligibleSession, async (context) => {
+api.get("/groups", async (context) => {
   const courseCode = context.req.query("courseCode")?.trim();
 
   if (courseCode === "") {
@@ -62,7 +62,7 @@ api.get("/groups", requireEligibleSession, async (context) => {
   return context.json({ groups });
 });
 
-api.get("/groups/:groupId", requireEligibleSession, async (context) => {
+api.get("/groups/:groupId", async (context) => {
   const group = await getGroup(context.req.param("groupId"));
 
   if (!group) {
@@ -83,7 +83,7 @@ const groupInputSchema = z.object({
   calendarEventId: z.string().trim().max(500).optional(),
 });
 
-api.post("/groups", requireEligibleSession, async (context) => {
+api.post("/groups", requireSession, async (context) => {
   const input = groupInputSchema.safeParse(await context.req.json());
 
   if (!input.success) {
@@ -94,7 +94,7 @@ api.post("/groups", requireEligibleSession, async (context) => {
   return context.json({ group }, 201);
 });
 
-api.post("/groups/:groupId/join", requireEligibleSession, async (context) => {
+api.post("/groups/:groupId/join", requireSession, async (context) => {
   const input = z
     .object({ calendarEventId: z.string().trim().max(500).optional() })
     .safeParse(await context.req.json().catch(() => ({})));
@@ -128,7 +128,7 @@ api.post("/groups/:groupId/join", requireEligibleSession, async (context) => {
   return context.json({ joined: true });
 });
 
-api.delete("/groups/:groupId/join", requireEligibleSession, async (context) => {
+api.delete("/groups/:groupId/join", requireSession, async (context) => {
   const result = await leaveGroup(
     context.req.param("groupId"),
     context.var.userId,
@@ -141,7 +141,7 @@ api.delete("/groups/:groupId/join", requireEligibleSession, async (context) => {
   return context.json(result);
 });
 
-api.patch("/groups/:groupId", requireEligibleSession, async (context) => {
+api.patch("/groups/:groupId", requireSession, async (context) => {
   const input = groupInputSchema.safeParse(await context.req.json());
 
   if (!input.success) {
@@ -161,7 +161,7 @@ api.patch("/groups/:groupId", requireEligibleSession, async (context) => {
   return context.json({ group });
 });
 
-api.get("/me/profile", requireEligibleSession, async (context) => {
+api.get("/me/profile", requireSession, async (context) => {
   return context.json({ profile: await getProfile(context.var.userId) });
 });
 
@@ -171,7 +171,7 @@ const profileUpdateSchema = z.object({
   minors: z.string().max(500).optional(),
 });
 
-api.patch("/me/profile", requireEligibleSession, async (context) => {
+api.patch("/me/profile", requireSession, async (context) => {
   const input = profileUpdateSchema.safeParse(await context.req.json());
 
   if (!input.success) {
@@ -183,7 +183,7 @@ api.patch("/me/profile", requireEligibleSession, async (context) => {
   });
 });
 
-api.patch("/me/theme", requireEligibleSession, async (context) => {
+api.patch("/me/theme", requireSession, async (context) => {
   const input = z
     .object({ theme: z.enum(["light", "dark"]) })
     .safeParse(await context.req.json());
@@ -196,13 +196,13 @@ api.patch("/me/theme", requireEligibleSession, async (context) => {
   return context.json({ theme: input.data.theme });
 });
 
-api.get("/me/courses", requireEligibleSession, async (context) => {
+api.get("/me/courses", requireSession, async (context) => {
   return context.json({
     courseCodes: await getCourseCodes(context.var.userId),
   });
 });
 
-api.post("/me/courses", requireEligibleSession, async (context) => {
+api.post("/me/courses", requireSession, async (context) => {
   const input = z
     .object({ courseCode: z.string().trim().min(1).max(20) })
     .safeParse(await context.req.json());
@@ -215,20 +215,16 @@ api.post("/me/courses", requireEligibleSession, async (context) => {
   return context.json({ added: true }, 201);
 });
 
-api.delete(
-  "/me/courses/:courseCode",
-  requireEligibleSession,
-  async (context) => {
-    await deleteCourseCode(context.var.userId, context.req.param("courseCode"));
-    return context.json({ deleted: true });
-  },
-);
+api.delete("/me/courses/:courseCode", requireSession, async (context) => {
+  await deleteCourseCode(context.var.userId, context.req.param("courseCode"));
+  return context.json({ deleted: true });
+});
 
-api.get("/me/blocking", requireEligibleSession, async (context) => {
+api.get("/me/blocking", requireSession, async (context) => {
   return context.json(await getBlockingState(context.var.userId));
 });
 
-api.post("/me/blocks", requireEligibleSession, async (context) => {
+api.post("/me/blocks", requireSession, async (context) => {
   const input = z
     .object({ email: z.string().trim().email() })
     .safeParse(await context.req.json());
@@ -250,7 +246,7 @@ api.post("/me/blocks", requireEligibleSession, async (context) => {
   return context.json(result, 201);
 });
 
-api.delete("/me/blocks/:email", requireEligibleSession, async (context) => {
+api.delete("/me/blocks/:email", requireSession, async (context) => {
   const deleted = await unblockUser(
     context.var.userId,
     context.req.param("email"),
@@ -263,7 +259,7 @@ api.delete("/me/blocks/:email", requireEligibleSession, async (context) => {
   return context.json({ deleted: true });
 });
 
-api.get("/me/blocks/:email/impact", requireEligibleSession, async (context) => {
+api.get("/me/blocks/:email/impact", requireSession, async (context) => {
   const impact = await getBlockImpact(
     context.var.userId,
     context.req.param("email"),

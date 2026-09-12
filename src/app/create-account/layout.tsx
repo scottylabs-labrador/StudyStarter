@@ -3,7 +3,6 @@ import React from "react";
 import { redirect } from "next/navigation";
 
 import { requireServerSession } from "~/lib/auth";
-import { getUserEligibility } from "~/server/eligibility/service";
 
 export const metadata = {
   title: "CMU Study",
@@ -20,19 +19,6 @@ export default async function ContentLayout({
 
   if (!session?.user) {
     redirect("/");
-  }
-
-  const eligibility = await getUserEligibility(
-    session.user.id,
-    session.user.email,
-  );
-
-  if (eligibility === "INELIGIBLE") {
-    redirect("/access-restricted");
-  }
-
-  if (eligibility === "UNAVAILABLE") {
-    redirect("/eligibility-unavailable");
   }
 
   return (

@@ -2,9 +2,11 @@ import "~/styles/globals.css";
 import { redirect } from "next/navigation";
 import NavBar from "~/components/layout/NavBar";
 import React from "react";
-import { userHasCreatedProfile } from "~/features/profile/services/serverAccountService";
+import {
+  checkFacultyStatus,
+  userHasCreatedProfile,
+} from "~/features/profile/services/serverAccountService";
 import { requireServerSession } from "~/lib/auth";
-import { getUserEligibility } from "~/server/eligibility/service";
 
 export const metadata = {
   title: "CMU Study",
@@ -29,17 +31,16 @@ export default async function ContentLayout({
     redirect("/");
   }
 
-  const eligibility = await getUserEligibility(session.user.id, email);
+  const isFaculty = await checkFacultyStatus(
+    email,
+    session.user.name ?? "User",
+  );
 
-  if (eligibility === "INELIGIBLE") {
+  if (isFaculty) {
     redirect("/access-restricted");
   }
 
-  if (eligibility === "UNAVAILABLE") {
-    redirect("/eligibility-unavailable");
-  }
-
-  if (!(await userHasCreatedProfile(session.user.id))) {
+  if (!(await userHasCreatedProfile(email))) {
     redirect("/create-account");
   }
 
