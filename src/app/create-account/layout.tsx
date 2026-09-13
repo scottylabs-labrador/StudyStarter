@@ -24,7 +24,7 @@ export default async function ContentLayout({
 
   const eligibility = await getUserEligibility(
     session.user.id,
-    session.user.email,
+    session.user.andrewID,
   );
 
   if (eligibility === "INELIGIBLE") {

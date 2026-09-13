@@ -20,8 +20,10 @@ function isCachedEligibility(
 
 export async function getUserEligibility(
   userId: string,
-  email: string,
+  andrewID: string | null | undefined,
 ): Promise<UserEligibility> {
+  if (!andrewID) return "UNAVAILABLE";
+
   const user = await db.user.findUnique({
     where: { id: userId },
     select: {
@@ -45,7 +47,7 @@ export async function getUserEligibility(
     return "UNAVAILABLE";
   }
 
-  const eligibility = await checkDirectoryEligibility(email);
+  const eligibility = await checkDirectoryEligibility(andrewID);
   const ttl =
     eligibility === "UNAVAILABLE"
       ? DIRECTORY_UNAVAILABLE_TTL_MS

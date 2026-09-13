@@ -15,6 +15,7 @@ model User {
   directoryEligibility    DirectoryEligibility @default(UNCHECKED)
   directoryCheckedAt      DateTime?
   directoryCheckExpiresAt DateTime?
+  andrewID                String?              @map("andrew_id")
   image                   String?
   academicYear            String?
   majors                  String?

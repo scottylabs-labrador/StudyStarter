@@ -36,7 +36,7 @@ export const requireEligibleSession = createMiddleware<ApiEnvironment>(
 
     const eligibility = await getUserEligibility(
       session.user.id,
-      session.user.email,
+      session.user.andrewID,
     );
 
     if (eligibility === "INELIGIBLE") {

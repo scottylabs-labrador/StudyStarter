@@ -29,7 +29,7 @@ export default async function ContentLayout({
     redirect("/");
   }
 
-  const eligibility = await getUserEligibility(session.user.id, email);
+  const eligibility = await getUserEligibility(session.user.id, session.user.andrewID);
 
   if (eligibility === "INELIGIBLE") {
     redirect("/access-restricted");
