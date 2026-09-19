@@ -10,7 +10,11 @@ Find and manage CMU study groups.
 - `GET /api/v1/health` verifies the Hono API boundary.
 - `GET /api/v1/groups` returns groups ordered by start time; pass `courseCode` to filter by course.
 - PostgreSQL is configured through `DATABASE_URL`; use `npm run db:generate` to create a migration after changing the Prisma schema.
+<<<<<<< HEAD
 - To connect to the Railway Postgres-dev database, create a local SSH key, upload to Railway, install the railway CLI, and run `railway connect Postgres-dev --tunnel-only`. Copy the given URL into the .env and .env.local DATABASE_URL before starting the app.
+=======
+- To connect to the Railway Postgres-dev database, create a local SSH key, upload to Railway, install the railway CLI, and run `railway connect Postgres-dev --tunnel-only`. Copy the given URL into the .env and .env.local DATABASE_URL before starting the app. You will need to be a member of the Railway project.
+>>>>>>> a03462f28c072b5f9381ca25551159e810b24a92
 - To create a local Postgres database with Docker, run:
   ```bash
   docker run --name studystarter-postgres \
