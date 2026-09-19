@@ -1,4 +1,4 @@
-name: Deploy to Railway Prod
+name: Deploy to Railway Production
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 concurrency:
-  group: railway-prod
+  group: railway-production
   cancel-in-progress: true
 
 jobs:
@@ -24,4 +24,4 @@ jobs:
       - name: Deploy to Railway Production
         run: railway up --ci --service "CMU Study" --environment production
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PRODUCTION }}
