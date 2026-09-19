@@ -24,10 +24,7 @@ import { setIsCreateGroupModalOpen } from "~/lib/features/uiSlice";
 const navItems = [
   { href: "/feed", label: "Group Finder", page: "feed", icon: Search },
   { href: "/my-groups", label: "My Groups", page: "my-groups", icon: Users },
-<<<<<<< HEAD
   { href: "/profile", label: "Profile", page: "profile", icon: User },
-=======
->>>>>>> a03462f28c072b5f9381ca25551159e810b24a92
 ];
 
 export default function NavBar() {
